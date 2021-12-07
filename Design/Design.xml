@@ -1,4 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <d:design projectShortName="OpcUaSampleServerNameChangeItInDesign" xmlns:d="http://cern.ch/quasar/Design" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://cern.ch/quasar/Design Design.xsd ">
-  <d:root/>
+  <d:class name="Regs">
+  	<d:devicelogic></d:devicelogic>
+  	<d:cachevariable initializeWith="valueAndStatus"
+  		dataType="OpcUa_UInt32" name="userReg" nullPolicy="nullAllowed"
+  		addressSpaceWrite="forbidden" initialStatus="OpcUa_BadWaitingForInitialData">
+  	</d:cachevariable>
+  	<d:configentry dataType="OpcUa_UInt32" name="address"
+  		storedInDeviceObject="true">
+  	</d:configentry>
+  	<d:cachevariable initializeWith="valueAndStatus"
+  		dataType="OpcUa_UInt32" name="writeRegValue"
+  		nullPolicy="nullAllowed" addressSpaceWrite="regular"
+  		initialStatus="OpcUa_Good" initialValue="0">
+  	</d:cachevariable>
+  </d:class>
+  <d:root>
+  	<d:hasobjects instantiateUsing="configuration" class="Regs"></d:hasobjects></d:root>
 </d:design>

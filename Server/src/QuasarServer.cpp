@@ -1,4 +1,4 @@
-/* © Copyright CERN, Universidad de Oviedo, 2015.  All rights not expressly granted are reserved.
+/* �� Copyright CERN, Universidad de Oviedo, 2015.  All rights not expressly granted are reserved.
  * QuasarServer.cpp
  *
  *  Created on: Nov 6, 2015
@@ -27,6 +27,10 @@
 #include <LogIt.h>
 #include <shutdown.h>
 
+// ECC - include DRoot.h (for some reason)
+#include <DRoot.h>
+#include <DRegs.h>
+
 QuasarServer::QuasarServer() : BaseQuasarServer()
 {
 
@@ -46,6 +50,9 @@ void QuasarServer::mainLoop()
     while(ShutDownFlag() == 0)
     {
         std::this_thread::sleep_for(std::chrono::milliseconds(100));
+
+        for(Device::DRegs *reg : Device::DRoot::getInstance()->regss()) // somehow this got named regss instead of regs...
+        	reg->update();
     }
     printServerMsg(" Shutting down server");
 }
