@@ -1,0 +1,218 @@
+<?xml version="1.0" encoding="UTF-8"?>
+{# © Copyright CERN, 2015.                                                       #}
+{# All rights not expressly granted are reserved.                                #}
+{# This file is part of Quasar.                                                  #}
+{#                                                                               #}
+{# Quasar is free software: you can redistribute it and/or modify                #}
+{# it under the terms of the GNU Lesser General Public Licence as published by   #}
+{# the Free Software Foundation, either version 3 of the Licence.                #}
+{# Quasar is distributed in the hope that it will be useful,                     #}
+{# but WITHOUT ANY WARRANTY; without even the implied warranty of                #}
+{#                                                                               #}
+{# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the                 #}
+{# GNU Lesser General Public Licence for more details.                           #}
+{#                                                                               #}
+{# You should have received a copy of the GNU Lesser General Public License      #}
+{# along with Quasar.  If not, see <http://www.gnu.org/licenses/>                #}
+{#                                                                               #}
+{# Created:   Jul 2014                                                           #}
+{#            Mar 2020 (translated to Jinja2)                                    #}
+{# Authors:                                                                      #}
+{#   Piotr Nikiel <piotr@nikiel.info>                                            #}
+{#   Ben Farnham  <firstNm.secondNm@cern.ch>                                     #}
+{% import 'headers.jinja' as headers %}
+{% set this = designInspector.objectify_root() %}
+{# TODO piotr{{ headers.xmlFullGeneratedHeader() }} #}
+
+{%macro writeDocumentation(docElements) %}
+  {% if docElements|length>0 %}
+    <xs:annotation>
+      <xs:documentation>
+      {% for docElement in docElements %}
+        {{ designInspector.strip_documentation_for_xsd(docElement) }}
+      {% endfor %}
+      </xs:documentation>
+    </xs:annotation>
+  {% endif %}
+{% endmacro %}
+
+{% macro writeRestrictions(className, varName, dataType, restrictions) %}
+  <!--processing [{{restrictions|length}}] restrictions for class [{{className}}] name: {{varName}} dataType [{{dataType}}]-->  
+  <xs:simpleType>
+    <xs:restriction base="{{dataType}}">
+      {% for restriction in restrictions %}
+        <xs:{{restriction[0]}} value="{{restriction[1]}}"/>
+      {% endfor %}
+    </xs:restriction>
+  </xs:simpleType>
+{% endmacro %}
+
+{% macro writeUsageAndDefaultValue(configEntry) %}
+  {%- if configEntry.get('defaultValue') %}
+    use="optional" default="{{configEntry.get('defaultValue')}}"
+  {% else %}
+    use="required"
+  {% endif -%}
+{% endmacro %}
+
+{% macro writeArrayCacheVarOrConfigEntry(className, targetVar, what) %}
+  {% set targetName = targetVar.get('name') %}
+  {% set dataType = oracle.quasar_data_type_to_xsd_type(targetVar.get('dataType')) %}
+  {% set arrayObject = designInspector.xpath_relative_to_object(targetVar, "d:array")[0] %}
+  {% set restrictions = designInspector.get_restrictions(className, targetName, what) %}
+  <!-- add array cacheVariable/configEntry name [{{targetName}}] type [{{dataType}}] -->
+  <xs:element name="{{targetName}}">
+    <xs:complexType>
+      {{ writeDocumentation(designInspector.objectifyDocumentation(className, targetName)) }}
+      <xs:sequence minOccurs="{{ arrayObject.get('minimumSize')|default('0', true) }}" maxOccurs="{{ arrayObject.get('maximumSize')|default('unbounded', true) }}">
+        {% if restrictions|length > 0 %}
+          <xs:element name="value">
+            {{ writeRestrictions(className, targetName, dataType, restrictions) }}
+          </xs:element>
+        {% else %}
+          <xs:element name="value" type="{{dataType}}"/>
+        {% endif %}
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+{% endmacro %}
+
+<xs:schema xmlns:tns="http://cern.ch/quasar/Configuration"
+  xmlns:xi="http://www.w3.org/2003/XInclude"
+  xmlns:xs="http://www.w3.org/2001/XMLSchema"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:d="http://cern.ch/quasar/Design"
+  xmlns:fnc="http://cern.ch/quasar/Functions"
+  targetNamespace="http://cern.ch/quasar/Configuration"
+  elementFormDefault="qualified">
+
+  <!--meta schema location comes via python transform parameter -->  
+  <xi:include href="{{metaXsdPath}}" xpointer="xmlns(xs=http://www.w3.org/2001/XMLSchema) xpointer(/xs:schema/node())"/>
+
+  <xs:simpleType name="ObjectName">
+    <xs:restriction base="xs:string">
+      <xs:minLength value="1"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:complexType name="CalculatedVariable">
+    <xs:attribute name="name" type="tns:ObjectName" use="required"/>
+    <xs:attribute name="value" type="xs:string" use="required"/>
+    <xs:attribute name="initialValue" type="xs:double" use="optional"/>
+    <xs:attribute name="isBoolean" type="xs:boolean" use="optional" default="false"/>
+    <xs:attribute name="status" type="xs:string" use="optional"/>
+  </xs:complexType>
+
+  <xs:complexType name="CalculatedVariableGenericFormula">
+    <xs:attribute name="name" type="tns:ObjectName" use="required"/>
+    <xs:attribute name="formula" type="xs:string" use="required"/>
+  </xs:complexType>
+  
+  <xs:complexType name="FreeVariable">
+    <xs:attribute name="name" type="tns:ObjectName" use="required"/>
+    <xs:attribute name="type" use="required">
+      <xs:simpleType>
+        <xs:restriction base="xs:string">
+          <xs:enumeration value="Boolean"/>
+          <xs:enumeration value="Byte"/>
+          <xs:enumeration value="SByte"/>
+          <xs:enumeration value="UInt16"/>
+          <xs:enumeration value="Int16"/>
+          <xs:enumeration value="UInt32"/>
+          <xs:enumeration value="Int32"/>
+          <xs:enumeration value="UInt64"/>
+          <xs:enumeration value="Int64"/>
+          <xs:enumeration value="Double"/>
+          <xs:enumeration value="Float"/>
+          <xs:enumeration value="String"/>
+        </xs:restriction>
+      </xs:simpleType>
+    </xs:attribute>
+    <xs:attribute name="initialValue" type="xs:string" use="optional"/>
+  </xs:complexType>
+ 
+{% for className in designInspector.get_names_of_all_classes() %}
+  <xs:complexType name="{{className}}">
+   
+    <xs:sequence>
+      <xs:choice minOccurs="0" maxOccurs="unbounded">
+        <xs:element name="CalculatedVariable" type="tns:CalculatedVariable" />
+        <xs:element name="FreeVariable" type="tns:FreeVariable" />
+        {% for innerClassByConfig in designInspector.objectify_has_objects(className) %}
+          <xs:element name="{{innerClassByConfig.get('class')}}" type="tns:{{innerClassByConfig.get('class')}}"/>
+        {% endfor %}
+	  </xs:choice>
+    
+	    <!-- processing array cache vars (by configuration) for class [{{className}}] -->
+	    {% for arrayCacheVarByConfig in designInspector.objectify_cache_variables(className, restrict_by="[@initializeWith='configuration' and d:array]") %}
+	      {{writeArrayCacheVarOrConfigEntry(className, arrayCacheVarByConfig, "cachevariable") }}
+	    {% endfor %}
+
+	    <!-- processing array config entries for class [{{className}}] -->
+	    {% for arrayConfigEntry in designInspector.objectify_config_entries(className, restrict_by="[d:array]") %}
+	      {{writeArrayCacheVarOrConfigEntry(className, arrayConfigEntry, "configentry") }}
+	    {% endfor %}
+	    
+    </xs:sequence>
+    
+    <xs:attribute name="name" type="tns:ObjectName" use="required"/>
+    
+    <!-- processing scalar cache vars for class [{{className}}] -->
+    {% for scalarCacheVarByConfig in designInspector.objectify_cache_variables(className, restrict_by="[@initializeWith='configuration' and not(d:array)]") %}
+      {% set cacheVarName = scalarCacheVarByConfig.get('name') %}
+      {% set dataType = oracle.quasar_data_type_to_xsd_type(scalarCacheVarByConfig.get('dataType')) %}
+      {% set restrictions = designInspector.get_restrictions(className, cacheVarName, "cachevariable") %}
+      <!-- add scalarCacheVarByConfig name [{{cacheVarName}}] type [{{dataType}}] restriction count [{{ restrictions|length }}] -->
+      {% if restrictions|length>0 %}
+        <xs:attribute name="{{cacheVarName}}" use="required">
+        {{ writeDocumentation(designInspector.objectifyDocumentation(className, cacheVarName)) }}
+        {{ writeRestrictions(className, cacheVarName, dataType, restrictions) }}
+      {% else %}
+        <xs:attribute name="{{cacheVarName}}" use="required" type="{{dataType}}">
+        {{ writeDocumentation(designInspector.objectifyDocumentation(className, cacheVarName)) }}
+      {% endif %}      
+      </xs:attribute>   
+    {% endfor %}
+    
+    <!-- processing scalar config entries for class [{{className}}] -->
+    {% for scalarConfigEntry in designInspector.objectify_config_entries(className, restrict_by="[not(d:array)]") %}
+      {% set configEntryName = scalarConfigEntry.get('name') %}
+      {% set dataType = oracle.quasar_data_type_to_xsd_type(scalarConfigEntry.get('dataType')) %}
+      {% set restrictions = designInspector.get_restrictions(className, configEntryName, "configentry") %}
+      <!-- add scalarConfigEntry name [{{configEntryName}}] type [{{dataType}}] restriction count [{{ restrictions|length }}] -->
+      {% if restrictions|length>0 %}
+       <xs:attribute name="{{configEntryName}}" {{writeUsageAndDefaultValue(scalarConfigEntry)}}>
+         {{ writeDocumentation(designInspector.objectifyDocumentation(className, configEntryName)) }}
+         {{ writeRestrictions(className, configEntryName, dataType, restrictions) }}
+      {% else %}
+        <xs:attribute name="{{configEntryName}}" {{writeUsageAndDefaultValue(scalarConfigEntry)}} type="{{dataType}}" >
+        {{ writeDocumentation(designInspector.objectifyDocumentation(className, configEntryName)) }}
+      {% endif %}
+      </xs:attribute>   
+    {% endfor %}    
+        
+  </xs:complexType>
+{% endfor %}
+
+<xs:complexType name="Configuration">
+  <xs:sequence>
+    <xs:choice minOccurs="0" maxOccurs="1">
+      <xs:element name="StandardMetaData" type="tns:StandardMetaData"/>
+    </xs:choice>
+    <xs:choice minOccurs="0" maxOccurs="unbounded">
+      <xs:element name="CalculatedVariableGenericFormula" type="tns:CalculatedVariableGenericFormula"/>
+    </xs:choice>
+    <xs:choice minOccurs="0" maxOccurs="unbounded">
+      {% for hasobjects in designInspector.objectify_any("/d:design/d:root/d:hasobjects[@instantiateUsing='configuration']") %}
+        <xs:element name="{{hasobjects.get('class')}}" type="tns:{{hasobjects.get('class')}}" />
+      {% endfor %}
+    </xs:choice>
+    <xs:choice minOccurs="0" maxOccurs="unbounded">
+      <xs:element name="CalculatedVariable" type="tns:CalculatedVariable"/>
+      <xs:element name="FreeVariable" type="tns:FreeVariable" />
+    </xs:choice>
+  </xs:sequence>
+</xs:complexType>
+<xs:element name="configuration" type="tns:Configuration"/>
+
+ </xs:schema>
