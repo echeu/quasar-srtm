@@ -1,0 +1,46 @@
+{
+	"sources" : 
+	[
+		{
+			"file" : "/home/root/quasar/opcua-server/build/FrameworkInternals/EnabledModules/open62541-compat_cmake/CMakeFiles/open62541-compat"
+		},
+		{
+			"file" : "/home/root/quasar/opcua-server/build/FrameworkInternals/EnabledModules/open62541-compat_cmake/CMakeFiles/open62541-compat.rule"
+		},
+		{
+			"file" : "/home/root/quasar/opcua-server/build/FrameworkInternals/EnabledModules/open62541-compat_cmake/CMakeFiles/open62541-compat-complete.rule"
+		},
+		{
+			"file" : "/home/root/quasar/opcua-server/build/FrameworkInternals/EnabledModules/open62541-compat_download/src/open62541-compat-stamp/open62541-compat-build.rule"
+		},
+		{
+			"file" : "/home/root/quasar/opcua-server/build/FrameworkInternals/EnabledModules/open62541-compat_download/src/open62541-compat-stamp/open62541-compat-configure.rule"
+		},
+		{
+			"file" : "/home/root/quasar/opcua-server/build/FrameworkInternals/EnabledModules/open62541-compat_download/src/open62541-compat-stamp/open62541-compat-download.rule"
+		},
+		{
+			"file" : "/home/root/quasar/opcua-server/build/FrameworkInternals/EnabledModules/open62541-compat_download/src/open62541-compat-stamp/open62541-compat-install.rule"
+		},
+		{
+			"file" : "/home/root/quasar/opcua-server/build/FrameworkInternals/EnabledModules/open62541-compat_download/src/open62541-compat-stamp/open62541-compat-mkdir.rule"
+		},
+		{
+			"file" : "/home/root/quasar/opcua-server/build/FrameworkInternals/EnabledModules/open62541-compat_download/src/open62541-compat-stamp/open62541-compat-patch.rule"
+		},
+		{
+			"file" : "/home/root/quasar/opcua-server/build/FrameworkInternals/EnabledModules/open62541-compat_download/src/open62541-compat-stamp/open62541-compat-test.rule"
+		},
+		{
+			"file" : "/home/root/quasar/opcua-server/build/FrameworkInternals/EnabledModules/open62541-compat_download/src/open62541-compat-stamp/open62541-compat-update.rule"
+		}
+	],
+	"target" : 
+	{
+		"labels" : 
+		[
+			"open62541-compat"
+		],
+		"name" : "open62541-compat"
+	}
+}

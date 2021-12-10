@@ -1,0 +1,11 @@
+# Hashes of file build rules.
+e259ca820d01d8792422ea9400682d05 /home/root/quasar/opcua-server/build/FrameworkInternals/EnabledModules/open62541-compat_download/src/open62541-compat-stamp/open62541-compat-build
+1eca770c37061f490429d6eb1c2936b8 /home/root/quasar/opcua-server/build/FrameworkInternals/EnabledModules/open62541-compat_download/src/open62541-compat-stamp/open62541-compat-configure
+0aa0a6a66a7455dbc2ef8a3f84d575cd /home/root/quasar/opcua-server/build/FrameworkInternals/EnabledModules/open62541-compat_download/src/open62541-compat-stamp/open62541-compat-download
+228295ad33d53fe406ab2d077d8aff56 /home/root/quasar/opcua-server/build/FrameworkInternals/EnabledModules/open62541-compat_download/src/open62541-compat-stamp/open62541-compat-install
+b49486bed96f0d82cbc82c8efe511102 /home/root/quasar/opcua-server/build/FrameworkInternals/EnabledModules/open62541-compat_download/src/open62541-compat-stamp/open62541-compat-mkdir
+1cca34e722e4a1d669a3c75690a58688 /home/root/quasar/opcua-server/build/FrameworkInternals/EnabledModules/open62541-compat_download/src/open62541-compat-stamp/open62541-compat-patch
+e6d30466458a43b8f169d5c6d8e5f5c7 /home/root/quasar/opcua-server/build/FrameworkInternals/EnabledModules/open62541-compat_download/src/open62541-compat-stamp/open62541-compat-test
+a8e302ec7d93bab4f4a488ded9da9e5a /home/root/quasar/opcua-server/build/FrameworkInternals/EnabledModules/open62541-compat_download/src/open62541-compat-stamp/open62541-compat-update
+eaff45aa1772b4854ef7eaad38497f5d CMakeFiles/open62541-compat
+b444b2c4a644a66de9e3ade370662d62 CMakeFiles/open62541-compat-complete

@@ -1,0 +1,2 @@
+add_library( Uio OBJECT src/uio_find_devices_by_name.c src/uio_get_all_info.c src/uio_get_mem_size.c src/uio_line_from_file.c src/uio_find_devices_byname.c src/uio_get_event_count.c src/uio_get_name.c src/uio_num_from_filename.c src/uio_find_devices.c src/uio_get_mem_addr.c src/uio_get_version.c src/uio_setup.c )
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DSRTM -static")

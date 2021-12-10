@@ -14,6 +14,11 @@
   		nullPolicy="nullAllowed" addressSpaceWrite="regular"
   		initialStatus="OpcUa_Good" initialValue="0">
   	</d:cachevariable>
+  	<d:cachevariable initializeWith="valueAndStatus"
+  		dataType="OpcUa_Double" name="FPGAuptime" nullPolicy="nullAllowed"
+  		addressSpaceWrite="forbidden" initialStatus="OpcUa_Good"
+  		initialValue="0">
+  	</d:cachevariable>
   </d:class>
   <d:root>
   	<d:hasobjects instantiateUsing="configuration" class="Regs"></d:hasobjects></d:root>

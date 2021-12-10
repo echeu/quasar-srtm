@@ -1,0 +1,38 @@
+
+
+
+digraph  {
+  graph [fontname="Arial"]
+          class_Regs [shape=none,margin=0,label=<
+      <table border="1" cellspacing="0" cellpadding="2" cellborder="0">
+        <tr> 
+          <td width="0"></td>
+          <td width="0"></td>
+          <td colspan="2" align="center"><b><font point-size="18" >Regs</font><font point-size="10" color="blue" >DL=1</font></b></td>
+        </tr>
+        <hr/><tr>
+            <!-- don't indent the lines below: you will break the graphical layout -->
+            <td align="left" width="0"><font point-size="16">&#8592;</font></td>
+            <td align="left" width="0"><font point-size="10" color="blue" >CV</font></td>
+            <td align="left" >userReg</td>
+            <td align="left" >: UInt32</td>
+            </tr><tr>
+            <!-- don't indent the lines below: you will break the graphical layout -->
+            <td align="left" width="0"><font point-size="16">&#8596;</font></td>
+            <td align="left" width="0"><font point-size="10" color="blue" >CV</font></td>
+            <td align="left" >writeRegValue</td>
+            <td align="left" >: UInt32</td>
+            </tr><tr>
+            <!-- don't indent the lines below: you will break the graphical layout -->
+            <td align="left" width="0"></td>
+            <td align="left"><font point-size="10" color="red" >CE</font></td>
+            <td align="left" >address</td>
+            <td align="left" >: UInt32</td>
+            </tr>              </table>>]
+  
+          
+    class_ROOT [label="ROOT"]
+                          class_ROOT -> class_Regs [arrowtail=odiamond,dir=back,label="*"]
+
+  
+}
