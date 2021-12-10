@@ -3,7 +3,7 @@
 ## information how to use this file.
 ## ----------------------------------------------------
 
-set(CUSTOM_SERVER_MODULES )
+set(CUSTOM_SERVER_MODULES I2c Json Sensor Uio Util)
 set(EXECUTABLE OpcUaServer)
 set(SERVER_INCLUDE_DIRECTORIES  )
 set(SERVER_LINK_LIBRARIES  )
