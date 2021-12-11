@@ -301,25 +301,34 @@ void DRegs::update() {
 
     //printf("%s\n",cJSON_Print(top));
 
+    // *** Now get values directly from function rather than trying to decode JSON data
     // Try to extract value from the json structure
-    cJSON *sensor = cJSON_GetObjectItem(top, "sensor");
-    cJSON *fpga   = cJSON_GetObjectItem(sensor,"fpga");
-    cJSON *uptime = cJSON_GetObjectItem(fpga,"up");
-
-    double upval = uptime->valuedouble;
+    //cJSON *sensor = cJSON_GetObjectItem(top, "sensor");
+    //cJSON *fpga   = cJSON_GetObjectItem(sensor,"fpga");
+    //cJSON *uptime = cJSON_GetObjectItem(fpga,"up");
+    //double upval = uptime->valuedouble;
 
     // ECC - i2c stuff
-    static int ntimes=0;
+    //     - try to get information using array access of sensors
+    static int maxprint = 0;
 
-    // Print out first 10 values
-    if (ntimes<10) {
-    	ntimes++;
-    	std::cout << "ntimes: " << ntimes << " " << "uptime:  " << upval << std::endl;
-	}
+    int nsensor = sensorCount();
+    for (int is=0; is<nsensor; is++) {
+      const struct sensorRecord *record = sensorGet(is);
+      int isval = *(int*)record->valueBuffer;
+      if (maxprint < 5) std::cout << "isval: " << isval << " name: " << record->name << std::endl;
+    }
 
-	// Push the values to the OpcUa client display
-	getAddressSpaceLink()->setUserReg(val,OpcUa_Good);
-	getAddressSpaceLink()->setFPGAuptime(upval,OpcUa_Good);
+    // Zynq values
+    double vals[100];
+    char *names[100];
+    getzynqvals(vals, names);
+    if (maxprint < 5) for (int iv=0; iv<35; iv++) std::cout << "zynq vals (" << iv << "): " << names[iv] << " " << vals[iv] << std::endl;
+    maxprint++;
+
+    // Push the values to the OpcUa client display
+    getAddressSpaceLink()->setUserReg(val,OpcUa_Good);
+    getAddressSpaceLink()->setFPGAuptime(vals[0],OpcUa_Good);
 }
 
 /* delegators for methods */

@@ -136,6 +136,9 @@ static struct zynqDataRecord zynqDataRecs[] = {
   {0,0,1.0,0.0,0,0.0,-1} /* EOR */
 };
 
+static double zynq_vals[100];
+static char*  zynq_names[100];
+
 static char* readZynqConstantString( const char *basename, const char *tag ) {
   static char valueString[128]; /* Excessively long for an int or float! */
   if( !basename ) return 0;
@@ -248,8 +251,16 @@ void zynqOnBoardFormat(struct sensorRecord *sr, struct cJSON *parent) {
   for( int i=0 ; i<zdr->nzs ; i++ ) {
     struct zynqDataRecord *cur = &(zdr->zynqData[i]);
     if( !cur->err ) {
-      if( cur->easyname ) cJSON_AddItemToObject(zynq,cur->easyname,cJSON_CreateNumber(cur->value));
-      else cJSON_AddItemToObject(zynq,cur->basename,cJSON_CreateNumber(cur->value));
+      if( cur->easyname ) {
+        cJSON_AddItemToObject(zynq,cur->easyname,cJSON_CreateNumber(cur->value));
+	zynq_vals[i+5] = cur->value;
+        zynq_names[i+5] = cur->easyname;
+      }
+      else {
+	cJSON_AddItemToObject(zynq,cur->basename,cJSON_CreateNumber(cur->value));
+        zynq_vals[i+5] = cur->value;
+        zynq_names[i+5] = cur->basename;
+      }
     }
     else cJSON_AddItemToObject(zynq,cur->basename,cJSON_CreateString("ERROR"));
   }
@@ -269,5 +280,26 @@ void zynqOnBoardFormat(struct sensorRecord *sr, struct cJSON *parent) {
   cJSON_AddStringToObject(fmt, "vaux", vccaux_str);
   cJSON_AddStringToObject(fmt, "vbram", vBRAM_str);
 
+  // ECC - store these values in the first 5 array locations
+  zynq_vals[0] = zdr->uptime;
+  zynq_vals[1] = zdr->zynqData[0].value;
+  zynq_vals[2] = zdr->zynqData[5].value;
+  zynq_vals[3] = zdr->zynqData[7].value;
+  zynq_vals[4] = zdr->zynqData[6].value;
+  zynq_names[0] = "up";
+  zynq_names[1] = "temp";
+  zynq_names[2] = "vint";
+  zynq_names[3] = "vaux";
+  zynq_names[4] = "vbram";
+
+}
+
+// ECC - function to return zynq values
+//     - for now hard code in 30 values and assume that the array is big enough
+void getzynqvals(double vals[], char **names){
+  for (int i=0; i<35; i++) {
+    vals[i] = zynq_vals[i];
+    names[i] = zynq_names[i];
+  }
 }
 

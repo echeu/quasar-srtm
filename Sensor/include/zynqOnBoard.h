@@ -42,6 +42,7 @@ struct zynqOnBoard {
 void zynqOnBoardInit(struct sensorI2CAddress *sa);
 void zynqOnBoardRead(struct sensorI2CAddress *sa, void *valueBuffer);
 void zynqOnBoardFormat(struct sensorRecord *sr, struct cJSON *parent);
+  void getzynqvals(double vals[], char **names);
 
 #ifdef __cplusplus
 }
