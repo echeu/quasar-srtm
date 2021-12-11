@@ -1,3 +1,0 @@
-/home/root/quasar/opcua-server/build/FrameworkInternals/EnabledModules/open62541-compat_cmake/CMakeFiles/rebuild_cache.dir
-/home/root/quasar/opcua-server/build/FrameworkInternals/EnabledModules/open62541-compat_cmake/CMakeFiles/open62541-compat.dir
-/home/root/quasar/opcua-server/build/FrameworkInternals/EnabledModules/open62541-compat_cmake/CMakeFiles/edit_cache.dir
