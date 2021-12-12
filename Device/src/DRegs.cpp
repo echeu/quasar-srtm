@@ -329,6 +329,10 @@ void DRegs::update() {
     // Push the values to the OpcUa client display
     getAddressSpaceLink()->setUserReg(val,OpcUa_Good);
     getAddressSpaceLink()->setFPGAuptime(vals[0],OpcUa_Good);
+    getAddressSpaceLink()->setFPGAtemp(vals[1],OpcUa_Good);
+    getAddressSpaceLink()->setFPGAvint(vals[2],OpcUa_Good);
+    getAddressSpaceLink()->setFPGAvaux(vals[3],OpcUa_Good);
+    getAddressSpaceLink()->setFPGAvbram(vals[4],OpcUa_Good);
 }
 
 /* delegators for methods */
