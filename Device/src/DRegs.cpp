@@ -245,94 +245,93 @@ DRegs::~DRegs ()
 // update output from /dev/mem
 void DRegs::update() {
 
-	OpcUa_UInt32 val = 0;
-	static int first = 1;
+  OpcUa_UInt32 val = 0;
+  static int first = 1;
 
-	// ECC - Read from /dev/mem
-	unsigned int bram_size = 0x8000;
+  // ECC - Read from /dev/mem
+  unsigned int bram_size = 0x8000;
 
-	// This is the physical base address which is set by the constructor
-	off_t bram_pbase = address();
-	OpcUa_UInt64 *bram64_vptr;
-	int fd;
+  // This is the physical base address which is set by the constructor
+  off_t bram_pbase = address();
+  OpcUa_UInt64 *bram64_vptr;
+  int fd;
 
-	// see if we want to write to this address
-	OpcUa_UInt32 setval = 0;
-	getAddressSpaceLink()->getWriteRegValue(setval);
+  // see if we want to write to this address
+  OpcUa_UInt32 setval = 0;
+  getAddressSpaceLink()->getWriteRegValue(setval);
 
-	// initialize write value here since I can't figure out how to do this in the constructor
-	if (first) {
-		saved_setval = setval;
-		LOG(Log::INF) << "Register setval: " << std::hex << saved_setval;
-		first = 0;
-
-		// i2c initialization
-		int hasIPMC = 0;
-		i2cBusRegister(2,srtmBuses);
-		sensorRegister(nsensors,sensors,hasIPMC);
-		LOG(Log::INF) << "Initialized i2c buses.";
-	}
+  // initialize write value here since I can't figure out how to do this in the constructor
+  if (first) {
+    saved_setval = setval;
+    LOG(Log::INF) << "Register setval: " << std::hex << saved_setval;
+    first = 0;
+    
+    // i2c initialization
+    int hasIPMC = 0;
+    i2cBusRegister(2,srtmBuses);
+    sensorRegister(nsensors,sensors,hasIPMC);
+    LOG(Log::INF) << "Initialized i2c buses.";
+  }
 
 
 	// Map the BRAM physical address into user space getting a virtual address for it
-	if ((fd = open("/dev/mem", O_RDWR | O_SYNC)) != -1) {
-	  bram64_vptr = (OpcUa_UInt64 *)mmap(NULL, bram_size, PROT_READ|PROT_WRITE, MAP_SHARED, fd, bram_pbase);
+  if ((fd = open("/dev/mem", O_RDWR | O_SYNC)) != -1) {
+    bram64_vptr = (OpcUa_UInt64 *)mmap(NULL, bram_size, PROT_READ|PROT_WRITE, MAP_SHARED, fd, bram_pbase);
 
-	  // if the value has changed, then we want to write it to memory
-	  if (setval != saved_setval) {
-		LOG(Log::INF) << "Changing register value to: " << std::hex << setval;
-		bram64_vptr[0] = setval;
-		saved_setval = setval;
-	  }
-
-	  val = bram64_vptr[0];
-	  close(fd);
-	}
-
-    /* Return it to the caller as a JSON object */
-    cJSON *top = cJSON_CreateObject();
-
-    // get sensor data
-    sensorMonitor(0);
-
-    // format sensor data
-    sysinfoFormat(top);
-    sensorFormat(top);
-
-    //printf("%s\n",cJSON_Print(top));
-
-    // *** Now get values directly from function rather than trying to decode JSON data
-    // Try to extract value from the json structure
-    //cJSON *sensor = cJSON_GetObjectItem(top, "sensor");
-    //cJSON *fpga   = cJSON_GetObjectItem(sensor,"fpga");
-    //cJSON *uptime = cJSON_GetObjectItem(fpga,"up");
-    //double upval = uptime->valuedouble;
-
-    // ECC - i2c stuff
-    //     - try to get information using array access of sensors
-    static int maxprint = 0;
-
-    int nsensor = sensorCount();
-    for (int is=0; is<nsensor; is++) {
-      const struct sensorRecord *record = sensorGet(is);
-      int isval = *(int*)record->valueBuffer;
-      if (maxprint < 5) std::cout << "isval: " << isval << " name: " << record->name << std::endl;
+    // if the value has changed, then we want to write it to memory
+    if (setval != saved_setval) {
+      LOG(Log::INF) << "Changing register value to: " << std::hex << setval;
+      bram64_vptr[0] = setval;
+      saved_setval = setval;
     }
 
-    // Zynq values
-    double vals[100];
-    char *names[100];
-    getzynqvals(vals, names);
-    if (maxprint < 5) for (int iv=0; iv<35; iv++) std::cout << "zynq vals (" << iv << "): " << names[iv] << " " << vals[iv] << std::endl;
-    maxprint++;
+    val = bram64_vptr[0];
+    close(fd);
+  }
 
-    // Push the values to the OpcUa client display
-    getAddressSpaceLink()->setUserReg(val,OpcUa_Good);
-    getAddressSpaceLink()->setFPGAuptime(vals[0],OpcUa_Good);
-    getAddressSpaceLink()->setFPGAtemp(vals[1],OpcUa_Good);
-    getAddressSpaceLink()->setFPGAvint(vals[2],OpcUa_Good);
-    getAddressSpaceLink()->setFPGAvaux(vals[3],OpcUa_Good);
-    getAddressSpaceLink()->setFPGAvbram(vals[4],OpcUa_Good);
+  /* Get i2c data */
+  sensorMonitor(0);
+
+  // format sensor data. 
+  // This is necessary to fill the appropriate arrays even though we don't access the cJSON data
+  cJSON *top = cJSON_CreateObject();
+  sysinfoFormat(top);
+  sensorFormat(top);
+
+  // Print out i2c values using JSON 
+  //printf("%s\n",cJSON_Print(top));
+
+  // ECC - i2c stuff
+  //     - try to get information using array access of sensors
+  static int maxprint = 0;
+
+  /* This isn't really necessary
+  int nsensor = sensorCount();
+  for (int is=0; is<nsensor; is++) {
+    const struct sensorRecord *record = sensorGet(is);
+    int isval = *(int*)record->valueBuffer;
+    if (maxprint < 5) std::cout << "isval: " << isval << " name: " << record->name << std::endl;
+  }
+  */
+
+  // Zynq values
+  int maxvals=35;
+  double vals[maxvals];
+  char *names[maxvals];
+  getzynqvals(vals, names);
+  if (maxprint < 5) {
+    std::cout << std::endl << "iteration: " << maxprint << std::endl;
+    for (int iv=0; iv<maxvals; iv++) std::cout << "zynq vals (" << iv << "): " << names[iv] << " " << vals[iv] << std::endl;
+  }
+  maxprint++;
+
+  // Push the values to the OpcUa client display
+  getAddressSpaceLink()->setUserReg(val,OpcUa_Good);
+  getAddressSpaceLink()->setFPGAuptime(vals[0],OpcUa_Good);
+  getAddressSpaceLink()->setFPGAtemp(vals[1],OpcUa_Good);
+  getAddressSpaceLink()->setFPGAvint(vals[2],OpcUa_Good);
+  getAddressSpaceLink()->setFPGAvaux(vals[3],OpcUa_Good);
+  getAddressSpaceLink()->setFPGAvbram(vals[4],OpcUa_Good);
 }
 
 /* delegators for methods */
