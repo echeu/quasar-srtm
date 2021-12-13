@@ -49,7 +49,7 @@ void QuasarServer::mainLoop()
 
     while(ShutDownFlag() == 0)
     {
-        std::this_thread::sleep_for(std::chrono::milliseconds(100));
+        std::this_thread::sleep_for(std::chrono::milliseconds(500));
 
         for(Device::DRegs *reg : Device::DRoot::getInstance()->regss()) // somehow this got named regss instead of regs...
         	reg->update();
