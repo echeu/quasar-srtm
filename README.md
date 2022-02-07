@@ -25,8 +25,9 @@ Building the source code can be done simply by doing:
 
 
 ## Running
-Copy the directory build/bin to the target board
-- cd build/bin
+Copy the contents of the directory build/bin to the target board
+- Modify the config.xml file (change the register address)
+    - At this moment the address field needs to be in decimal (not hex).
 - ./OpcUaServer
 
   The Unified Automation UA Client (UAExpert) can be used to communicate with the server
