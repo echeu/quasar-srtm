@@ -25,9 +25,9 @@ Building the source code can be done simply by doing:
 
 
 ## Running
-Copy the whole directory structure to target board
-  cd build/bin
-  ./OpcUaServer
+Copy the directory build/bin to the target board
+- cd build/bin
+- ./OpcUaServer
 
   The Unified Automation UA Client (UAExpert) can be used to communicate with the server
 
