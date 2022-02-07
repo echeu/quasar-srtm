@@ -11,12 +11,12 @@ See README-docker.md for more information about setting up the docker environmen
 ## Code development
 - Quasar tutorials can be found here: https://www.youtube.com/channel/UCQdLb4N-CEWrpYROcC-UF6w/videos
 - Adding a register for readout in the OpcUa server required modifications to the following:
--- bin/config.xml
--- Device/src/DRegs.cpp
--- Device/include/Dregs.h
--- Design/Design.xml
--- build/AddressSpace/include/ASRegs.h
--- Server/src/QuasarServer.cpp
+    - bin/config.xml
+    - Device/src/DRegs.cpp
+    - Device/include/Dregs.h
+    - Design/Design.xml
+    - build/AddressSpace/include/ASRegs.h
+    - Server/src/QuasarServer.cpp
 
 ## Building
 Building the source code can be done simply by doing:
