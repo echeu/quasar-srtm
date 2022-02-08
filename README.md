@@ -12,21 +12,23 @@ See [README-docker.md](README-docker.md) for more information about setting up t
 ## Code development
 - Quasar tutorials can be found here: https://www.youtube.com/channel/UCQdLb4N-CEWrpYROcC-UF6w/videos
 - Adding a register for readout in the OpcUa server required modifications to the following:
-    - bin/config.xml
-    - Device/src/DRegs.cpp
+    - bin/config.xml  (contains the register address)
+    - Device/src/DRegs.cpp  (the main code to read/write from the registers and i2c)
     - Device/include/Dregs.h
-    - Design/Design.xml
-    - build/AddressSpace/include/ASRegs.h
-    - Server/src/QuasarServer.cpp
+    - Design/Design.xml  (identifies which values to present to the client)
+    - Server/src/QuasarServer.cpp  (main executable loop)
 
 ## Building
 Building the source code can be done simply by doing:
+  - git clone https://github.com/echeu/quasar-srtm.git
   - cd quasar-srtm
-  - ./quasar.py 
+  - ./quasar.py enable_module open62541-compat v1.3.6
+  - ./quasar.py set_build_config ./open62541_config.cmake
+  - ./quasar.py build
 
 
 ## Running
-Copy the contents of the directory build/bin to the target board
+Copy the contents of the whole directory structure to the target board
 - Modify the config.xml file (change the register address)
     - At this moment the address field needs to be in decimal (not hex).
 - ./OpcUaServer
