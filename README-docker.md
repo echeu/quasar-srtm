@@ -9,16 +9,16 @@ A Dockerfile is provided to allow one to easily install the requisite packages.
 ## Build docker image
 
 The following commands only have to be issued once to instantiate the docker image.
-  docker run --rm --privileged multiarch/qemu-user-static:register --reset
-  docker build --rm -t cern-arm64-cs8 - < Dockerfile
+  - docker run --rm --privileged multiarch/qemu-user-static:register --reset
+  - docker build --rm -t cern-arm64-cs8 - < Dockerfile
 
 ## Docker run
 
 Do the following to enter the docker container.
-    docker run -it cern-arm64-cs8 /bin/bash
+  - docker run -it cern-arm64-cs8 /bin/bash
 
 ## Building the executable
 
-  git clone https://github.com/echeu/quasar-srtm.git
-  cd quasar-srtm
-  ./quasar.py build
+  - git clone https://github.com/echeu/quasar-srtm.git
+  - cd quasar-srtm
+  - ./quasar.py build
