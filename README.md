@@ -7,7 +7,7 @@ See the following documentation for more information:
 
 ## Build environment
 
-See README-docker.md for more information about setting up the docker environment. This allows one to build the executable for the target operating system (i.e. aarch64)
+See [README-docker.md](README-docker.md) for more information about setting up the docker environment. This allows one to build the executable for the target operating system (i.e. aarch64)
 
 ## Code development
 - Quasar tutorials can be found here: https://www.youtube.com/channel/UCQdLb4N-CEWrpYROcC-UF6w/videos
