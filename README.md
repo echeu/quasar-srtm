@@ -2,8 +2,10 @@
 
 opcUA server for the sRTM project
 See the following documentation for more information:
-    - https://github.com/quasar-team/quasar/blob/master/Documentation/quasar.html
-    - https://indico.cern.ch/event/996093/contributions/4376616/attachments/2260131/3836369/SoCs%20for%20Detector%20Controls%20and%20their%20Applications.pdf
+  - Information about quasar, a project for developing OpcUa servers
+  - https://github.com/quasar-team/quasar/blob/master/Documentation/quasar.html
+  - A presentation that includes a demo for building and accessing an OpcUA server via UaExpert
+  - https://indico.cern.ch/event/996093/contributions/4376616/attachments/2260131/3836369/SoCs%20for%20Detector%20Controls%20and%20their%20Applications.pdf
 
 ## Build environment
 
