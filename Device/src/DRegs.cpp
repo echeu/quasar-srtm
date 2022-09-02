@@ -329,6 +329,7 @@ void DRegs::update() {
     std::cout << std::endl;
     for (int iv=0; iv<32; iv++) {
       std::cout << "FF vals: " << ff_names[iv] << " " << ff_vals[iv] << std::endl;
+    }
   }
   maxprint++;
 
