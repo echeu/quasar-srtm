@@ -233,9 +233,44 @@ void fireflyFormat4(struct sensorRecord *sr, struct cJSON *parent) {
   cJSON_AddItemToObject(fftop,"fwversion",cJSON_CreateString(formatFwVers(data->fwVers,data->fwMinor,data->fwRev)));
   cJSON_AddItemToObject(parent,"firefly",fftop);
 
-  // ECC - save some FF data. Note that I'm not being careful about separating data by module
-  ff_names[0] = "tempC";
-  ff_vals[0] = data->temperatureRaw;
+  // ECC - save some FF data based upon name
+  int ioff;
+  if (strcmp(sr->name,"FF-TXRX11")==0) ioff = 0;
+  else ioff=16;
+
+  ff_names[0+ioff] = sr-name;
+  ff_names[1+ioff] = "present";
+  ff_names[2+ioff] = "status";
+  ff_names[3+ioff] = "txdisable";
+  ff_names[4+ioff] = "cdrenable";
+  ff_names[5+ioff] = "cdrrate"; 
+  ff_names[6+ioff] = "cdrilol";
+  ff_names[7+ioff] = "los";
+  ff_names[8+ioff] = "txfault";
+  ff_names[9+ioff] = "tempfault";
+  ff_names[10+ioff] = "voltfault";
+  ff_names[11+ioff] = "powerfault";
+  ff_names[12+ioff] = "uptime";
+  ff_names[13+ioff] = "tempC";
+  ff_names[14+ioff] = "rxpower";
+  ff_names[15+ioff] = "id";
+  
+  ff_vals[0+ioff] = 0;
+  ff_vals[1+ioff] = 1;
+  ff_vals[2+ioff] = data->status;
+  ff_vals[3+ioff] = data->txDisable;
+  ff_vals[4+ioff] = data->cdrEnable;
+  ff_vals[5+ioff] = data->cdrRate;
+  ff_vals[6+ioff] = data->cdrlol;
+  ff_vals[7+ioff] = data->los;
+  ff_vals[8+ioff] = data->txfault;
+  ff_vals[9+ioff] = data->tempfault
+  ff_vals[10+ioff] = data->voltfault;
+  ff_vals[11+ioff] = data->powerfault;
+  ff_vals[12+ioff] = data->uptime;
+  ff_vals[13+ioff] = data->temperatureRaw;
+  ff_vals[14+ioff] = rxpower;
+  ff_vals[15+ioff] = data->id;
 }
 
 /* ------------------------------------------------------------------------------------ */

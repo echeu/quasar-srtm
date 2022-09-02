@@ -324,7 +324,11 @@ void DRegs::update() {
   if (maxprint < 5) {
     std::cout << std::endl << "iteration: " << maxprint << std::endl;
     for (int iv=0; iv<maxvals; iv++) std::cout << "zynq vals (" << iv << "): " << names[iv] << " " << vals[iv] << std::endl;
-    std::cout << "FF vals: " << ff_names[0] << " " << ff_vals[0] << std::endl;
+
+    // Print out firefly values here
+    std::cout << std::endl;
+    for (int iv=0; iv<32; iv++) {
+      std::cout << "FF vals: " << ff_names[iv] << " " << ff_vals[iv] << std::endl;
   }
   maxprint++;
 
