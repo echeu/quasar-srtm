@@ -361,7 +361,7 @@ void fireflyFormat12(struct sensorRecord *sr, struct cJSON *parent) {
 // ECC - function to return firefly values
 //     - for now hard code in 30 values and assume that the array is big enough
 void getFFvals(double vals[], char **names){
-  for (int i=0; i<35; i++) {
+  for (int i=0; i<38; i++) {
     vals[i] = ff_vals[i];
     names[i] = ff_names[i];
   }
