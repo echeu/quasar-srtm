@@ -26,6 +26,10 @@ static char* formatFwVers(u8 vers, u8 minor, u8 rev) {
   return buffer;
 }
 
+// ECC - save values for displaying in opcua
+static double ff_vals[100];
+static char*  ff_names[100];
+
 static int getBit(struct sensorI2CAddress *ffsa, int bitnum) {
   /* Construct a sensor address for the status register. This is just so that we */
   /* can reuse code. The address of the status reg is one less than the control.  */
@@ -228,6 +232,10 @@ void fireflyFormat4(struct sensorRecord *sr, struct cJSON *parent) {
   cJSON_AddItemToObject(fftop,"serial",cJSON_CreateString(data->serial));
   cJSON_AddItemToObject(fftop,"fwversion",cJSON_CreateString(formatFwVers(data->fwVers,data->fwMinor,data->fwRev)));
   cJSON_AddItemToObject(parent,"firefly",fftop);
+
+  // ECC - save some FF data. Note that I'm not being careful about separating data by module
+  ff_names[0] = "tempC";
+  ff_vals[0] = data->temperatureRaw;
 }
 
 /* ------------------------------------------------------------------------------------ */
@@ -309,3 +317,11 @@ void fireflyFormat12(struct sensorRecord *sr, struct cJSON *parent) {
   cJSON_AddItemToObject(parent,"firefly",fftop);
 }
 
+// ECC - function to return firefly values
+//     - for now hard code in 30 values and assume that the array is big enough
+void getFFvals(double vals[], char **names){
+  for (int i=0; i<35; i++) {
+    vals[i] = ff_vals[i];
+    names[i] = ff_names[i];
+  }
+}

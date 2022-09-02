@@ -90,6 +90,7 @@ struct firefly12 {
 void fireflyInit12(struct sensorI2CAddress *sa);
 void fireflyRead12(struct sensorI2CAddress *sa, void *valueBuffer);
 void fireflyFormat12(struct sensorRecord *sr, struct cJSON *parent);
+void getFFvals(double vals[], char **names);
 
 #ifdef __cplusplus
 }

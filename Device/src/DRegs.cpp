@@ -315,14 +315,16 @@ void DRegs::update() {
   }
   */
 
-  // Zynq values
+  // Get Zynq values and Firefly values (see Sensor/src/zynqOnBoard.c and Sensor/src/firefly.c).
   int maxvals=35;
-  double vals[maxvals];
-  char *names[maxvals];
+  double vals[maxvals], ff_vals[maxvals];
+  char *names[maxvals], *ff_names[maxvals];
   getzynqvals(vals, names);
+  getFFvals(ff_vals, ff_names);
   if (maxprint < 5) {
     std::cout << std::endl << "iteration: " << maxprint << std::endl;
     for (int iv=0; iv<maxvals; iv++) std::cout << "zynq vals (" << iv << "): " << names[iv] << " " << vals[iv] << std::endl;
+    std::cout << "FF vals: " << ff_names[0] << " " << ff_vals[0] << std::endl;
   }
   maxprint++;
 
