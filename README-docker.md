@@ -22,9 +22,9 @@ Do the following to enter the docker container.
 ## Building the executable
 
   - git clone https://github.com/echeu/quasar-srtm.git
+  - cd quasar-srtm
   - ./quasar.py enable_module open62541-compat v1.3.6
   - ./quasar.py set_build_config ./open62541_config.cmake
-  - cd quasar-srtm
   - ./quasar.py build
 
 ## Uploading the new executable
