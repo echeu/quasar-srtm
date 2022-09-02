@@ -236,9 +236,9 @@ void fireflyFormat4(struct sensorRecord *sr, struct cJSON *parent) {
   // ECC - save some FF data based upon name
   int ioff;
   if (strcmp(sr->name,"FF-TXRX11")==0) ioff = 0;
-  else ioff=16;
+  else ioff=19;
 
-  ff_names[0+ioff] = sr-name;
+  ff_names[0+ioff] = sr->name;
   ff_names[1+ioff] = "present";
   ff_names[2+ioff] = "status";
   ff_names[3+ioff] = "txdisable";
@@ -252,8 +252,11 @@ void fireflyFormat4(struct sensorRecord *sr, struct cJSON *parent) {
   ff_names[11+ioff] = "powerfault";
   ff_names[12+ioff] = "uptime";
   ff_names[13+ioff] = "tempC";
-  ff_names[14+ioff] = "rxpower";
-  ff_names[15+ioff] = "id";
+  ff_names[14+ioff] = "rxpower[0]";
+  ff_names[15+ioff] = "rxpower[1]";
+  ff_names[16+ioff] = "rxpower[2]";
+  ff_names[17+ioff] = "rxpower[3]";
+  ff_names[18+ioff] = "id";
   
   ff_vals[0+ioff] = 0;
   ff_vals[1+ioff] = 1;
@@ -264,13 +267,16 @@ void fireflyFormat4(struct sensorRecord *sr, struct cJSON *parent) {
   ff_vals[6+ioff] = data->cdrlol;
   ff_vals[7+ioff] = data->los;
   ff_vals[8+ioff] = data->txfault;
-  ff_vals[9+ioff] = data->tempfault
+  ff_vals[9+ioff] = data->tempfault;
   ff_vals[10+ioff] = data->voltfault;
   ff_vals[11+ioff] = data->powerfault;
   ff_vals[12+ioff] = data->uptime;
   ff_vals[13+ioff] = data->temperatureRaw;
-  ff_vals[14+ioff] = rxpower;
-  ff_vals[15+ioff] = data->id;
+  ff_vals[14+ioff] = data->rxPower[0];
+  ff_vals[15+ioff] = data->rxPower[1];
+  ff_vals[16+ioff] = data->rxPower[2];
+  ff_vals[17+ioff] = data->rxPower[3];
+  ff_vals[18+ioff] = data->id;
 }
 
 /* ------------------------------------------------------------------------------------ */
