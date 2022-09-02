@@ -5,6 +5,8 @@ This provides information for setting up a docker environment for building the q
 ## Dockerfile
 
 A Dockerfile is provided to allow one to easily install the requisite packages.
+  - https://github.com/echeu/quasar-srtm/blob/f24d57ee03cb9479a014cae7dc42ea3834eaed68/Dockerfile
+
 
 ## Build docker image
 
