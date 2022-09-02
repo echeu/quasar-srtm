@@ -30,7 +30,7 @@ Do the following to enter the docker container.
 ## Uploading the new executable
   - You will need to stop the opcua service on the SRTM 
     - service opcua stop
-  - scp build/bin/OpcUaServer root@<IP address>:/home/root/quasar-srtm/build/bin/
+  - scp build/bin/OpcUaServer root@[IP address]:/home/root/quasar-srtm/build/bin/
     - This has to be done from the docker image 
   - Restart the opcua service on the SRTM
     - service opcua start
