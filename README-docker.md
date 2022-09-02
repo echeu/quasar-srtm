@@ -5,6 +5,8 @@ This provides information for setting up a docker environment for building the q
 ## Dockerfile
 
 A Dockerfile is provided to allow one to easily install the requisite packages.
+  - https://github.com/echeu/quasar-srtm/blob/main/Dockerfile
+
 
 ## Build docker image
 
@@ -24,3 +26,11 @@ Do the following to enter the docker container.
   - ./quasar.py set_build_config ./open62541_config.cmake
   - cd quasar-srtm
   - ./quasar.py build
+
+## Uploading the new executable
+  - You will need to stop the opcua service on the SRTM 
+    - service opcua stop
+  - scp build/bin/OpcUaServer root@[IP address]:/home/root/quasar-srtm/build/bin/
+    - This has to be done from the docker image 
+  - Restart the opcua service on the SRTM
+    - service opcua start
