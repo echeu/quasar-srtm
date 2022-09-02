@@ -115,15 +115,15 @@
  * The information in this is accessible via the sensorRecord array below.
  */
 static struct sensorReadings {
-  //struct tmp100 temperature[NTEMP];
-  //struct ltc2945 power[NPOWER];
-  //struct pca8575 status[NSTATUS];
-  //struct firefly12 txrx12[NFIREFLY-2];
-  //struct firefly4 txrx4[2];
-  //#ifdef ACCESS_SRTM_TESTER
-  //struct atca48V brick;
-  //#endif
-  //struct ddr4 ddr4;
+  struct tmp100 temperature[NTEMP];
+  struct ltc2945 power[NPOWER];
+  struct pca8575 status[NSTATUS];
+  struct firefly12 txrx12[NFIREFLY-2];
+  struct firefly4 txrx4[2];
+#ifdef ACCESS_SRTM_TESTER
+  struct atca48V brick;
+#endif
+  struct ddr4 ddr4;
   struct zynqOnBoard zynqInternal;
 } sensorData;
 
@@ -145,33 +145,34 @@ static struct sensorReadings {
 #define SENSOR0 0
 #define SENSOR1 1
 
-//static int nsensors=NTEMP+NPOWER+NSTATUS+NFIREFLY+NPSEQ+NDDR4+NZYNQ;
-static int nsensors=NZYNQ;
+static int nsensors=NTEMP+NPOWER+NSTATUS+NFIREFLY+NPSEQ+NDDR4+NZYNQ;
+//static int nsensors=NZYNQ;
 static struct sensorRecord sensors[] = {
+  /* ECC - changing {-1,0,0} to {1,0,0} since it causes compiler errors */
   /* The NTEMP temperature sensors. In the IPMC buffer, 16(byte) = 8(word) has FPGA temp. Skip it */
-  //{{SENSOR0,0,0,TMP100A,tmp100Init,tmp100Read,tmp100Format,0},{-1,0,0},&sensorData.temperature[0],"SRTM Temp"},
+  {{SENSOR0,0,0,TMP100A,tmp100Init,tmp100Read,tmp100Format,0},{1,0,0},&sensorData.temperature[0],"SRTM Temp"},
   /* And the power sensors */
-  //{{SENSOR0,0,0,TMPZYNQ, ltc2945Init,ltc2945Read,ltc2945Format,(void*)c_zynq_diode},{-1,0,0},&sensorData.power[0],"Zynq Diode"},
-  //{{SENSOR1,0,0,VI_P1V8, ltc2945Init,ltc2945Read,ltc2945Format,(void*)c_ltm4628},{-1,0,0},&sensorData.power[1],"SRTM1.8V (U12)"},
-  //{{SENSOR1,0,0,VI_P3V3, ltc2945Init,ltc2945Read,ltc2945Format,(void*)c_ltm4628},{-1,0,0},&sensorData.power[2],"SRTM3.3V (U11)"},
-  //{{SENSOR1,0,0,VI_P2V5, ltc2945Init,ltc2945Read,ltc2945Format,(void*)c_ltm4628},{-1,0,0},&sensorData.power[3],"SRTM2.5V (U12)"},
-  //{{SENSOR1,0,0,VI_P1V2, ltc2945Init,ltc2945Read,ltc2945Format,(void*)c_ltm4630},{-1,0,0},&sensorData.power[4],"SRTM1.2V (U1)"},
-  //{{SENSOR1,0,0,VI_P0V9, ltc2945Init,ltc2945Read,ltc2945Format,(void*)c_ltm4628},{-1,0,0},&sensorData.power[5],"SRTM0.9V (U9)"},
-  //{{SENSOR1,0,0,VI_P0V85,ltc2945Init,ltc2945Read,ltc2945Format,(void*)c_ltm4630},{-1,0,0},&sensorData.power[6],"SRTM0.85V (U1)"},
-  //{{SENSOR1,0,0,VI_P1V2DDR, ltc2945Init,ltc2945Read,ltc2945Format,(void*)c_ltm4628},{-1,0,0},&sensorData.power[7],"SRTM DDR4 1.2V (U9)"},
-  //{{SENSOR1,0,0,VI_P3V3FF,ltc2945Init,ltc2945Read,ltc2945Format,(void*)c_ltm4628},{-1,0,0},&sensorData.power[8],"SRTM Firefly 3.3V (U11)"},
-  //{{SENSOR0,0,0,PSTATUS,pca8575Init,pca8575Read,pca8575Format,0},{-1,0,0},&sensorData.status[0],"SRTM Power Status"},
+  {{SENSOR0,0,0,TMPZYNQ, ltc2945Init,ltc2945Read,ltc2945Format,(void* (*)())c_zynq_diode},{1,0,0},&sensorData.power[0],"Zynq Diode"},
+  {{SENSOR1,0,0,VI_P1V8, ltc2945Init,ltc2945Read,ltc2945Format,(void* (*)())c_ltm4628},{1,0,0},&sensorData.power[1],"SRTM1.8V (U12)"},
+  {{SENSOR1,0,0,VI_P3V3, ltc2945Init,ltc2945Read,ltc2945Format,(void* (*)())c_ltm4628},{1,0,0},&sensorData.power[2],"SRTM3.3V (U11)"},
+  {{SENSOR1,0,0,VI_P2V5, ltc2945Init,ltc2945Read,ltc2945Format,(void* (*)())c_ltm4628},{1,0,0},&sensorData.power[3],"SRTM2.5V (U12)"},
+  {{SENSOR1,0,0,VI_P1V2, ltc2945Init,ltc2945Read,ltc2945Format,(void* (*)())c_ltm4630},{1,0,0},&sensorData.power[4],"SRTM1.2V (U1)"},
+  {{SENSOR1,0,0,VI_P0V9, ltc2945Init,ltc2945Read,ltc2945Format,(void* (*)())c_ltm4628},{1,0,0},&sensorData.power[5],"SRTM0.9V (U9)"},
+  {{SENSOR1,0,0,VI_P0V85,ltc2945Init,ltc2945Read,ltc2945Format,(void* (*)())c_ltm4630},{1,0,0},&sensorData.power[6],"SRTM0.85V (U1)"},
+  {{SENSOR1,0,0,VI_P1V2DDR, ltc2945Init,ltc2945Read,ltc2945Format,(void* (*)())c_ltm4628},{1,0,0},&sensorData.power[7],"SRTM DDR4 1.2V (U9)"},
+  {{SENSOR1,0,0,VI_P3V3FF,ltc2945Init,ltc2945Read,ltc2945Format,(void* (*)())c_ltm4628},{1,0,0},&sensorData.power[8],"SRTM Firefly 3.3V (U11)"},
+  {{SENSOR0,0,0,PSTATUS,pca8575Init,pca8575Read,pca8575Format,0},{1,0,0},&sensorData.status[0],"SRTM Power Status"},
 
-  //{{SENSOR1,FFOutputReg,0x80 | 0, FF25TXONLY, fireflyInit12,fireflyRead12,fireflyFormat12,0},{-1,0,0},&sensorData.txrx12[0],"FF-TX4"},
-  //{{SENSOR1,FFOutputReg,0x80 | 2, FF25TXONLY, fireflyInit12,fireflyRead12,fireflyFormat12,0},{-1,0,0},&sensorData.txrx12[1],"FF-TX3"},
-  //{{SENSOR1,FFOutputReg,0x80 | 4, FF25TXONLY, fireflyInit12,fireflyRead12,fireflyFormat12,0},{-1,0,0},&sensorData.txrx12[2],"FF-TX2"},
-  //{{SENSOR1,FFOutputReg,0x80 | 6, FF25TXONLY, fireflyInit12,fireflyRead12,fireflyFormat12,0},{-1,0,0},&sensorData.txrx12[3],"FF-TX1"},
-  //{{SENSOR1,FFOutputReg,0x80 | 12, FF10TXRX, fireflyInit4,fireflyRead4,fireflyFormat4,0},{-1,0,0},&sensorData.txrx4[0],"FF-TXRX12"},
-  //{{SENSOR1,FFOutputReg,0x80 | 14, FF10TXRX, fireflyInit4,fireflyRead4,fireflyFormat4,0},{-1,0,0},&sensorData.txrx4[1],"FF-TXRX11"},
-  //{{SENSOR1,0,0,DDR4ADDR,ddr4Init,ddr4Read,ddr4Format,0},{-1,0,0},&sensorData.ddr4,"DDR4"},
-  //{{0,0,0,ZYNQADDR,zynqOnBoardInit,zynqOnBoardRead,zynqOnBoardFormat,0},{-1,0,0},&sensorData.zynqInternal,"ZynqInternal"},
-  // ECC - the -1 is a problem set to 1 for now...
+  {{SENSOR1,FFOutputReg,0x80 | 0, FF25TXONLY, fireflyInit12,fireflyRead12,fireflyFormat12,0},{1,0,0},&sensorData.txrx12[0],"FF-TX4"},
+  {{SENSOR1,FFOutputReg,0x80 | 2, FF25TXONLY, fireflyInit12,fireflyRead12,fireflyFormat12,0},{1,0,0},&sensorData.txrx12[1],"FF-TX3"},
+  {{SENSOR1,FFOutputReg,0x80 | 4, FF25TXONLY, fireflyInit12,fireflyRead12,fireflyFormat12,0},{1,0,0},&sensorData.txrx12[2],"FF-TX2"},
+  {{SENSOR1,FFOutputReg,0x80 | 6, FF25TXONLY, fireflyInit12,fireflyRead12,fireflyFormat12,0},{1,0,0},&sensorData.txrx12[3],"FF-TX1"},
+  {{SENSOR1,FFOutputReg,0x80 | 12, FF10TXRX, fireflyInit4,fireflyRead4,fireflyFormat4,0},{1,0,0},&sensorData.txrx4[0],"FF-TXRX12"},
+  {{SENSOR1,FFOutputReg,0x80 | 14, FF10TXRX, fireflyInit4,fireflyRead4,fireflyFormat4,0},{1,0,0},&sensorData.txrx4[1],"FF-TXRX11"},
+  {{SENSOR1,0,0,DDR4ADDR,ddr4Init,ddr4Read,ddr4Format,0},{1,0,0},&sensorData.ddr4,"DDR4"},
   {{0,0,0,ZYNQADDR,zynqOnBoardInit,zynqOnBoardRead,zynqOnBoardFormat,0},{1,0,0},&sensorData.zynqInternal,"ZynqInternal"},
+  // ECC - The following line was used when we were only looking at zynq data
+  //{{0,0,0,ZYNQADDR,zynqOnBoardInit,zynqOnBoardRead,zynqOnBoardFormat,0},{1,0,0},&sensorData.zynqInternal,"ZynqInternal"},
   {{0,0,0,0,0,0,0,0},{0,0,0},0,0}
 };
 
