@@ -340,6 +340,7 @@ void DRegs::update() {
   getAddressSpaceLink()->setFPGAvint(vals[2],OpcUa_Good);
   getAddressSpaceLink()->setFPGAvaux(vals[3],OpcUa_Good);
   getAddressSpaceLink()->setFPGAvbram(vals[4],OpcUa_Good);
+  getAddressSpaceLink()->setFireflytempC(ff_vals[13],OpcUa_Good);
 }
 
 /* delegators for methods */
