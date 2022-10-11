@@ -348,7 +348,7 @@ void DRegs::update() {
   getAddressSpaceLink()->setFireflytempC(ff_vals[13],OpcUa_Good);
   getAddressSpaceLink()->setFireflyrxpower0(ff_vals[14],OpcUa_Good);
   getAddressSpaceLink()->setFireflyrxpower1(ff_vals[15],OpcUa_Good);
-  getAddressSpaceLink()->setFireflyrxpower2(ff_vals[16],OpcUa_Good);}
+  getAddressSpaceLink()->setFireflyrxpower2(ff_vals[16],OpcUa_Good);
   getAddressSpaceLink()->setFireflyrxpower3(ff_vals[17],OpcUa_Good);
 
 
