@@ -19,6 +19,9 @@ See [README-docker.md](README-docker.md) for more information about setting up t
     - Device/include/Dregs.h
     - Design/Design.xml  (identifies which values to present to the client)
     - Server/src/QuasarServer.cpp  (main executable loop)
+- To allow firefly values to be displayed on the opcua client just modify the following files
+    - Device/src/DRegs.cpp
+    - Design/Design.xml
 
 ## Building
 Building the source code can be done simply by doing:
