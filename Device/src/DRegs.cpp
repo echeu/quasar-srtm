@@ -351,7 +351,7 @@ void DRegs::update() {
   getAddressSpaceLink()->setFireflyrxpower2(ff_vals[16],OpcUa_Good);
   getAddressSpaceLink()->setFireflyrxpower3(ff_vals[17],OpcUa_Good);
 
-
+}
 /* delegators for methods */
 
 // 3333333333333333333333333333333333333333333333333333333333333333333333333
