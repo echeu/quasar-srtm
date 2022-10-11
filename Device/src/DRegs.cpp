@@ -334,14 +334,23 @@ void DRegs::update() {
   maxprint++;
 
   // Push the values to the OpcUa client display
+  // See Sensor/src/firefly.c for definitions
+  // And see Design/Design.xml for names of address space links
   getAddressSpaceLink()->setUserReg(val,OpcUa_Good);
   getAddressSpaceLink()->setFPGAuptime(vals[0],OpcUa_Good);
   getAddressSpaceLink()->setFPGAtemp(vals[1],OpcUa_Good);
   getAddressSpaceLink()->setFPGAvint(vals[2],OpcUa_Good);
   getAddressSpaceLink()->setFPGAvaux(vals[3],OpcUa_Good);
   getAddressSpaceLink()->setFPGAvbram(vals[4],OpcUa_Good);
+
+  // Firefly stuff
+  getAddressSpaceLink()->setFireflytxdisable(ff_vals[3],OpcUa_Good);
   getAddressSpaceLink()->setFireflytempC(ff_vals[13],OpcUa_Good);
-}
+  getAddressSpaceLink()->setFireflyrxpower0(ff_vals[14],OpcUa_Good);
+  getAddressSpaceLink()->setFireflyrxpower1(ff_vals[15],OpcUa_Good);
+  getAddressSpaceLink()->setFireflyrxpower2(ff_vals[16],OpcUa_Good);}
+  getAddressSpaceLink()->setFireflyrxpower3(ff_vals[17],OpcUa_Good);
+
 
 /* delegators for methods */
 
