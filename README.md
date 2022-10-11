@@ -24,6 +24,8 @@ See [README-docker.md](README-docker.md) for more information about setting up t
     - Design/Design.xml
 
 ## Building
+To run this on the SRTM, you will need to build this using Docker (or similar platform). See [README-docker.md](README-docker.md).
+
 Building the source code can be done simply by doing:
   - git clone https://github.com/echeu/quasar-srtm.git
   - cd quasar-srtm
