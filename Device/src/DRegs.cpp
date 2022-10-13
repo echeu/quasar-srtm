@@ -354,7 +354,7 @@ void DRegs::update() {
   // Compare values of FF11 txdisable and set value. Enable/disable if different.
   OpcUa_UInt32 setval_tx = 0;
   getAddressSpaceLink()->getWriteValueF11TX(setval_tx);
-  UInt32 F11_txdisable = ff_vals[3];
+  OpcUA_UInt32 F11_txdisable = ff_vals[3];
   if (F11_txdisable != setval_tx) {
     if (setval_tx == 0) {
       disableFF11();

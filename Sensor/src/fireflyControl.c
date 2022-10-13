@@ -26,6 +26,7 @@
 #include "i2cDevUser.h"
 #include "cJSON.h"
 #include "firefly.h"
+#include "fireflyControl.h"
 
 /* Each sensor is one physical firefly package. This sets up the access ala the
  * sensor reading code. We want consistent addressing. */
