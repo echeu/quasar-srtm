@@ -105,6 +105,7 @@ int I2CWrite(int fd, Xuint8 addr, int nbytes, unsigned char *databytes)
   Xuint16 OffsetAddr = 0x0;    /* Address offset in EEPROM to be written. */
   Xuint8 WriteBytes;
   int Status = 0;
+  static int ntimes = 0;
 
   /* Set the I2C device address */
   unsigned long opts = I2C_TARGET_FORCE;
@@ -120,7 +121,10 @@ int I2CWrite(int fd, Xuint8 addr, int nbytes, unsigned char *databytes)
   BytesWritten = write(fd, databytes, nbytes);
   if(BytesWritten != nbytes)
     {
-      printf("\nI2CWrite, error: Return code = %d, (expected nbytes = %d)\n",(int)BytesWritten,nbytes);
+      if (ntimes<5) {
+	ntimes++;
+        printf("\nI2CWrite, error: Return code = %d, (expected nbytes = %d)\n",(int)BytesWritten,nbytes);
+      }
       if( BytesWritten==255 ) return -1;
       return BytesWritten;
     }
