@@ -266,7 +266,7 @@ void DRegs::update() {
     saved_setval = setval;
     LOG(Log::INF) << "Register setval: " << std::hex << saved_setval;
     first = 0;
-    
+
     // i2c initialization
     int hasIPMC = 0;
     i2cBusRegister(2,srtmBuses);
@@ -350,6 +350,20 @@ void DRegs::update() {
   getAddressSpaceLink()->setFireflyrxpower1(ff_vals[15],OpcUa_Good);
   getAddressSpaceLink()->setFireflyrxpower2(ff_vals[16],OpcUa_Good);
   getAddressSpaceLink()->setFireflyrxpower3(ff_vals[17],OpcUa_Good);
+
+  // Compare values of FF11 txdisable and set value. Enable/disable if different.
+  OpcUa_UInt32 setval_tx = 0;
+  getAddressSpaceLink()->getWriteValueF11TX(setval_tx);
+  UInt32 F11_txdisable = ff_vals[3];
+  if (F11_txdisable != setval_tx) {
+    if (setval_tx == 0) {
+      disableFF11();
+    }
+    else {
+      enableFF11();
+    }
+  }
+  
 
 }
 /* delegators for methods */
