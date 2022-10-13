@@ -58,8 +58,8 @@ private:
 
 public:
     void update();
-    void disableFF11();
-    void enaleFF11();
+    //    void disableFF11();
+    //    void enableFF11();
 
 private:
 
