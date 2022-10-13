@@ -47,7 +47,6 @@
 #include "ltc2945.h"
 #include "pca8575.h"
 #include "firefly.h"
-#include "fireflyControl.h"
 #include "ddr4.h"
 #include "zynqOnBoard.h"
 
@@ -177,6 +176,9 @@ static struct sensorRecord sensors[] = {
   {{0,0,0,0,0,0,0,0},{0,0,0},0,0}
 };
 
+/* Indices into the sensors record above */
+static enum ffID {FF1=14, FF2=13, FF3=12, FF4=11, FF12=15, FF11=16};
+
 /* ------------------------------------------------------------------------  */
 /* ----  Here is the bus interface definition -----------------------------  */
 /* ------------------------------------------------------------------------  */
@@ -240,6 +242,27 @@ DRegs::DRegs (
 /* sample dtr */
 DRegs::~DRegs ()
 {
+}
+
+int fcEnable(enum ffID aFirefly) {
+  /* Just get the address record and call the utility routine */
+  struct sensorI2CAddress *ffsa = &(sensors[aFirefly].saI2C);
+  return fireflyEnableI2C(ffsa);
+}
+
+int fcDisable(enum ffID aFirefly) {
+  /* Just get the address record and call the utility routine */
+  struct sensorI2CAddress *ffsa = &(sensors[aFirefly].saI2C);
+  return fireflyDisableI2C(ffsa);
+}
+
+// ECC - command to turn on FF11
+void enableFF11() {
+  fcEnable(FF11);
+}
+// ECC - command to turn off FF11
+void disableFF11() {
+  fcDisable(FF11);
 }
 
 /* delegates for cachevariables */
@@ -367,6 +390,7 @@ void DRegs::update() {
   
 
 }
+
 /* delegators for methods */
 
 // 3333333333333333333333333333333333333333333333333333333333333333333333333
