@@ -158,14 +158,6 @@ static int getChannel(enum ffID theff, const char *snum) {
 
 static int init=0, hasIPMC=0; /* Always leave hasIPMC=0 for HL-LHC */
 
-int sensorInit() {
-  if( init ) return 0;
-  //printf("In %s, %s\n",__FILE__,__FUNCTION__);
-  i2cBusRegister(1,srtmBuses);
-  sensorRegister(NFIREFLY,sensors,hasIPMC);
-  init = 1;
-  return 0;
-}
 
 int fcIsPresent(enum ffID aFirefly) { 
   /* Just get the address record and call the utility routine */
@@ -334,37 +326,5 @@ void disableFF11() {
   fcDisable(FF11);
 }
 
-#ifdef STANDALONE
-int main(int argc, char **argv) {
-  if( argc != 3 && argc !=4 ) usage();
-
-  /* Parse the command line */
-  enum ffID ffsel = getFFID(argv[1]);
-  if( ffsel == NONE )  usage();
-  if( ffsel<ALL && ffsel>FF12 ) { printf("FATAL: Invalid module = '%s'\n",argv[1]); usage(); }
-  int icmd = getCommand(argv[2]);
-  if( icmd == CMD_UNKNOWN ) { printf("FATAL: Invalid command: %s\n",argv[2]); usage(); }
-
-  /* Is there an extra argument needed? The channel... */
-  if( !isChannelCommand(icmd) ) { /* These are per module commands */
-    if( argc != 3 ) usage();
-    sensorInit();
-    if( ffsel == ALL ) executeAllCommand(icmd);
-    else executeCommand(ffsel,icmd);
-  }
-  else { /* These are per channel commands */
-    if( argc != 4 ) usage();
-    /* Get the channel number */
-    int ffchan = getChannel(ffsel,argv[3]);
-    if( ffchan<0 ) usage();
-    /* and now execute the command */
-    sensorInit();
-    if( ffchan == getNChan(ffsel) ) executeAllChannelCommand(ffsel,icmd);
-    else executeChannelCommand(ffsel,ffchan,icmd);
-  }
-
-  return 0;
-}
-#endif
 
   
