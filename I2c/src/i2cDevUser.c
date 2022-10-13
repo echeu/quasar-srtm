@@ -58,6 +58,7 @@ int I2CRead(int fd, Xuint8 address, int nbytes, Xuint8 *dataBuffer)
   Xuint16 OffsetAddr = 0x0;    /* Address offset in EEPROM to be written. */
   Xuint8 ReadBytes;
   int Status = 0;
+  static int nprint = 0;
 
   /* Set the device address... */
   unsigned long opts = I2C_TARGET_FORCE;
@@ -73,7 +74,10 @@ int I2CRead(int fd, Xuint8 address, int nbytes, Xuint8 *dataBuffer)
   BytesRead = read(fd, dataBuffer, nbytes);
   if(BytesRead != nbytes )
     {
-      printf("I2CRead, error: Return code = %d\n",BytesRead);
+      if (nprint<5) {
+	nprint++;
+	printf("I2CRead, error: Return code = %d\n",BytesRead);
+      }
       if( BytesRead==255 ) return -1;
       return BytesRead;
     }
