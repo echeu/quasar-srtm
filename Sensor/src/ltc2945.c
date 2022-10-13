@@ -53,11 +53,11 @@ void ltc2945Read(struct sensorI2CAddress *sa, void *valueBuffer) {
   if( sa->params ) {
     float vin = dest->rawADIN;
     float *calib = (float *)(sa->params());
-    printf("params = %p, calib = %p\n",sa->params,calib);
+    //printf("params = %p, calib = %p\n",sa->params,calib);
     float slope = calib[0];       // FPGA = 0.22, ltm4628/16 = 0.22, ltm4628/50 = 0.25
     float offset = calib[1];     // FPGA = 345.,            = 242.,              327
     float temperature = offset - vin*slope;
-    printf("data = 0x%02x/0x%02x raw = %d, vin = %f\n",data[0x28],data[0x29],dest->rawADIN,temperature);
+    //printf("data = 0x%02x/0x%02x raw = %d, vin = %f\n",data[0x28],data[0x29],dest->rawADIN,temperature);
     dest->temperature = temperature;
   }
   else { /* Use the Phase I calibration */
@@ -91,7 +91,7 @@ void ltc2945Read(struct sensorI2CAddress *sa, void *valueBuffer) {
     float slope = calib[0];       // FPGA = 0.22, ltm4628/16 = 0.22, ltm4628/50 = 0.25
     float offset = calib[1];     // FPGA = 345.,            = 242.,              327
     float temperature = offset - vin*slope;
-    printf("data = 0x%02x/0x%02x raw = %d, vin = %f\n",data[0x28],data[0x29],dest->rawADIN,temperature);
+    //printf("data = 0x%02x/0x%02x raw = %d, vin = %f\n",data[0x28],data[0x29],dest->rawADIN,temperature);
     dest->temperature = temperature;
   }
   else { /* Use the Phase I calibration */
@@ -101,7 +101,7 @@ void ltc2945Read(struct sensorI2CAddress *sa, void *valueBuffer) {
   }    
 #endif
   
-  printf("ltc2945Read: voltage = %.2f, current = %.2f, temperature = %.2f\n",dest->voltage,dest->current,dest->temperature);
+  //printf("ltc2945Read: voltage = %.2f, current = %.2f, temperature = %.2f\n",dest->voltage,dest->current,dest->temperature);
 }
 
 
