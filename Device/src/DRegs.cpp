@@ -345,7 +345,7 @@ void DRegs::update() {
   char *names[maxvals], *ff_names[maxvals];
   getzynqvals(vals, names);
   getFFvals(ff_vals, ff_names);
-  if (maxprint < 5) {
+  if (maxprint < 3) {
     std::cout << std::endl << "iteration: " << maxprint << std::endl;
     for (int iv=0; iv<35; iv++) std::cout << "zynq vals (" << iv << "): " << names[iv] << " " << vals[iv] << std::endl;
 
@@ -380,6 +380,11 @@ void DRegs::update() {
   getAddressSpaceLink()->getWriteValueF11TX(setval_tx);
   OpcUa_UInt32 F11_txdisable = ff_vals[3];
   if (F11_txdisable != setval_tx) {
+      
+    for (int i=0; i<38; i++) {
+      std::cout << ff_names[i] << " " << ff_vals[i] << std::endl;
+    }
+
     if (setval_tx == 0) {
       printf("disable FF11");
       disableFF11();
