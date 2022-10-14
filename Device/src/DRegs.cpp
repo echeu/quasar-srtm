@@ -70,6 +70,8 @@
 #define NDDR4 1
 #define NZYNQ 1  /* For the internal Zynq sensors */
 
+#define nFFchan 4
+
 
 /* --- SRTM sensors -----------------------------------------------------------
  * First, we do the devices on the RTM_SENSOR bus. This is shared with the
@@ -214,7 +216,6 @@ namespace Device
 static OpcUa_UInt32 saved_setval;
 
 
-
 // 2222222222222222222222222222222222222222222222222222222222222222222222222
 // 2     SEMI CUSTOM CODE STARTS HERE AND FINISHES AT SECTION 3            2
 // 2     (code for which only stubs were generated automatically)          2
@@ -244,26 +245,81 @@ DRegs::~DRegs ()
 {
 }
 
-int fcEnable(int aFirefly) {
+void fcEnable(int aFirefly) {
   /* Just get the address record and call the utility routine */
   struct sensorI2CAddress *ffsa = &(sensors[aFirefly].saI2C);
-  return fireflyEnableI2C(ffsa);
+  int iret=fireflyEnableI2C(ffsa);
 }
 
-int fcDisable(int aFirefly) {
+void fcDisable(int aFirefly) {
   /* Just get the address record and call the utility routine */
   struct sensorI2CAddress *ffsa = &(sensors[aFirefly].saI2C);
-  return fireflyDisableI2C(ffsa);
+  int iret=fireflyDisableI2C(ffsa);
 }
 
-// ECC - command to turn on FF11
-void enableFF11() {
-  fcEnable(16);
+#define TXDIS4 86
+#define TXDIS12 52
+
+int fcChanEnable(int aFirefly, int ichan) {
+  fcEnable(aFirefly);
+  printf("In %s, %s with ffID = %d, ichan =%d\n",__FILE__,__FUNCTION__,aFirefly,ichan);
+  struct sensorI2CAddress *ffsa = &(sensors[aFirefly].saI2C);
+  /* The enable register format depends on which version it is. */
+  if( ffsa->initfcn == fireflyInit4 ) { /* 4 channel Tx/Rx module */ 
+	  u8 *data = sensorRead(ffsa,TXDIS4,1);
+	  u8 oldval = data[0];
+	  u8 ibit = 1<<ichan;
+	  u8 mask = ~ibit;
+	  u8 newval[2] = {TXDIS4, oldval & mask};  /* clear the disable bit for this channel */
+	  sensorWrite(ffsa,newval,2);
+	  data = sensorRead(ffsa,TXDIS4,1);
+	  printf("    initial tx disable register = 0x%02x; after enabling channel %d, = 0x%02x\n",oldval,ichan,data[0]);
+  }
+  else { /* 12 channel Tx module */
+	  u8 *data = sensorRead(ffsa,TXDIS12,2);
+	  u16 oldval = (( data[0] << 8 ) & 0xFF00 ) | data[1];
+	  u16 ibit = 1<<ichan;
+	  u16 mask = ~ibit;
+    u16 mval = oldval & mask;
+	  u8 newval[3] = {TXDIS12, ((mval>>8) & 0xFF) , mval & 0xFF};  /* clear the disable bit for this channel */
+	  sensorWrite(ffsa,newval,3);
+	  data = sensorRead(ffsa,TXDIS12,2);
+    mval =  (( data[0] << 8 ) & 0xFF00 ) | data[1];
+	  printf("    initial tx disable register = 0x%03x; after enabling channel %d, = 0x%03x\n",oldval,ichan,mval);
+  }
+  fcDisable(aFirefly);
+  return 0;
 }
-// ECC - command to turn off FF11
-void disableFF11() {
-  fcDisable(16);
+
+int fcChanDisable(int aFirefly, int ichan) {
+  fcEnable(aFirefly);
+  printf("In %s, %s with ffID = %d, ichan =%d\n",__FILE__,__FUNCTION__,aFirefly,ichan);
+  struct sensorI2CAddress *ffsa = &(sensors[aFirefly].saI2C);
+  /* The enable register format depends on which version it is. */
+  if( ffsa->initfcn == fireflyInit4 ) { /* 4 channel Tx/Rx module */ 
+	  u8 *data = sensorRead(ffsa,TXDIS4,1);
+	  u8 oldval = data[0];
+	  u8 ibit = 1<<ichan;
+	  u8 newval[2] = {TXDIS4, oldval | ibit}; /* Set the register address and then the disable bit for this channel */
+	  sensorWrite(ffsa,newval,2);
+	  data = sensorRead(ffsa,TXDIS4,1);
+	  printf("    initial tx disable register = 0x%02x; after disabling channel %d, = 0x%02x\n",oldval,ichan,data[0]);
+  }
+  else { /* 12 channel Tx module */
+	  u8 *data = sensorRead(ffsa,TXDIS12,2);
+	  u16 oldval = (( data[0] << 8 ) & 0xFF00 ) | data[1];
+	  u16 ibit = 1<<ichan;
+    u16 mval = oldval | ibit;
+	  u8 newval[3] = {TXDIS12, ((mval>>8) & 0xFF) , mval & 0xFF};  /* clear the disable bit for this channel */
+	  sensorWrite(ffsa,newval,3);
+	  data = sensorRead(ffsa,TXDIS12,2);
+    mval =  (( data[0] << 8 ) & 0xFF00 ) | data[1];
+	  printf("    initial tx disable register = 0x%03x; after disabling channel %d, = 0x%03x\n",oldval,ichan,mval);
+  }
+  fcDisable(aFirefly);
+  return 0;
 }
+
 
 /* delegates for cachevariables */
 
@@ -367,31 +423,57 @@ void DRegs::update() {
   getAddressSpaceLink()->setFPGAvaux(vals[3],OpcUa_Good);
   getAddressSpaceLink()->setFPGAvbram(vals[4],OpcUa_Good);
 
-  // Firefly stuff
-  getAddressSpaceLink()->setFireflytxdisable(ff_vals[3],OpcUa_Good);
-  getAddressSpaceLink()->setFireflytempC(ff_vals[13],OpcUa_Good);
-  getAddressSpaceLink()->setFireflyrxpower0(ff_vals[14],OpcUa_Good);
-  getAddressSpaceLink()->setFireflyrxpower1(ff_vals[15],OpcUa_Good);
-  getAddressSpaceLink()->setFireflyrxpower2(ff_vals[16],OpcUa_Good);
-  getAddressSpaceLink()->setFireflyrxpower3(ff_vals[17],OpcUa_Good);
+  // Firefly 11 stuff
+  getAddressSpaceLink()->setFF11txdisable(ff_vals[3],OpcUa_Good);
+  getAddressSpaceLink()->setFF11tempC(ff_vals[13],OpcUa_Good);
+  getAddressSpaceLink()->setFF11rxpower0(ff_vals[14],OpcUa_Good);
+  getAddressSpaceLink()->setFF11rxpower1(ff_vals[15],OpcUa_Good);
+  getAddressSpaceLink()->setFF11rxpower2(ff_vals[16],OpcUa_Good);
+  getAddressSpaceLink()->setFF11rxpower3(ff_vals[17],OpcUa_Good);
+
+  // Firefly 11 stuff
+# define FF12off 19
+  getAddressSpaceLink()->setFF12txdisable(ff_vals[3+FF12off],OpcUa_Good);
+  getAddressSpaceLink()->setFF12tempC(ff_vals[13+FF12off],OpcUa_Good);
+  getAddressSpaceLink()->setFF12rxpower0(ff_vals[14+FF12off],OpcUa_Good);
+  getAddressSpaceLink()->setFF12rxpower1(ff_vals[15+FF12off],OpcUa_Good);
+  getAddressSpaceLink()->setFF12rxpower2(ff_vals[16+FF12off],OpcUa_Good);
+  getAddressSpaceLink()->setFF12rxpower3(ff_vals[17+FF12off],OpcUa_Good);
 
   // Compare values of FF11 txdisable and set value. Enable/disable if different.
   OpcUa_UInt32 setval_tx = 0;
-  getAddressSpaceLink()->getWriteValueF11TX(setval_tx);
-  OpcUa_UInt32 F11_txdisable = ff_vals[3];
-  if (F11_txdisable != setval_tx) {
+  getAddressSpaceLink()->getFF11txwrite(setval_tx);
+  OpcUa_UInt32 FF11_txdisable = ff_vals[3];
+  if (FF11_txdisable != setval_tx) {
       
-    for (int i=0; i<38; i++) {
-      std::cout << ff_names[i] << " " << ff_vals[i] << std::endl;
-    }
+   // Loop over the four channels
+    for (int ichan=0; ichan<nFFchan; ichan++) {
+      int ibitset = (setval_tx >> ichan) & 1;
+      int ibitval = (FF11_txdisable >> ichan) & 1;
 
-    if (setval_tx == 0) {
-      printf("disable FF11");
-      disableFF11();
+      // only change enable if the two bits differ
+      if (ibitset != ibitval) {
+	if (ibitset == 0) fcChanEnable(16, ichan);
+	else              fcChanDisable(16, ichan);
+      }
     }
-    else {
-      printf("enable FF11");
-      enableFF11();
+  }
+  
+  // Compare values of FF12 txdisable and set value. Enable/disable if different.
+  getAddressSpaceLink()->getFF12txwrite(setval_tx);
+  OpcUa_UInt32 FF12_txdisable = ff_vals[3+FF12off];
+  if (FF12_txdisable != setval_tx) {
+      
+   // Loop over the four channels
+    for (int ichan=0; ichan<nFFchan; ichan++) {
+      int ibitset = (setval_tx >> ichan) & 1;
+      int ibitval = (FF12_txdisable >> ichan) & 1;
+
+      // only change enable if the two bits differ
+      if (ibitset != ibitval) {
+	if (ibitset == 0) fcChanEnable(15, ichan);
+	else              fcChanDisable(15, ichan);
+      }
     }
   }
   
