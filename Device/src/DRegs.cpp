@@ -381,9 +381,11 @@ void DRegs::update() {
   OpcUa_UInt32 F11_txdisable = ff_vals[3];
   if (F11_txdisable != setval_tx) {
     if (setval_tx == 0) {
+      printf("disable FF11");
       disableFF11();
     }
     else {
+      printf("enable FF11");
       enableFF11();
     }
   }
