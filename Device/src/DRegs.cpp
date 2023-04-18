@@ -36,6 +36,7 @@
 #include <sys/types.h>
 #include <sys/mman.h>
 #include <iostream>
+#include <iomanip>
 
 // ECC stuff for i2c
 #include "malloc.h"
