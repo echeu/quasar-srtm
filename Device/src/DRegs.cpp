@@ -379,7 +379,7 @@ void DRegs::update() {
     val = bram64_vptr[0];
     // copy from axi-bus memory to the spi registers in opc-ua
     for (int i=0; i<nspi; i++) {
-      spi[0] = bram64_vptr[i];
+      spi[i] = bram64_vptr[i];
     }
     close(fd);
   }
