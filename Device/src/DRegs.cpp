@@ -327,6 +327,16 @@ int fcChanDisable(int aFirefly, int ichan) {
 void DRegs::update() {
 
   OpcUa_UInt32 val = 0;
+  OpcUa_Uint32 spi[] = {
+    0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0,
+    0, 0};
+  static int nspi = 38;
+
   static int first = 1;
 
   // ECC - Read from /dev/mem
@@ -367,6 +377,10 @@ void DRegs::update() {
     }
 
     val = bram64_vptr[0];
+    // copy from axi-bus memory to the spi registers in opc-ua
+    for (int i=0; i<nspi; i++) {
+      spi[0] = bram64_vptr[i];
+    }
     close(fd);
   }
 
@@ -417,6 +431,48 @@ void DRegs::update() {
   // See Sensor/src/firefly.c for definitions
   // And see Design/Design.xml for names of address space links
   getAddressSpaceLink()->setUserReg(val,OpcUa_Good);
+
+  // fill SPI stuff
+  getAddressSpaceLink()->setSPI00(spi[0],OpcUa_Good);
+  getAddressSpaceLink()->setSPI01(spi[1],OpcUa_Good);
+  getAddressSpaceLink()->setSPI02(spi[2],OpcUa_Good);
+  getAddressSpaceLink()->setSPI03(spi[3],OpcUa_Good);
+  getAddressSpaceLink()->setSPI04(spi[4],OpcUa_Good);
+  getAddressSpaceLink()->setSPI05(spi[5],OpcUa_Good);
+  getAddressSpaceLink()->setSPI06(spi[6],OpcUa_Good);
+  getAddressSpaceLink()->setSPI07(spi[7],OpcUa_Good);
+  getAddressSpaceLink()->setSPI08(spi[8],OpcUa_Good);
+  getAddressSpaceLink()->setSPI09(spi[9],OpcUa_Good);
+  getAddressSpaceLink()->setSPI10(spi[10],OpcUa_Good);
+  getAddressSpaceLink()->setSPI11(spi[11],OpcUa_Good);
+  getAddressSpaceLink()->setSPI12(spi[12],OpcUa_Good);
+  getAddressSpaceLink()->setSPI13(spi[13],OpcUa_Good);
+  getAddressSpaceLink()->setSPI14(spi[14],OpcUa_Good);
+  getAddressSpaceLink()->setSPI15(spi[15],OpcUa_Good);
+  getAddressSpaceLink()->setSPI16(spi[16],OpcUa_Good);
+  getAddressSpaceLink()->setSPI17(spi[17],OpcUa_Good);
+  getAddressSpaceLink()->setSPI18(spi[18],OpcUa_Good);
+  getAddressSpaceLink()->setSPI19(spi[10],OpcUa_Good);
+  getAddressSpaceLink()->setSPI20(spi[20],OpcUa_Good);
+  getAddressSpaceLink()->setSPI21(spi[21],OpcUa_Good);
+  getAddressSpaceLink()->setSPI22(spi[22],OpcUa_Good);
+  getAddressSpaceLink()->setSPI23(spi[23],OpcUa_Good);
+  getAddressSpaceLink()->setSPI24(spi[24],OpcUa_Good);
+  getAddressSpaceLink()->setSPI25(spi[25],OpcUa_Good);
+  getAddressSpaceLink()->setSPI26(spi[26],OpcUa_Good);
+  getAddressSpaceLink()->setSPI27(spi[27],OpcUa_Good);
+  getAddressSpaceLink()->setSPI28(spi[28],OpcUa_Good);
+  getAddressSpaceLink()->setSPI29(spi[29],OpcUa_Good);
+  getAddressSpaceLink()->setSPI30(spi[30],OpcUa_Good);
+  getAddressSpaceLink()->setSPI31(spi[31],OpcUa_Good);
+  getAddressSpaceLink()->setSPI32(spi[32],OpcUa_Good);
+  getAddressSpaceLink()->setSPI33(spi[33],OpcUa_Good);
+  getAddressSpaceLink()->setSPI34(spi[34],OpcUa_Good);
+  getAddressSpaceLink()->setSPI35(spi[35],OpcUa_Good);
+  getAddressSpaceLink()->setSPI36(spi[36],OpcUa_Good);
+  getAddressSpaceLink()->setSPI37(spi[37],OpcUa_Good);
+
+  // i2c stuff
   getAddressSpaceLink()->setFPGAuptime(vals[0],OpcUa_Good);
   getAddressSpaceLink()->setFPGAtemp(vals[1],OpcUa_Good);
   getAddressSpaceLink()->setFPGAvint(vals[2],OpcUa_Good);
