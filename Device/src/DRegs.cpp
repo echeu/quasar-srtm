@@ -392,7 +392,7 @@ void DRegs::update() {
   if (maxprint < 3) {
     std::cout << "SPI vals - iteration: " << maxprint << std::endl;
     for (int i=0; i<nspi; i++) {
-      std::cout << spi[i] << " ";
+      std::cout << std::hex << setw(4) << spi[i] << " ";
       if ( !(i%6) ) std::cout << std::endl;
     }
     std::cout << std::endl;
