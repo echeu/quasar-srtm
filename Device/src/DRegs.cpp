@@ -327,7 +327,7 @@ int fcChanDisable(int aFirefly, int ichan) {
 void DRegs::update() {
 
   OpcUa_UInt32 val = 0;
-  OpcUa_Uint32 spi[] = {
+  OpcUa_UInt32 spi[] = {
     0, 0, 0, 0, 0, 0,
     0, 0, 0, 0, 0, 0,
     0, 0, 0, 0, 0, 0,
