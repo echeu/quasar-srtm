@@ -345,7 +345,7 @@ void DRegs::update() {
 
   // This is the physical base address which is set by the constructor
   off_t bram_pbase = address();
-  OpcUa_UInt64 *bram64_vptr;
+  OpcUa_UInt32 *bram32_vptr;
   int fd;
 
   // see if we want to write to this address
@@ -368,7 +368,7 @@ void DRegs::update() {
 
 	// Map the BRAM physical address into user space getting a virtual address for it
   if ((fd = open("/dev/mem", O_RDWR | O_SYNC)) != -1) {
-    bram64_vptr = (OpcUa_UInt64 *)mmap(NULL, bram_size, PROT_READ|PROT_WRITE, MAP_SHARED, fd, bram_pbase);
+    bram32_vptr = (int *)mmap(NULL, bram_size, PROT_READ|PROT_WRITE, MAP_SHARED, fd, bram_pbase);
 
     if (maxprint < 3) {
       std::cout << "bram_pbase: " << std::hex << bram_pbase << std::endl;
@@ -377,14 +377,14 @@ void DRegs::update() {
     // if the value has changed, then we want to write it to memory
     if (setval != saved_setval) {
       LOG(Log::INF) << "Changing register value to: " << std::hex << setval;
-      bram64_vptr[0] = setval;
+      bram32_vptr[0] = setval;
       saved_setval = setval;
     }
 
-    val = bram64_vptr[0];
+    val = bram32_vptr[0];
     // copy from axi-bus memory to the spi registers in opc-ua
     for (int i=0; i<nspi; i++) {
-      spi[i] = bram64_vptr[i];
+      spi[i] = bram32_vptr[i];
     }
     close(fd);
   }
