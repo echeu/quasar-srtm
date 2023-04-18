@@ -326,6 +326,7 @@ int fcChanDisable(int aFirefly, int ichan) {
 // update output from /dev/mem
 void DRegs::update() {
 
+  static int maxprint = 0;
   OpcUa_UInt32 val = 0;
   OpcUa_UInt32 spi[] = {
     0, 0, 0, 0, 0, 0,
@@ -384,6 +385,14 @@ void DRegs::update() {
     close(fd);
   }
 
+  if (maxprint < 3) {
+    std::cout << "SPI vals - iteration: " << maxprint << std::endl;
+    for (int i=0; i<nspi; i++) {
+      std::cout << spi[i] << " ";
+      if (i%6 == 0 && i>0) std::cout << std::endl;
+    }
+  }
+
   /* Get i2c data */
   sensorMonitor(0);
 
@@ -398,7 +407,6 @@ void DRegs::update() {
 
   // ECC - i2c stuff
   //     - try to get information using array access of sensors
-  static int maxprint = 0;
 
   /* This isn't really necessary
   int nsensor = sensorCount();
@@ -415,6 +423,8 @@ void DRegs::update() {
   char *names[maxvals], *ff_names[maxvals];
   getzynqvals(vals, names);
   getFFvals(ff_vals, ff_names);
+
+  /*
   if (maxprint < 3) {
     std::cout << std::endl << "iteration: " << maxprint << std::endl;
     for (int iv=0; iv<35; iv++) std::cout << "zynq vals (" << iv << "): " << names[iv] << " " << vals[iv] << std::endl;
@@ -425,6 +435,8 @@ void DRegs::update() {
       std::cout << "FF vals: " << ff_names[iv] << " " << ff_vals[iv] << std::endl;
     }
   }
+  */
+
   maxprint++;
 
   // Push the values to the OpcUa client display
