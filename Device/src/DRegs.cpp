@@ -393,8 +393,9 @@ void DRegs::update() {
     std::cout << "SPI vals - iteration: " << maxprint << std::endl;
     for (int i=0; i<nspi; i++) {
       std::cout << spi[i] << " ";
-      if (i%6 == 0 && i>0) std::cout << std::endl;
+      if ( !(i%6) ) std::cout << std::endl;
     }
+    std::cout << std::endl;
   }
 
   /* Get i2c data */
