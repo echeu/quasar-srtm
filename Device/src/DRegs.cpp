@@ -370,6 +370,10 @@ void DRegs::update() {
   if ((fd = open("/dev/mem", O_RDWR | O_SYNC)) != -1) {
     bram64_vptr = (OpcUa_UInt64 *)mmap(NULL, bram_size, PROT_READ|PROT_WRITE, MAP_SHARED, fd, bram_pbase);
 
+    if (maxprint < 3) {
+      std::cout << "bram_pbase: " << std::hex << bram_pbase << std::endl;
+    }
+
     // if the value has changed, then we want to write it to memory
     if (setval != saved_setval) {
       LOG(Log::INF) << "Changing register value to: " << std::hex << setval;
