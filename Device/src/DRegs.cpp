@@ -368,7 +368,7 @@ void DRegs::update() {
 
 	// Map the BRAM physical address into user space getting a virtual address for it
   if ((fd = open("/dev/mem", O_RDWR | O_SYNC)) != -1) {
-    bram32_vptr = (int *)mmap(NULL, bram_size, PROT_READ|PROT_WRITE, MAP_SHARED, fd, bram_pbase);
+    bram32_vptr = (OpcUa_UInt32 *)mmap(NULL, bram_size, PROT_READ|PROT_WRITE, MAP_SHARED, fd, bram_pbase);
 
     if (maxprint < 3) {
       std::cout << "bram_pbase: " << std::hex << bram_pbase << std::endl;
