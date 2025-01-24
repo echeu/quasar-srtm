@@ -17,9 +17,14 @@
 extern "C" {
 #endif
 
+/* Initialize the sensor structures */
 int sensorInitSRTM_hw2();
-void sensorMonitor(int doPrint);
-int sensorFormat(cJSON *parent);
+
+/* Get the number of sensors */
+int getNSensors_hw2();
+
+/* Get the pointer to the sensor structures */
+struct sensorRecord* getSensorRecord_hw2();
 
 #ifdef __cplusplus
 }

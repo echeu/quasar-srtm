@@ -32,26 +32,27 @@ void sfpRead(struct sensorI2CAddress *sa, void *valueBuffer) {
   memset(dest,0,sizeof(struct sfp));
 
   u8 reg = 0;
+  int nread=128; /* Was 255 */
   /* Required manufacturer's ID section */
-  u8 *data = sensorRead(sa,0x0,255); /* Can't read 256 bytes as a block. */
+  u8 *data = sensorRead(sa,0x0,nread); /* Can't read 256 bytes as a block. */
   if( !data ) {
     dest->noUpd = 1;
     return;
   }
-  memcpy(dest->rawData,data,255);
+  memcpy(dest->rawData,data,nread);
 
   /* Check if extended data is present. It's OK if that's the case. */
   if( (dest->rawData[92] & 0x40) == 0 ) return;
 
   /* Extended info, including power */
   sa->deviceAddr += 1;
-  data = sensorRead(sa,0x0,255);
+  data = sensorRead(sa,0x0,nread);
   sa->deviceAddr -= 1;
   if( !data ) {
     dest->noUpd = 1;
     return;
   }
-  memcpy(&(dest->rawData[256]),data,255);
+  memcpy(&(dest->rawData[256]),data,nread);
   // hexdump(dest->rawData,512);
   dest->noUpd = 0;
 

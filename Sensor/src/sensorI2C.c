@@ -17,6 +17,7 @@
 #include <stdio.h>
 
 #include "xtypes.h"
+#include "BoardInfo.h"
 #include "sensorData.h"
 #include "sensorI2C.h"
 #include "i2cBus.h"
@@ -58,7 +59,10 @@ u8* sensorRead(struct sensorI2CAddress *sa, u8 reg, int nbytes) {
     u8 channel = (sa->switchChannel & 0x7F);
     u8 addr = sa->switchChannelSelector;
     if( isSwitch ) seti2cStatus(bus->muxen(busID,addr,channel));
-    else seti2cStatus(bus->regen(busID,addr,channel));
+    else {
+    	if( getHWVer() == 1 ) seti2cStatus(bus->regen(busID,addr,channel));
+    	else  seti2cStatus(bus->regen(busID,addr,channel+8));
+    }
     if( geti2cStatus() < 0 ) {
       printf("ERROR: sensorI2C, I2CMuxEnable returns failure. BUS LOCKED?\n");
       if( bus->unlock ) bus->unlock(busID);
@@ -69,7 +73,7 @@ u8* sensorRead(struct sensorI2CAddress *sa, u8 reg, int nbytes) {
   /* Then do the transaction, first checking to see if an offset is needed
    * for the register to be read.
    */
-  if( reg ) {
+  if( reg != 0xFF ) {
     iicbuffer[0] = reg;
     retcode = bus->write(busID,sa->deviceAddr,1,iicbuffer);
     seti2cStatus(retcode);
@@ -117,7 +121,10 @@ u8* sensorWrite(struct sensorI2CAddress *sa, u8 *val, int nbytes) {
     u8 channel = (sa->switchChannel & 0x7F);
     u8 addr = sa->switchChannelSelector;
     if( isSwitch ) seti2cStatus(bus->muxen(busID,addr,channel));
-    else seti2cStatus(bus->regen(busID,addr,channel));
+    else {
+    	if( getHWVer() == 1 ) seti2cStatus(bus->regen(busID,addr,channel));
+    	else  seti2cStatus(bus->regen(busID,addr,channel+8));
+    }
     if( geti2cStatus() == XST_FAILURE ) {
       printf("ERROR: sensorI2C, I2CMuxEnable returns failure. BUS LOCKED?\n");
       if( bus->unlock ) bus->unlock(busID);

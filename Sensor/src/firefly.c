@@ -14,6 +14,7 @@
 #include <stdio.h>
 #include <string.h>
 
+#include "BoardInfo.h"
 #include "firefly.h"
 #include "cJSON.h"
 #include "sensorData.h"
@@ -26,14 +27,13 @@ static char* formatFwVers(u8 vers, u8 minor, u8 rev) {
   return buffer;
 }
 
-// ECC - save values for displaying in opcua
-static double ff_vals[100];
-static char*  ff_names[100];
-
 static int getBit(struct sensorI2CAddress *ffsa, int bitnum) {
-  /* Construct a sensor address for the status register. This is just so that we */
-  /* can reuse code. The address of the status reg is one less than the control.  */
-  struct sensorI2CAddress crAddr = {ffsa->i2cBusNumber,0,0,ffsa->switchChannelSelector-1,0,0,0,0};
+  /* Construct a sensor address for the status register. This is just so that we
+   * can reuse code. In v1.x hardware, the address of the status reg is one less than the control.
+   * In v2 hardware, the lower word of the single register is read only, and the upper is write. */
+  int delta = 0;
+  if( getHWVer() == 1 ) delta = 1;
+  struct sensorI2CAddress crAddr = {ffsa->i2cBusNumber,0,0,ffsa->switchChannelSelector-delta,0,0,0,0};
   u8 *data = sensorRead(&crAddr,0x0,2);
   if( !data ) return 0;
 
@@ -47,8 +47,9 @@ static int getBit(struct sensorI2CAddress *ffsa, int bitnum) {
 
 static int setBit(struct sensorI2CAddress *ffsa, int bitnum) {
   struct sensorI2CAddress crAddr = {ffsa->i2cBusNumber,0,0,ffsa->switchChannelSelector,0,0,0,0};
-  /* Construct a sensor address for the control register. This is just so that we */
-  /* can reuse code. The address of the status reg is one less than the control.  */
+  /* Construct a sensor address for the control register. This is just so that we
+   * can reuse code. The address of the status reg is one less than the control.
+   * In v2 hardware, the lower word of the single register is read only, and the upper is write. */
   u8 *data = sensorRead(&crAddr,0x0,2);
   if( !data ) {
     printf("In %s / %s, read failed\n",__FILE__,__FUNCTION__);
@@ -70,8 +71,9 @@ static int setBit(struct sensorI2CAddress *ffsa, int bitnum) {
 
 static int clrBit(struct sensorI2CAddress *ffsa, int bitnum) {
   struct sensorI2CAddress crAddr = {ffsa->i2cBusNumber,0,0,ffsa->switchChannelSelector,0,0,0,0};
-  /* Construct a sensor address for the control register. This is just so that we */
-  /* can reuse code. The address of the status reg is one less than the control.  */
+  /* Construct a sensor address for the control register. This is just so that we
+   * can reuse code. The address of the status reg is one less than the control.
+   * In v2 hardware, the lower word of the single register is read only, and the upper is write. */
   u8 *data = sensorRead(&crAddr,0x0,2);
   if( !data ) {
     printf("In %s / %s, read failed\n",__FILE__,__FUNCTION__);
@@ -114,7 +116,8 @@ int fireflyIsInInterrupt(struct sensorI2CAddress *ffsa) {
 /* Toggle the firefly reset line */
 int fireflyReset(struct sensorI2CAddress *ffsa) {
   if( !ffsa ) return 0;
-  int bitnum = (ffsa->switchChannel & 0x7F) + 1;
+  int bitnum = (ffsa->switchChannel & 0x7F) + 9;
+  if( getHWVer() == 1 ) bitnum -= 8;
   clrBit(ffsa,bitnum);
   return setBit(ffsa,bitnum);
 }
@@ -122,13 +125,17 @@ int fireflyReset(struct sensorI2CAddress *ffsa) {
 /* Enable a specific firefly (only 1 at a time) for I2C access */
 int fireflyEnableI2C(struct sensorI2CAddress *ffsa) {
   if( !ffsa ) return 0;
-  return clrBit(ffsa,ffsa->switchChannel & 0x7F);
+  int bitnum = (ffsa->switchChannel & 0x7F) + 8;
+  if( getHWVer() == 1 ) bitnum -= 7;
+  return clrBit(ffsa,bitnum);
 }
 
 /* Disable I2C access the Fireflies */
 int fireflyDisableI2C(struct sensorI2CAddress *ffsa) {
   if( !ffsa ) return 0;
-  return setBit(ffsa,ffsa->switchChannel & 0x7F);
+  int bitnum = (ffsa->switchChannel & 0x7F) + 8;
+  if( getHWVer() == 1 ) bitnum -= 7;
+  return setBit(ffsa,bitnum);
 }
 
 
@@ -165,7 +172,7 @@ void fireflyRead4(struct sensorI2CAddress *sa, void *valueBuffer) {
   if( !data ) { printf("Error setting starting address for firefly second block read\n"); return; }
 
   /* and read the second part */
-  data = sensorRead(sa,0x0,nbytes-128);
+  data = sensorRead(sa,0x80,nbytes-128);
   if( !data ) { printf("Error reading 4 channel firefly second block\n"); return; }
   memcpy(&rdbuf[128],data,nbytes-128);
   data = rdbuf;
@@ -205,7 +212,12 @@ void fireflyFormat4(struct sensorRecord *sr, struct cJSON *parent) {
   cJSON_AddItemToObject(fftop,"name",cJSON_CreateString(sr->name));
   if( !data->present ) {
     cJSON_AddItemToObject(fftop,"present",cJSON_CreateNumber(0));
-    cJSON_AddItemToObject(parent,"firefly",fftop);
+    if( !sr->tag ) cJSON_AddItemToObject(parent,"firefly",fftop);
+    else {
+      char fullkey[128];
+      sprintf(fullkey,"%s%s","firefly",sr->tag);
+      cJSON_AddItemToObject(parent,fullkey,fftop);
+    }
     return;
   }  
   cJSON_AddItemToObject(fftop,"present",cJSON_CreateNumber(1));
@@ -231,52 +243,12 @@ void fireflyFormat4(struct sensorRecord *sr, struct cJSON *parent) {
   cJSON_AddItemToObject(fftop,"model",cJSON_CreateString(data->part));
   cJSON_AddItemToObject(fftop,"serial",cJSON_CreateString(data->serial));
   cJSON_AddItemToObject(fftop,"fwversion",cJSON_CreateString(formatFwVers(data->fwVers,data->fwMinor,data->fwRev)));
-  cJSON_AddItemToObject(parent,"firefly",fftop);
-
-  // ECC - save some FF data based upon name
-  int ioff;
-  if (strcmp(sr->name,"FF-TXRX11")==0) ioff = 0;
-  else ioff=19;
-
-  ff_names[0+ioff] = sr->name;
-  ff_names[1+ioff] = "present";
-  ff_names[2+ioff] = "status";
-  ff_names[3+ioff] = "txdisable";
-  ff_names[4+ioff] = "cdrenable";
-  ff_names[5+ioff] = "cdrrate"; 
-  ff_names[6+ioff] = "cdrilol";
-  ff_names[7+ioff] = "los";
-  ff_names[8+ioff] = "txfault";
-  ff_names[9+ioff] = "tempfault";
-  ff_names[10+ioff] = "voltfault";
-  ff_names[11+ioff] = "powerfault";
-  ff_names[12+ioff] = "uptime";
-  ff_names[13+ioff] = "tempC";
-  ff_names[14+ioff] = "rxpower[0]";
-  ff_names[15+ioff] = "rxpower[1]";
-  ff_names[16+ioff] = "rxpower[2]";
-  ff_names[17+ioff] = "rxpower[3]";
-  ff_names[18+ioff] = "id";
-  
-  ff_vals[0+ioff] = 0;
-  ff_vals[1+ioff] = 1;
-  ff_vals[2+ioff] = data->status;
-  ff_vals[3+ioff] = data->txDisable;
-  ff_vals[4+ioff] = data->cdrEnable;
-  ff_vals[5+ioff] = data->cdrRate;
-  ff_vals[6+ioff] = data->cdrlol;
-  ff_vals[7+ioff] = data->los;
-  ff_vals[8+ioff] = data->txfault;
-  ff_vals[9+ioff] = data->tempfault;
-  ff_vals[10+ioff] = data->voltfault;
-  ff_vals[11+ioff] = data->powerfault;
-  ff_vals[12+ioff] = data->uptime;
-  ff_vals[13+ioff] = data->temperatureRaw;
-  ff_vals[14+ioff] = data->rxPower[0];
-  ff_vals[15+ioff] = data->rxPower[1];
-  ff_vals[16+ioff] = data->rxPower[2];
-  ff_vals[17+ioff] = data->rxPower[3];
-  ff_vals[18+ioff] = data->id;
+  if( !sr->tag ) cJSON_AddItemToObject(parent,"firefly",fftop);
+  else {
+    char fullkey[128];
+    sprintf(fullkey,"%s%s","firefly",sr->tag);
+    cJSON_AddItemToObject(parent,fullkey,fftop);
+  }
 }
 
 /* ------------------------------------------------------------------------------------ */
@@ -338,7 +310,13 @@ void fireflyFormat12(struct sensorRecord *sr, struct cJSON *parent) {
   cJSON_AddItemToObject(fftop,"name",cJSON_CreateString(sr->name));
     if( !data->present ) {
     cJSON_AddItemToObject(fftop,"present",cJSON_CreateNumber(0));
-    cJSON_AddItemToObject(parent,"firefly",fftop);
+    if( !sr->tag ) cJSON_AddItemToObject(parent,"firefly",fftop);
+    else {
+      char fullkey[128];
+      sprintf(fullkey,"%s%s","firefly",sr->tag);
+      cJSON_AddItemToObject(parent,fullkey,fftop);
+    }
+    return;
     return;
   }  
   cJSON_AddItemToObject(fftop,"present",cJSON_CreateNumber(1));
@@ -355,14 +333,11 @@ void fireflyFormat12(struct sensorRecord *sr, struct cJSON *parent) {
   cJSON_AddItemToObject(fftop,"model",cJSON_CreateString(data->part));
   cJSON_AddItemToObject(fftop,"serial",cJSON_CreateString(data->serial));
   cJSON_AddItemToObject(fftop,"fwversion",cJSON_CreateNumber(data->fwVers));
-  cJSON_AddItemToObject(parent,"firefly",fftop);
-}
-
-// ECC - function to return firefly values
-//     - for now hard code in 30 values and assume that the array is big enough
-void getFFvals(double vals[], char **names){
-  for (int i=0; i<38; i++) {
-    vals[i] = ff_vals[i];
-    names[i] = ff_names[i];
+  if( !sr->tag ) cJSON_AddItemToObject(parent,"firefly",fftop);
+  else {
+    char fullkey[128];
+    sprintf(fullkey,"%s%s","firefly",sr->tag);
+    cJSON_AddItemToObject(parent,fullkey,fftop);
   }
 }
+

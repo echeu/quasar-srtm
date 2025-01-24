@@ -29,15 +29,13 @@ int sensorRegister(int nsensorsOnBoard, struct sensorRecord *sensors, int unpack
   return 0;
 }
 
-int sensorInit() {
-	return 0;
-}
+//int sensorInit();
 
 /* This is the universal monitoring routine. */
 static int init=0;
 void sensorMonitor(int doPrint) {
   int is;
-  if( !init ) { sensorInit(); init=1; }
+//  if( !init ) { sensorInit(); init=1; }
 
    /* Read the data directly over the I2C bus */
   if( !unpackBufferOnly ) {

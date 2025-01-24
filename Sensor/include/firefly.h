@@ -24,11 +24,15 @@ extern "C" {
 #define FF25TXONLY 0x50
 #define FF25RXONLY 0x54  /* ??? */
 #define FF10TXRX   0x50  /* ??? */
-
+#define FF25TXRX   0x50
+  
 /* These are the addresses of the I2C registers for the Firefly module pin-base control/status lines */
+/* These are the pair of registers for the V1 SRTM hardware */
 #define FFOutputReg 0x22 /* 2 bits per FF: selectL, resetL */
 #define FFInputReg  0x21 /* 2 bits per FF: presentL, interruptL. Assumed to be FFOutputReg-1 */
-
+/* This is the hardware V2 and later single register */
+#define FFIOReg     0x22
+  
 /* These handle the control and status lines for a full Firefly module */
 int fireflyIsPresent(struct sensorI2CAddress *ffsa);
 int fireflyIsInInterrupt(struct sensorI2CAddress *ffsa);
@@ -90,7 +94,6 @@ struct firefly12 {
 void fireflyInit12(struct sensorI2CAddress *sa);
 void fireflyRead12(struct sensorI2CAddress *sa, void *valueBuffer);
 void fireflyFormat12(struct sensorRecord *sr, struct cJSON *parent);
-void getFFvals(double vals[], char **names);
 
 #ifdef __cplusplus
 }

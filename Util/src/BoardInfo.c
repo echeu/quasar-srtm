@@ -25,6 +25,12 @@ static int initDone=0;
 
 #endif
 
+/* These allow artifical overrides of the actual values */
+static int hasEfuseOverride = 0;
+static int hasDNAOverride = 0;
+static u32 efuseOverride = 0;
+static u32 dnaOverride[3] = {0,0,0};
+
 u8 hasHWInfo() {
 #ifdef __linux__
   if( !initDone ) {
@@ -67,6 +73,8 @@ u8 hwTypeSRTMTester() {
 
 u32 getHWEFuse() {
 #ifdef __linux__
+  if( hasEfuseOverride ) return efuseOverride;
+  
   if( !hasHWInfo() ) return 0;
   return *((u32*)biDevice);
 #else
@@ -102,6 +110,42 @@ u8 getHWSerialNumber() {
 	return ( getHWEFuse() >> 8 ) & 0xFF;
 }
 
+const u32* getUserRegisters() {
+#ifdef __linux__
+  if( !hasHWInfo() ) return 0;
+  return (u32*)biDevice+4;
+#else
+#ifdef XPAR_AXI_BOARDINFO_0_BASEADDR
+	return *(((u32*)(XPAR_AXI_BOARDINFO_0_BASEADDR)+4));
+#else
+	return 0;
+#endif
+#endif
+}
+
+const u32* getFuseDNARaw() {
+#ifdef __linux__
+  if( hasDNAOverride ) return dnaOverride;
+  if( !hasHWInfo() ) return 0;
+  return ((u32*)biDevice)+1;
+#else
+#ifdef XPAR_AXI_BOARDINFO_0_BASEADDR
+	return *(((u32*)(XPAR_AXI_BOARDINFO_0_BASEADDR)+1));
+#else
+	return 0;
+#endif
+#endif
+}
+
+const char* getFuseDNA() {
+  u32 *dna = getFuseDNARaw();
+  if( !dna ) return 0;
+  static char cdna[32];
+  cdna[0]=0;
+  for( int i=2 ; i>=0 ; i-- ) sprintf(cdna,"%s%08x",cdna,dna[i]);
+  return cdna;
+}
+
 const char* getBoardTypeName() {
   /* Is there a memory leak here or not? */
   if( hasHWInfo() ) {
@@ -119,3 +163,14 @@ const char* getBoardTypeName() {
   }
   return "UNKNOWN";
 }
+
+void setHWEFuse( u32 efuseValue ) {
+  hasEfuseOverride = 1;
+  efuseOverride = efuseValue;
+}
+
+void setFuseDNARaw( u32 *dnaValue ) {
+  hasDNAOverride = 1;
+  for( int i=0 ; i<3 ; i++ ) dnaOverride[i] = dnaValue[i];
+}
+

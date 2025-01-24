@@ -20,124 +20,129 @@
 #include "stdio.h"
 
 #include "zynqOnBoard.h"
+#define INCLUDE_PL_IN_PS
 
-#define ERR_BASENAME 1
-#define ERR_SCALE 2
-#define ERR_OFFSET 3
-#define ERR_RAW  4
+static const char* fsBase = "/sys/devices/platform/axi/ffa50000.ams/iio:device1";
 
-/* TODO: Auto-detect this by looking at "name" file if there is ever more than one iio device */
-static const char* fsBase = "/sys/bus/iio/devices/iio:device0";
-
-/* The following is the list of compound information for the "sensors". The commented
- * out list of the individual file name is below. Maybe later change this to read 
- * file names from the fsBase directory, and parse them on the fly to create th
- * list. But for now, just hardcode information.
+/* The list of sensor channel numbers to actual values can be found (as of 2022.x) at
  *
- * These are the files actually found in the iio device list in fsBase
-    "in_temp0_ps_temp_offset",
-    "in_temp0_ps_temp_raw",
-    "in_temp0_ps_temp_scale",
-    "in_temp1_remote_temp_offset",
-    "in_temp1_remote_temp_raw",
-    "in_temp1_remote_temp_scale",
-    "in_temp2_pl_temp_offset",
-    "in_temp2_pl_temp_raw",
-    "in_temp2_pl_temp_scale",
-    "in_voltage0_vcc_pspll0_raw",
-    "in_voltage0_vcc_pspll0_scale",
-    "in_voltage10_vccpsddr_raw",
-    "in_voltage10_vccpsddr_scale",
-    "in_voltage11_vccpsio3_raw",
-    "in_voltage11_vccpsio3_scale",
-    "in_voltage12_vccpsio0_raw",
-    "in_voltage12_vccpsio0_scale",
-    "in_voltage13_vccpsio1_raw",
-    "in_voltage13_vccpsio1_scale",
-    "in_voltage14_vccpsio2_raw",
-    "in_voltage14_vccpsio2_scale",
-    "in_voltage15_psmgtravcc_raw",
-    "in_voltage15_psmgtravcc_scale",
-    "in_voltage16_psmgtravtt_raw",
-    "in_voltage16_psmgtravtt_scale",
-    "in_voltage17_vccams_raw",
-    "in_voltage17_vccams_scale",
-    "in_voltage18_vccint_raw",
-    "in_voltage18_vccint_scale",
-    "in_voltage19_vccaux_raw",
-    "in_voltage19_vccaux_scale",
-    "in_voltage1_vcc_psbatt_raw",
-    "in_voltage1_vcc_psbatt_scale",
-    "in_voltage20_vccvrefp_raw",
-    "in_voltage20_vccvrefp_scale",
-    "in_voltage21_vccvrefn_raw",
-    "in_voltage21_vccvrefn_scale",
-    "in_voltage22_vccbram_raw",
-    "in_voltage22_vccbram_scale",
-    "in_voltage23_vccplintlp_raw",
-    "in_voltage23_vccplintlp_scale",
-    "in_voltage24_vccplintfp_raw",
-    "in_voltage24_vccplintfp_scale",
-    "in_voltage25_vccplaux_raw",
-    "in_voltage25_vccplaux_scale",
-    "in_voltage26_vccams_raw",
-    "in_voltage26_vccams_scale",
-    "in_voltage2_vccint_raw",
-    "in_voltage2_vccint_scale",
-    "in_voltage3_vccbram_raw",
-    "in_voltage3_vccbram_scale",
-    "in_voltage4_vccaux_raw",
-    "in_voltage4_vccaux_scale",
-    "in_voltage5_vcc_psddrpll_raw",
-    "in_voltage5_vcc_psddrpll_scale",
-    "in_voltage6_vccpsintfpddr_raw",
-    "in_voltage6_vccpsintfpddr_scale",
-    "in_voltage7_vccpsintlp_raw",
-    "in_voltage7_vccpsintlp_scale",
-    "in_voltage8_vccpsintfp_raw",
-    "in_voltage8_vccpsintfp_scale",
-    "in_voltage9_vccpsaux_raw",
-    "in_voltage9_vccpsaux_scale",
+ *    https://github.com/Xilinx/linux-xlnx/blob/master/Documentation/devicetree/bindings/iio/adc/xlnx%2Czynqmp-ams.yaml
+ *
+ * N.B. We use only channels through 29 in this document because we have no 
+ * additional analog inputs. This URL also has a link to the definitions 
+ * in earlier Xilinx releases.
+ *
+ * Channels 0 - 6 AMS
+ * Channels 7 - 19 PS Sysmon
+ * Channel 20 - 50 PL Sysmon
+ *
+ * Here is the file name list seen by 'ls -lha $fsBase' with fsBase defined above.
+ *
+ *   "in_voltage0_raw"    -- VCC_PSPLL
+ *   "in_voltage0_scale"
+ *   "in_voltage1_raw"    -- V(battery), not on SRTM. ignore
+ *   "in_voltage1_scale"
+ *   "in_voltage2_raw"    -- VCCINT
+ *   "in_voltage2_scale"
+ *   "in_voltage3_raw"    -- VCCBRAM
+ *   "in_voltage3_scale"
+ *   "in_voltage4_raw"    -- VCCAUX
+ *   "in_voltage4_scale"
+ *   "in_voltage5_raw"    -- VCC_PSDDR_PLL
+ *   "in_voltage5_scale"
+ *   "in_voltage6_raw"    -- VCC_PSINTFP_DDR
+ *   "in_voltage6_scale"
+ *   "in_temp7_input"     -- PS LPD
+ *   "in_temp7_offset"
+ *   "in_temp7_raw"
+ *   "in_temp7_scale"
+ *   "in_temp8_input"     -- temp8 Not implemented on SRTM
+ *   "in_temp8_offset"
+ *   "in_temp8_raw"
+ *   "in_temp8_scale"
+ *   "in_voltage9_raw"    -- VCC PS LPD Supply 1
+ *   "in_voltage9_scale"
+ *   "in_voltage10_raw"   -- VCC PS LPD Supply 2
+ *   "in_voltage10_scale"
+ *   "in_voltage11_raw"   -- PS AUX ref Supply 3
+ *   "in_voltage11_scale"
+ *   "in_voltage12_raw"   -- VCC DDR IO
+ *   "in_voltage12_scale"
+ *   "in_voltage13_raw"   -- PS Bank 503
+ *   "in_voltage13_scale"
+ *   "in_voltage14_raw"   -- PS Bank 500
+ *   "in_voltage14_scale"
+ *   "in_voltage15_raw"   -- VCCO_PSIO1
+ *   "in_voltage15_scale"
+ *   "in_voltage16_raw"   -- VCCO_PSIO2
+ *   "in_voltage16_scale"
+ *   "in_voltage17_raw"   -- VCC_PS_GTR
+ *   "in_voltage17_scale"
+ *   "in_voltage18_raw"   -- VTT_PS_GTR
+ *   "in_voltage18_scale"
+ *   "in_voltage19_raw"   -- VCC_PSADC (?)
+ *   "in_voltage19_scale"
+ *   "in_temp20_input"    -- PL
+ *   "in_temp20_offset"
+ *   "in_temp20_raw"
+ *   "in_temp20_scale"
+ *   "in_voltage21_raw"   -- PL VCCINT
+ *   "in_voltage21_scale"
+ *   "in_voltage22_raw"   -- PL VCCAUX
+ *   "in_voltage22_scale"
+ *   "in_voltage23_raw"   -- VREF_P = ?, not connected; internal voltage reference here.
+ *   "in_voltage23_scale"
+ *   "in_voltage24_raw"   -- VREF_N = 0, not connected
+ *   "in_voltage24_scale"
+ *   "in_voltage25_raw"   -- PL VCCBRAM
+ *   "in_voltage25_scale"
+ *   "in_voltage26_raw"   -- VCC_PSINTLP (Supply 4)
+ *   "in_voltage26_scale"
+ *   "in_voltage27_raw"   -- VCC_PSINTFP (Supply 5)
+ *   "in_voltage27_scale"
+ *   "in_voltage28_raw"   -- PS VCCAUX
+ *   "in_voltage28_scale"
+ *   "in_voltage29_raw"   -- PL VCCADC
+ *   "in_voltage29_scale"
 */
 
 static struct zynqDataRecord zynqDataRecs[] = {
   /* The 3 temperatures */
-  {"in_temp0_ps_temp","PS temp",1.0,0.0,0,0.0,0,ZYNQ_INTERNAL_TEMPERATURE},
-  {"in_temp1_remote_temp","remote temp",1.0,0.0,0,0.0,0,ZYNQ_INTERNAL_TEMPERATURE},
-  {"in_temp2_pl_temp","PL temp",1.0,0.0,0,0.0,0,ZYNQ_INTERNAL_TEMPERATURE},
+  {"in_temp7","PS LPD temp",1.0,0.0,0,0.0,0,ZYNQ_INTERNAL_TEMPERATURE},
+  {"in_temp20","PL temp",1.0,0.0,0,0.0,0,ZYNQ_INTERNAL_TEMPERATURE},
+  //{"in_temp8","PS FPD temp",1.0,0.0,0,0.0,0,ZYNQ_INTERNAL_TEMPERATURE}, /* This not on SRTM */
   /* The 27! voltages, many of which are redundant. */
-  {"in_voltage0_vcc_pspll0",0,1.0,0.0,0,0.0,0,ZYNQ_INTERNAL_VOLTAGE},
-  {"in_voltage1_vcc_psbatt",0,1.0,0.0,0,0.0,0,ZYNQ_INTERNAL_VOLTAGE},
-  {"in_voltage2_vccint",0,1.0,0.0,0,0.0,0,ZYNQ_INTERNAL_VOLTAGE},
-  {"in_voltage3_vccbram",0,1.0,0.0,0,0.0,0,ZYNQ_INTERNAL_VOLTAGE},
-  {"in_voltage4_vccaux",0,1.0,0.0,0,0.0,0,ZYNQ_INTERNAL_VOLTAGE},
-  {"in_voltage5_vcc_psddrpll",0,1.0,0.0,0,0.0,0,ZYNQ_INTERNAL_VOLTAGE},
-  {"in_voltage6_vccpsintfpddr",0,1.0,0.0,0,0.0,0,ZYNQ_INTERNAL_VOLTAGE},
-  {"in_voltage7_vccpsintlp",0,1.0,0.0,0,0.0,0,ZYNQ_INTERNAL_VOLTAGE},
-  {"in_voltage8_vccpsintfp",0,1.0,0.0,0,0.0,0,ZYNQ_INTERNAL_VOLTAGE},
-  {"in_voltage9_vccpsaux",0,1.0,0.0,0,0.0,0,ZYNQ_INTERNAL_VOLTAGE},
-  {"in_voltage10_vccpsddr",0,1.0,0.0,0,0.0,0,ZYNQ_INTERNAL_VOLTAGE},
-  {"in_voltage11_vccpsio3",0,1.0,0.0,0,0.0,0,ZYNQ_INTERNAL_VOLTAGE},
-  {"in_voltage12_vccpsio0",0,1.0,0.0,0,0.0,0,ZYNQ_INTERNAL_VOLTAGE},
-  {"in_voltage13_vccpsio1",0,1.0,0.0,0,0.0,0,ZYNQ_INTERNAL_VOLTAGE},
-  {"in_voltage14_vccpsio2",0,1.0,0.0,0,0.0,0,ZYNQ_INTERNAL_VOLTAGE},
-  {"in_voltage15_psmgtravcc",0,1.0,0.0,0,0.0,0,ZYNQ_INTERNAL_VOLTAGE},
-  {"in_voltage16_psmgtravtt",0,1.0,0.0,0,0.0,0,ZYNQ_INTERNAL_VOLTAGE},
-  {"in_voltage17_vccams",0,1.0,0.0,0,0.0,0,ZYNQ_INTERNAL_VOLTAGE},
-  {"in_voltage18_vccint",0,1.0,0.0,0,0.0,0,ZYNQ_INTERNAL_VOLTAGE},
-  {"in_voltage19_vccaux",0,1.0,0.0,0,0.0,0,ZYNQ_INTERNAL_VOLTAGE},
-  {"in_voltage20_vccvrefp",0,1.0,0.0,0,0.0,0,ZYNQ_INTERNAL_VOLTAGE},
-  {"in_voltage21_vccvrefn",0,1.0,0.0,0,0.0,0,ZYNQ_INTERNAL_VOLTAGE},
-  {"in_voltage22_vccbram",0,1.0,0.0,0,0.0,0,ZYNQ_INTERNAL_VOLTAGE},
-  {"in_voltage23_vccplintlp",0,1.0,0.0,0,0.0,0,ZYNQ_INTERNAL_VOLTAGE},
-  {"in_voltage24_vccplintfp",0,1.0,0.0,0,0.0,0,ZYNQ_INTERNAL_VOLTAGE},
-  {"in_voltage25_vccplaux",0,1.0,0.0,0,0.0,0,ZYNQ_INTERNAL_VOLTAGE},
-  {"in_voltage26_vccams",0,1.0,0.0,0,0.0,0,ZYNQ_INTERNAL_VOLTAGE},
+  {"in_voltage0","VCC_PSPLL0",1.0,0.0,0,0.0,0,ZYNQ_INTERNAL_VOLTAGE},
+  //{"in_voltage1","VCC_PSBATT",1.0,0.0,0,0.0,0,ZYNQ_INTERNAL_VOLTAGE},   /* This not on SRTM */
+  {"in_voltage2","VCCINT",1.0,0.0,0,0.0,0,ZYNQ_INTERNAL_VOLTAGE},
+  {"in_voltage3","VCCBRAM",1.0,0.0,0,0.0,0,ZYNQ_INTERNAL_VOLTAGE},
+  {"in_voltage4","VCCAUX",1.0,0.0,0,0.0,0,ZYNQ_INTERNAL_VOLTAGE},
+  {"in_voltage5","VCC_PSDDRPLL",1.0,0.0,0,0.0,0,ZYNQ_INTERNAL_VOLTAGE},
+  {"in_voltage6","VCC_PSINTFP_DDR",1.0,0.0,0,0.0,0,ZYNQ_INTERNAL_VOLTAGE},
+  {"in_voltage9","VCC_PS_LPD1",1.0,0.0,0,0.0,0,ZYNQ_INTERNAL_VOLTAGE},
+  {"in_voltage10","VCC PS_LPD2",1.0,0.0,0,0.0,0,ZYNQ_INTERNAL_VOLTAGE},
+  {"in_voltage11","PS AUX3",1.0,0.0,0,0.0,0,ZYNQ_INTERNAL_VOLTAGE},
+  {"in_voltage12","VCC_DDR_IO",1.0,0.0,0,0.0,0,ZYNQ_INTERNAL_VOLTAGE},
+  {"in_voltage13","PS_Bank_503",1.0,0.0,0,0.0,0,ZYNQ_INTERNAL_VOLTAGE},
+  {"in_voltage14","PS_Bank_500",1.0,0.0,0,0.0,0,ZYNQ_INTERNAL_VOLTAGE},
+  {"in_voltage15","VCCO_PSIO1",1.0,0.0,0,0.0,0,ZYNQ_INTERNAL_VOLTAGE},
+  {"in_voltage16","VCCO_PSIO1",1.0,0.0,0,0.0,0,ZYNQ_INTERNAL_VOLTAGE},
+  {"in_voltage17","VCC_PS_GTR",1.0,0.0,0,0.0,0,ZYNQ_INTERNAL_VOLTAGE},
+#ifdef INCLUDE_PL_IN_PS
+  {"in_voltage18","VTT_PS_GTR",1.0,0.0,0,0.0,0,ZYNQ_INTERNAL_VOLTAGE},
+  {"in_voltage19","VCC_PS_ADC",1.0,0.0,0,0.0,0,ZYNQ_INTERNAL_VOLTAGE},
+  {"in_voltage21","VCC_PL_INT",1.0,0.0,0,0.0,0,ZYNQ_INTERNAL_VOLTAGE},
+  {"in_voltage22","VCC_PL_AUX",1.0,0.0,0,0.0,0,ZYNQ_INTERNAL_VOLTAGE},
+  {"in_voltage23","VREF_P",1.0,0.0,0,0.0,0,ZYNQ_INTERNAL_VOLTAGE},
+  {"in_voltage24","VREF_N",1.0,0.0,0,0.0,0,ZYNQ_INTERNAL_VOLTAGE},
+  {"in_voltage25","VCC_PL_BRAM",1.0,0.0,0,0.0,0,ZYNQ_INTERNAL_VOLTAGE},
+  {"in_voltage26","VCC_PS_INTLP4",1.0,0.0,0,0.0,0,ZYNQ_INTERNAL_VOLTAGE},
+  {"in_voltage27","VCC_PS_INTFP5",1.0,0.0,0,0.0,0,ZYNQ_INTERNAL_VOLTAGE},
+  {"in_voltage28","VCC_PS_AUX",1.0,0.0,0,0.0,0,ZYNQ_INTERNAL_VOLTAGE},
+  {"in_voltage29","VCC_PL_ADC",1.0,0.0,0,0.0,0,ZYNQ_INTERNAL_VOLTAGE},
+#endif
   {0,0,1.0,0.0,0,0.0,-1} /* EOR */
 };
-
-static double zynq_vals[100];
-static char*  zynq_names[100];
 
 static char* readZynqConstantString( const char *basename, const char *tag ) {
   static char valueString[128]; /* Excessively long for an int or float! */
@@ -181,7 +186,7 @@ static void doInitIntoUserBuffer(void *valueBuffer) {
   struct zynqOnBoard *sbf = (struct zynqOnBoard *)valueBuffer;
   sbf->nzs = nrecs;
   sbf->zynqData = zynqDataRecs;
-  /*printf("%s in %s, found %d records\n",__FILE__,__func__,nrecs);*/
+  //printf("%s in %s, found %d records\n",__FILE__,__func__,nrecs);
 
   /* Check text, and get the scale and (for temperatures) the offset into the record. */
   for( int i=0 ; i<nrecs ; i++ ) {
@@ -251,20 +256,12 @@ void zynqOnBoardFormat(struct sensorRecord *sr, struct cJSON *parent) {
   for( int i=0 ; i<zdr->nzs ; i++ ) {
     struct zynqDataRecord *cur = &(zdr->zynqData[i]);
     if( !cur->err ) {
-      if( cur->easyname ) {
-        cJSON_AddItemToObject(zynq,cur->easyname,cJSON_CreateNumber(cur->value));
-	zynq_vals[i+5] = cur->value;
-        zynq_names[i+5] = cur->easyname;
-      }
-      else {
-	cJSON_AddItemToObject(zynq,cur->basename,cJSON_CreateNumber(cur->value));
-        zynq_vals[i+5] = cur->value;
-        zynq_names[i+5] = cur->basename;
-      }
+      if( cur->easyname ) cJSON_AddItemToObject(zynq,cur->easyname,cJSON_CreateNumber(cur->value));
+      else cJSON_AddItemToObject(zynq,cur->basename,cJSON_CreateNumber(cur->value));
     }
     else cJSON_AddItemToObject(zynq,cur->basename,cJSON_CreateString("ERROR"));
   }
-  cJSON_AddItemToObject(parent,"zynq",zynq);
+  cJSON_AddItemToObject(parent,"zynqps",zynq);
 
   /* And this is a LArC-like minimal "fpga" record */
   cJSON *fmt = cJSON_CreateObject();
@@ -274,32 +271,11 @@ void zynqOnBoardFormat(struct sensorRecord *sr, struct cJSON *parent) {
   sprintf(vccint_str,"%0.3f",zdr->zynqData[5].value);
   sprintf(vccaux_str,"%0.3f",zdr->zynqData[7].value);
   sprintf(vBRAM_str,"%0.3f",zdr->zynqData[6].value);
-  cJSON_AddNumberToObject(fmt, "up", zdr->uptime);
+  cJSON_AddNumberToObject(fmt, "up", round(zdr->uptime));
   cJSON_AddStringToObject(fmt, "temp", temp_str);
   cJSON_AddStringToObject(fmt, "vint", vccint_str);
   cJSON_AddStringToObject(fmt, "vaux", vccaux_str);
   cJSON_AddStringToObject(fmt, "vbram", vBRAM_str);
 
-  // ECC - store these values in the first 5 array locations
-  zynq_vals[0] = zdr->uptime;
-  zynq_vals[1] = zdr->zynqData[0].value;
-  zynq_vals[2] = zdr->zynqData[5].value;
-  zynq_vals[3] = zdr->zynqData[7].value;
-  zynq_vals[4] = zdr->zynqData[6].value;
-  zynq_names[0] = "up";
-  zynq_names[1] = "temp";
-  zynq_names[2] = "vint";
-  zynq_names[3] = "vaux";
-  zynq_names[4] = "vbram";
-
-}
-
-// ECC - function to return zynq values
-//     - for now hard code in 30 values and assume that the array is big enough
-void getzynqvals(double vals[], char **names){
-  for (int i=0; i<35; i++) {
-    vals[i] = zynq_vals[i];
-    names[i] = zynq_names[i];
-  }
 }
 

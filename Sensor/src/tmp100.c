@@ -52,7 +52,7 @@ void tmp100Read(struct sensorI2CAddress *sa, void *valueBuffer) {
   dest->noUpd = 0;
   dest->raw = (data[0]<<4) | (data[1]>>4);
   dest->celsius = dest->raw/16.0;
-  //printf("Raw: 0x%04x, Converted: %f\n",dest->raw,dest->celsius);
+  // printf("Raw: 0x%04x, Converted: %f\n",dest->raw,dest->celsius);
 }
 
 void tmp100Format(struct sensorRecord *tmpSensor, struct cJSON *parent) {

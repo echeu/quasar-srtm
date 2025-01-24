@@ -28,6 +28,15 @@ u8 getHWRev();
 u8 getHWVer();
 u8 getHWVerRev();
 u8 getHWSerialNumber();
+
+const u32* getFuseDNARaw();
+const char* getFuseDNA();
+const u32* getUserRegisters();
+
 const char* getBoardTypeName();
+
+/* These allow us to manually override the eFuse and DNA info for debugging */
+void setHWEFuse( u32 efuseValue );
+void setFuseDNARaw( u32 *dnaValue );
 
 #endif

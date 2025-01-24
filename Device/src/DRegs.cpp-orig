@@ -53,7 +53,6 @@
 #include "sensorI2C.h"
 #include "sensorData.h"
 #include "sensorSRTM.h"
-#include "sensorInitSRTM_hw2.h"
 
 #include "SysInfo.h"
 #include "cJSON.h"
@@ -242,7 +241,6 @@ DRegs::DRegs (
 }
 
 /* sample dtr */
-
 DRegs::~DRegs ()
 {
 }
@@ -360,11 +358,45 @@ void DRegs::update() {
     LOG(Log::INF) << "Register setval: " << std::hex << saved_setval;
     first = 0;
 
-    // ECC - only do the sensor stuff for now
-    sensorInitSRTM_hw2();
-    LOG(Log::INF) << "Initialized sensor stuff.";
+    // i2c initialization
+    int hasIPMC = 0;
+    i2cBusRegister(2,srtmBuses);
+    sensorRegister(nsensors,sensors,hasIPMC);
+    LOG(Log::INF) << "Initialized i2c buses.";
   }
 
+
+	// Map the BRAM physical address into user space getting a virtual address for it
+  if ((fd = open("/dev/mem", O_RDWR | O_SYNC)) != -1) {
+    bram32_vptr = (OpcUa_UInt32 *)mmap(NULL, bram_size, PROT_READ|PROT_WRITE, MAP_SHARED, fd, bram_pbase);
+
+    if (maxprint < 3) {
+      std::cout << "bram_pbase: " << std::hex << bram_pbase << std::endl;
+    }
+
+    // if the value has changed, then we want to write it to memory
+    if (setval != saved_setval) {
+      LOG(Log::INF) << "Changing register value to: " << std::hex << setval;
+      bram32_vptr[0] = setval;
+      saved_setval = setval;
+    }
+
+    val = bram32_vptr[0];
+    // copy from axi-bus memory to the spi registers in opc-ua
+    for (int i=0; i<nspi; i++) {
+      spi[i] = bram32_vptr[i];
+    }
+    close(fd);
+  }
+
+  if (maxprint < 3) {
+    std::cout << "SPI vals - iteration: " << maxprint << std::endl;
+    for (int i=0; i<nspi; i++) {
+      if ( !(i%6) && i!=0 ) std::cout << std::endl;
+      std::cout << std::hex << std::setw(4) << spi[i] << " ";
+    }
+    std::cout << std::endl;
+  }
 
   /* Get i2c data */
   sensorMonitor(0);
@@ -375,14 +407,27 @@ void DRegs::update() {
   sysinfoFormat(top);
   sensorFormat(top);
 
-  // ECC - open file for output --- This is temporary to check that it works
-  FILE *json_file = fopen("SRTM-sensor.output.txt","w");
-  fprintf(json_file, cJSON_Print(top));
-  fclose(json_file);
-
   // Print out i2c values using JSON 
   //printf("%s\n",cJSON_Print(top));
 
+  // ECC - i2c stuff
+  //     - try to get information using array access of sensors
+
+  /* This isn't really necessary
+  int nsensor = sensorCount();
+  for (int is=0; is<nsensor; is++) {
+    const struct sensorRecord *record = sensorGet(is);
+    int isval = *(int*)record->valueBuffer;
+    if (maxprint < 5) std::cout << "isval: " << isval << " name: " << record->name << std::endl;
+  }
+  */
+
+  // Get Zynq values and Firefly values (see Sensor/src/zynqOnBoard.c and Sensor/src/firefly.c).
+  int maxvals=40;
+  double vals[maxvals], ff_vals[maxvals];
+  char *names[maxvals], *ff_names[maxvals];
+  getzynqvals(vals, names);
+  getFFvals(ff_vals, ff_names);
 
   /*
   if (maxprint < 3) {
@@ -399,7 +444,6 @@ void DRegs::update() {
 
   maxprint++;
 
-  /******
   // Push the values to the OpcUa client display
   // See Sensor/src/firefly.c for definitions
   // And see Design/Design.xml for names of address space links
@@ -505,7 +549,7 @@ void DRegs::update() {
       }
     }
   }
-  ************/
+  
 
 }
 
@@ -518,5 +562,3 @@ void DRegs::update() {
 // 3333333333333333333333333333333333333333333333333333333333333333333333333
 
 }
-
-

@@ -16,7 +16,8 @@
 #include "sensorI2C.h"
 
 /* These are the calibration values for the HL-LHC system(s). This would be soooo much easier in C++ */
-const float* c_zynq_diode() { static const float cvals[] = {0.22,345.0}; return cvals; }
+const float* c_zynq_diode() { static const float cvals[] = {0.315,488.0}; return cvals; }
+/* OBSOLETE, 1/1024 const float* c_zynq_diode() { static const float cvals[] = {0.22,345.0}; return cvals; } */
 const float* c_ltm4628() { static const float cvals[] = {0.22,242.0}; return cvals; }  /* Also for ltm4616 */
 const float* c_ltm4630() { static const float cvals[] = {0.25,317.0}; return cvals; }  /* Also for ltm4650 */
 
@@ -53,11 +54,11 @@ void ltc2945Read(struct sensorI2CAddress *sa, void *valueBuffer) {
   if( sa->params ) {
     float vin = dest->rawADIN;
     float *calib = (float *)(sa->params());
-    //printf("params = %p, calib = %p\n",sa->params,calib);
+    // printf("params = %p, calib = %p\n",sa->params,calib);
     float slope = calib[0];       // FPGA = 0.22, ltm4628/16 = 0.22, ltm4628/50 = 0.25
     float offset = calib[1];     // FPGA = 345.,            = 242.,              327
     float temperature = offset - vin*slope;
-    //printf("data = 0x%02x/0x%02x raw = %d, vin = %f\n",data[0x28],data[0x29],dest->rawADIN,temperature);
+    // printf("data = 0x%02x/0x%02x raw = %d, vin = %f\n",data[0x28],data[0x29],dest->rawADIN,temperature);
     dest->temperature = temperature;
   }
   else { /* Use the Phase I calibration */
@@ -91,7 +92,7 @@ void ltc2945Read(struct sensorI2CAddress *sa, void *valueBuffer) {
     float slope = calib[0];       // FPGA = 0.22, ltm4628/16 = 0.22, ltm4628/50 = 0.25
     float offset = calib[1];     // FPGA = 345.,            = 242.,              327
     float temperature = offset - vin*slope;
-    //printf("data = 0x%02x/0x%02x raw = %d, vin = %f\n",data[0x28],data[0x29],dest->rawADIN,temperature);
+    // printf("data = 0x%02x/0x%02x raw = %d, vin = %f\n",data[0x28],data[0x29],dest->rawADIN,temperature);
     dest->temperature = temperature;
   }
   else { /* Use the Phase I calibration */
@@ -101,7 +102,7 @@ void ltc2945Read(struct sensorI2CAddress *sa, void *valueBuffer) {
   }    
 #endif
   
-  //printf("ltc2945Read: voltage = %.2f, current = %.2f, temperature = %.2f\n",dest->voltage,dest->current,dest->temperature);
+  // printf("ltc2945Read: voltage = %.2f, current = %.2f, temperature = %.2f\n",dest->voltage,dest->current,dest->temperature);
 }
 
 
@@ -114,6 +115,9 @@ void ltc2945Format(struct sensorRecord *ltcSensor, struct cJSON *parent) {
   cJSON_AddItemToArray(viarr,cJSON_CreateNumber(tmp->voltage) );
   cJSON_AddItemToArray(viarr,cJSON_CreateNumber(tmp->current) );
   cJSON_AddItemToArray(viarr,cJSON_CreateNumber(tmp->temperature) );
-  cJSON_AddItemToObject(parent,"ltc2945",viarr);
+  char fullkey[128];
+  if( ltcSensor->tag ) sprintf(fullkey,"%s%s","ltc2945",ltcSensor->tag);
+  else sprintf(fullkey,"%s","ltc2945");
+  cJSON_AddItemToObject(parent,fullkey,viarr);
 }
 

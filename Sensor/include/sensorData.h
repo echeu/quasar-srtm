@@ -73,6 +73,7 @@ struct sensorRecord {
   struct sensorIPMCAddress saIPMC; /* For internal sensor data buffer. See, e.g., SensorAccess.c */
   void *valueBuffer;               /* Address of the storage for the raw and */
   char *name;                      /* formatted data. And a text name */
+  char *tag;                       /* optional tag to disambiguate. default is null and unused */
 };
 
 

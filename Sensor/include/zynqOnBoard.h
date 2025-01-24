@@ -21,6 +21,12 @@ extern "C" {
 #define ZYNQ_INTERNAL_TEMPERATURE 0
 #define ZYNQ_INTERNAL_VOLTAGE 1
 
+#define ERR_BASENAME 1
+#define ERR_SCALE 2
+#define ERR_OFFSET 3
+#define ERR_RAW  4
+
+
 struct zynqDataRecord {
   char *basename;
   char *easyname;
@@ -42,7 +48,6 @@ struct zynqOnBoard {
 void zynqOnBoardInit(struct sensorI2CAddress *sa);
 void zynqOnBoardRead(struct sensorI2CAddress *sa, void *valueBuffer);
 void zynqOnBoardFormat(struct sensorRecord *sr, struct cJSON *parent);
-  void getzynqvals(double vals[], char **names);
 
 #ifdef __cplusplus
 }
