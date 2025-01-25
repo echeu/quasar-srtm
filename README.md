@@ -36,6 +36,7 @@ Building the source code can be done simply by doing:
 
 ## Running
 Copy the contents of the whole directory structure to the target board
+- scp -r quasar-srtm root@<IP address>:/home/root
 - Modify the config.xml file (change the register address)
     - At this moment the address field needs to be in decimal (not hex).
 - ./OpcUaServer
