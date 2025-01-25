@@ -27,7 +27,7 @@ See [README-docker.md](README-docker.md) for more information about setting up t
 To run this on the SRTM, you will need to build this using Docker (or similar platform). See [README-docker.md](README-docker.md).
 
 Building the source code can be done simply by doing:
-  - git clone https://github.com/echeu/quasar-srtm.git
+  - git clone git@github.com/echeu/quasar-srtm.git
   - cd quasar-srtm
   - ./quasar.py enable_module open62541-compat v1.3.6
   - ./quasar.py set_build_config ./open62541_config.cmake
@@ -36,6 +36,7 @@ Building the source code can be done simply by doing:
 
 ## Running
 Copy the contents of the whole directory structure to the target board
+- scp -r quasar-srtm root@<IP address>:/home/root
 - Modify the config.xml file (change the register address)
     - At this moment the address field needs to be in decimal (not hex).
 - ./OpcUaServer
