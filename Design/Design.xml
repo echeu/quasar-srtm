@@ -15,289 +15,44 @@
   		initialStatus="OpcUa_Good" initialValue="0">
   	</d:cachevariable>
   	<d:cachevariable initializeWith="valueAndStatus"
-  		dataType="OpcUa_UInt32" name="SPI00" nullPolicy="nullAllowed"
+  		dataType="OpcUa_Double" name="SRTM_v00" nullPolicy="nullAllowed"
   		addressSpaceWrite="forbidden" initialStatus="OpcUa_Good"
   		initialValue="0">
   	</d:cachevariable>
   	<d:cachevariable initializeWith="valueAndStatus"
-  		dataType="OpcUa_UInt32" name="SPI01" nullPolicy="nullAllowed"
+  		dataType="OpcUa_Double" name="SRTM_v01" nullPolicy="nullAllowed"
   		addressSpaceWrite="forbidden" initialStatus="OpcUa_Good"
   		initialValue="0">
   	</d:cachevariable>
   	<d:cachevariable initializeWith="valueAndStatus"
-  		dataType="OpcUa_UInt32" name="SPI02" nullPolicy="nullAllowed"
+  		dataType="OpcUa_Double" name="SRTM_v02" nullPolicy="nullAllowed"
   		addressSpaceWrite="forbidden" initialStatus="OpcUa_Good"
   		initialValue="0">
   	</d:cachevariable>
   	<d:cachevariable initializeWith="valueAndStatus"
-  		dataType="OpcUa_UInt32" name="SPI03" nullPolicy="nullAllowed"
+  		dataType="OpcUa_Double" name="SRTM_v03" nullPolicy="nullAllowed"
   		addressSpaceWrite="forbidden" initialStatus="OpcUa_Good"
   		initialValue="0">
   	</d:cachevariable>
   	<d:cachevariable initializeWith="valueAndStatus"
-  		dataType="OpcUa_UInt32" name="SPI04" nullPolicy="nullAllowed"
+  		dataType="OpcUa_Double" name="SRTM_v04" nullPolicy="nullAllowed"
   		addressSpaceWrite="forbidden" initialStatus="OpcUa_Good"
   		initialValue="0">
   	</d:cachevariable>
   	<d:cachevariable initializeWith="valueAndStatus"
-  		dataType="OpcUa_UInt32" name="SPI05" nullPolicy="nullAllowed"
+  		dataType="OpcUa_Double" name="SRTM_v05" nullPolicy="nullAllowed"
   		addressSpaceWrite="forbidden" initialStatus="OpcUa_Good"
   		initialValue="0">
   	</d:cachevariable>
   	<d:cachevariable initializeWith="valueAndStatus"
-  		dataType="OpcUa_UInt32" name="SPI06" nullPolicy="nullAllowed"
+  		dataType="OpcUa_Double" name="SRTM_v06" nullPolicy="nullAllowed"
   		addressSpaceWrite="forbidden" initialStatus="OpcUa_Good"
   		initialValue="0">
   	</d:cachevariable>
   	<d:cachevariable initializeWith="valueAndStatus"
-  		dataType="OpcUa_UInt32" name="SPI07" nullPolicy="nullAllowed"
+  		dataType="OpcUa_Double" name="SRTM_v07" nullPolicy="nullAllowed"
   		addressSpaceWrite="forbidden" initialStatus="OpcUa_Good"
   		initialValue="0">
-  	</d:cachevariable>
-  	<d:cachevariable initializeWith="valueAndStatus"
-  		dataType="OpcUa_UInt32" name="SPI08" nullPolicy="nullAllowed"
-  		addressSpaceWrite="forbidden" initialStatus="OpcUa_Good"
-  		initialValue="0">
-  	</d:cachevariable>
-  	<d:cachevariable initializeWith="valueAndStatus"
-  		dataType="OpcUa_UInt32" name="SPI09" nullPolicy="nullAllowed"
-  		addressSpaceWrite="forbidden" initialStatus="OpcUa_Good"
-  		initialValue="0">
-  	</d:cachevariable>
-  	<d:cachevariable initializeWith="valueAndStatus"
-  		dataType="OpcUa_UInt32" name="SPI10" nullPolicy="nullAllowed"
-  		addressSpaceWrite="forbidden" initialStatus="OpcUa_Good"
-  		initialValue="0">
-  	</d:cachevariable>
-  	<d:cachevariable initializeWith="valueAndStatus"
-  		dataType="OpcUa_UInt32" name="SPI11" nullPolicy="nullAllowed"
-  		addressSpaceWrite="forbidden" initialStatus="OpcUa_Good"
-  		initialValue="0">
-  	</d:cachevariable>
-  	<d:cachevariable initializeWith="valueAndStatus"
-  		dataType="OpcUa_UInt32" name="SPI12" nullPolicy="nullAllowed"
-  		addressSpaceWrite="forbidden" initialStatus="OpcUa_Good"
-  		initialValue="0">
-  	</d:cachevariable>
-  	<d:cachevariable initializeWith="valueAndStatus"
-  		dataType="OpcUa_UInt32" name="SPI13" nullPolicy="nullAllowed"
-  		addressSpaceWrite="forbidden" initialStatus="OpcUa_Good"
-  		initialValue="0">
-  	</d:cachevariable>
-  	<d:cachevariable initializeWith="valueAndStatus"
-  		dataType="OpcUa_UInt32" name="SPI14" nullPolicy="nullAllowed"
-  		addressSpaceWrite="forbidden" initialStatus="OpcUa_Good"
-  		initialValue="0">
-  	</d:cachevariable>
-  	<d:cachevariable initializeWith="valueAndStatus"
-  		dataType="OpcUa_UInt32" name="SPI15" nullPolicy="nullAllowed"
-  		addressSpaceWrite="forbidden" initialStatus="OpcUa_Good"
-  		initialValue="0">
-  	</d:cachevariable>
-  	<d:cachevariable initializeWith="valueAndStatus"
-  		dataType="OpcUa_UInt32" name="SPI16" nullPolicy="nullAllowed"
-  		addressSpaceWrite="forbidden" initialStatus="OpcUa_Good"
-  		initialValue="0">
-  	</d:cachevariable>
-  	<d:cachevariable initializeWith="valueAndStatus"
-  		dataType="OpcUa_UInt32" name="SPI17" nullPolicy="nullAllowed"
-  		addressSpaceWrite="forbidden" initialStatus="OpcUa_Good"
-  		initialValue="0">
-  	</d:cachevariable>
-  	<d:cachevariable initializeWith="valueAndStatus"
-  		dataType="OpcUa_UInt32" name="SPI18" nullPolicy="nullAllowed"
-  		addressSpaceWrite="forbidden" initialStatus="OpcUa_Good"
-  		initialValue="0">
-  	</d:cachevariable>
-  	<d:cachevariable initializeWith="valueAndStatus"
-  		dataType="OpcUa_UInt32" name="SPI19" nullPolicy="nullAllowed"
-  		addressSpaceWrite="forbidden" initialStatus="OpcUa_Good"
-  		initialValue="0">
-  	</d:cachevariable>
-  	<d:cachevariable initializeWith="valueAndStatus"
-  		dataType="OpcUa_UInt32" name="SPI20" nullPolicy="nullAllowed"
-  		addressSpaceWrite="forbidden" initialStatus="OpcUa_Good"
-  		initialValue="0">
-  	</d:cachevariable>
-  	<d:cachevariable initializeWith="valueAndStatus"
-  		dataType="OpcUa_UInt32" name="SPI21" nullPolicy="nullAllowed"
-  		addressSpaceWrite="forbidden" initialStatus="OpcUa_Good"
-  		initialValue="0">
-  	</d:cachevariable>
-  	<d:cachevariable initializeWith="valueAndStatus"
-  		dataType="OpcUa_UInt32" name="SPI22" nullPolicy="nullAllowed"
-  		addressSpaceWrite="forbidden" initialStatus="OpcUa_Good"
-  		initialValue="0">
-  	</d:cachevariable>
-  	<d:cachevariable initializeWith="valueAndStatus"
-  		dataType="OpcUa_UInt32" name="SPI23" nullPolicy="nullAllowed"
-  		addressSpaceWrite="forbidden" initialStatus="OpcUa_Good"
-  		initialValue="0">
-  	</d:cachevariable>
-  	<d:cachevariable initializeWith="valueAndStatus"
-  		dataType="OpcUa_UInt32" name="SPI24" nullPolicy="nullAllowed"
-  		addressSpaceWrite="forbidden" initialStatus="OpcUa_Good"
-  		initialValue="0">
-  	</d:cachevariable>
-  	<d:cachevariable initializeWith="valueAndStatus"
-  		dataType="OpcUa_UInt32" name="SPI25" nullPolicy="nullAllowed"
-  		addressSpaceWrite="forbidden" initialStatus="OpcUa_Good"
-  		initialValue="0">
-  	</d:cachevariable>
-  	<d:cachevariable initializeWith="valueAndStatus"
-  		dataType="OpcUa_UInt32" name="SPI26" nullPolicy="nullAllowed"
-  		addressSpaceWrite="forbidden" initialStatus="OpcUa_Good"
-  		initialValue="0">
-  	</d:cachevariable>
-  	<d:cachevariable initializeWith="valueAndStatus"
-  		dataType="OpcUa_UInt32" name="SPI27" nullPolicy="nullAllowed"
-  		addressSpaceWrite="forbidden" initialStatus="OpcUa_Good"
-  		initialValue="0">
-  	</d:cachevariable>
-  	<d:cachevariable initializeWith="valueAndStatus"
-  		dataType="OpcUa_UInt32" name="SPI28" nullPolicy="nullAllowed"
-  		addressSpaceWrite="forbidden" initialStatus="OpcUa_Good"
-  		initialValue="0">
-  	</d:cachevariable>
-  	<d:cachevariable initializeWith="valueAndStatus"
-  		dataType="OpcUa_UInt32" name="SPI29" nullPolicy="nullAllowed"
-  		addressSpaceWrite="forbidden" initialStatus="OpcUa_Good"
-  		initialValue="0">
-  	</d:cachevariable>
-  	<d:cachevariable initializeWith="valueAndStatus"
-  		dataType="OpcUa_UInt32" name="SPI30" nullPolicy="nullAllowed"
-  		addressSpaceWrite="forbidden" initialStatus="OpcUa_Good"
-  		initialValue="0">
-  	</d:cachevariable>
-  	<d:cachevariable initializeWith="valueAndStatus"
-  		dataType="OpcUa_UInt32" name="SPI31" nullPolicy="nullAllowed"
-  		addressSpaceWrite="forbidden" initialStatus="OpcUa_Good"
-  		initialValue="0">
-  	</d:cachevariable>
-  	<d:cachevariable initializeWith="valueAndStatus"
-  		dataType="OpcUa_UInt32" name="SPI32" nullPolicy="nullAllowed"
-  		addressSpaceWrite="forbidden" initialStatus="OpcUa_Good"
-  		initialValue="0">
-  	</d:cachevariable>
-  	<d:cachevariable initializeWith="valueAndStatus"
-  		dataType="OpcUa_UInt32" name="SPI33" nullPolicy="nullAllowed"
-  		addressSpaceWrite="forbidden" initialStatus="OpcUa_Good"
-  		initialValue="0">
-  	</d:cachevariable>
-  	<d:cachevariable initializeWith="valueAndStatus"
-  		dataType="OpcUa_UInt32" name="SPI34" nullPolicy="nullAllowed"
-  		addressSpaceWrite="forbidden" initialStatus="OpcUa_Good"
-  		initialValue="0">
-  	</d:cachevariable>
-  	<d:cachevariable initializeWith="valueAndStatus"
-  		dataType="OpcUa_UInt32" name="SPI35" nullPolicy="nullAllowed"
-  		addressSpaceWrite="forbidden" initialStatus="OpcUa_Good"
-  		initialValue="0">
-  	</d:cachevariable>
-  	<d:cachevariable initializeWith="valueAndStatus"
-  		dataType="OpcUa_UInt32" name="SPI36" nullPolicy="nullAllowed"
-  		addressSpaceWrite="forbidden" initialStatus="OpcUa_Good"
-  		initialValue="0">
-  	</d:cachevariable>
-  	<d:cachevariable initializeWith="valueAndStatus"
-  		dataType="OpcUa_UInt32" name="SPI37" nullPolicy="nullAllowed"
-  		addressSpaceWrite="forbidden" initialStatus="OpcUa_Good"
-  		initialValue="0">
-  	</d:cachevariable>
-  	<d:cachevariable initializeWith="valueAndStatus"
-  		dataType="OpcUa_Double" name="FPGAuptime" nullPolicy="nullAllowed"
-  		addressSpaceWrite="forbidden" initialStatus="OpcUa_Good"
-  		initialValue="0">
-  	</d:cachevariable>
-  	<d:cachevariable initializeWith="valueAndStatus"
-  		dataType="OpcUa_Double" name="FPGAtemp" nullPolicy="nullAllowed"
-  		addressSpaceWrite="forbidden" initialStatus="OpcUa_Good"
-  		initialValue="0">
-  	</d:cachevariable>
-  	<d:cachevariable initializeWith="valueAndStatus"
-  		dataType="OpcUa_Double" name="FPGAvint" nullPolicy="nullAllowed"
-  		addressSpaceWrite="forbidden" initialStatus="OpcUa_Good"
-  		initialValue="0">
-  	</d:cachevariable>
-  	<d:cachevariable initializeWith="valueAndStatus"
-  		dataType="OpcUa_Double" name="FPGAvaux" nullPolicy="nullAllowed"
-  		addressSpaceWrite="forbidden" initialStatus="OpcUa_Good"
-  		initialValue="0">
-  	</d:cachevariable>
-  	<d:cachevariable initializeWith="valueAndStatus"
-  		dataType="OpcUa_Double" name="FPGAvbram" nullPolicy="nullAllowed"
-  		addressSpaceWrite="forbidden" initialStatus="OpcUa_Good"
-  		initialValue="0">
-  	</d:cachevariable>
-  	<d:cachevariable initializeWith="valueAndStatus"
-  		dataType="OpcUa_UInt32" name="FF11txdisable" nullPolicy="nullAllowed"
-  		addressSpaceWrite="forbidden" initialStatus="OpcUa_Good"
-  		initialValue="0">
-  	</d:cachevariable>
-  	<d:cachevariable initializeWith="valueAndStatus"
-  		dataType="OpcUa_Double" name="FF11tempC" nullPolicy="nullAllowed"
-  		addressSpaceWrite="forbidden" initialStatus="OpcUa_Good"
-  		initialValue="0">
-  	</d:cachevariable>
-  	<d:cachevariable initializeWith="valueAndStatus"
-  		dataType="OpcUa_Double" name="FF11rxpower0" nullPolicy="nullAllowed"
-  		addressSpaceWrite="forbidden" initialStatus="OpcUa_Good"
-  		initialValue="0">
-  	</d:cachevariable>
-  	<d:cachevariable initializeWith="valueAndStatus"
-  		dataType="OpcUa_Double" name="FF11rxpower1" nullPolicy="nullAllowed"
-  		addressSpaceWrite="forbidden" initialStatus="OpcUa_Good"
-  		initialValue="0">
-  	</d:cachevariable>
-  	<d:cachevariable initializeWith="valueAndStatus"
-  		dataType="OpcUa_Double" name="FF11rxpower2" nullPolicy="nullAllowed"
-  		addressSpaceWrite="forbidden" initialStatus="OpcUa_Good"
-  		initialValue="0">
-  	</d:cachevariable>
-  	<d:cachevariable initializeWith="valueAndStatus"
-  		dataType="OpcUa_Double" name="FF11rxpower3" nullPolicy="nullAllowed"
-  		addressSpaceWrite="forbidden" initialStatus="OpcUa_Good"
-  		initialValue="0">
-  	</d:cachevariable>
-  	<d:cachevariable initializeWith="valueAndStatus"
-  		dataType="OpcUa_UInt32" name="FF11txwrite"
-  		nullPolicy="nullAllowed" addressSpaceWrite="regular"
-  		initialStatus="OpcUa_Good" initialValue="0">
-  	</d:cachevariable>
-  	<d:cachevariable initializeWith="valueAndStatus"
-  		dataType="OpcUa_UInt32" name="FF12txdisable" nullPolicy="nullAllowed"
-  		addressSpaceWrite="forbidden" initialStatus="OpcUa_Good"
-  		initialValue="0">
-  	</d:cachevariable>
-  	<d:cachevariable initializeWith="valueAndStatus"
-  		dataType="OpcUa_Double" name="FF12tempC" nullPolicy="nullAllowed"
-  		addressSpaceWrite="forbidden" initialStatus="OpcUa_Good"
-  		initialValue="0">
-  	</d:cachevariable>
-  	<d:cachevariable initializeWith="valueAndStatus"
-  		dataType="OpcUa_Double" name="FF12rxpower0" nullPolicy="nullAllowed"
-  		addressSpaceWrite="forbidden" initialStatus="OpcUa_Good"
-  		initialValue="0">
-  	</d:cachevariable>
-  	<d:cachevariable initializeWith="valueAndStatus"
-  		dataType="OpcUa_Double" name="FF12rxpower1" nullPolicy="nullAllowed"
-  		addressSpaceWrite="forbidden" initialStatus="OpcUa_Good"
-  		initialValue="0">
-  	</d:cachevariable>
-  	<d:cachevariable initializeWith="valueAndStatus"
-  		dataType="OpcUa_Double" name="FF12rxpower2" nullPolicy="nullAllowed"
-  		addressSpaceWrite="forbidden" initialStatus="OpcUa_Good"
-  		initialValue="0">
-  	</d:cachevariable>
-  	<d:cachevariable initializeWith="valueAndStatus"
-  		dataType="OpcUa_Double" name="FF12rxpower3" nullPolicy="nullAllowed"
-  		addressSpaceWrite="forbidden" initialStatus="OpcUa_Good"
-  		initialValue="0">
-  	</d:cachevariable>
-  	<d:cachevariable initializeWith="valueAndStatus"
-  		dataType="OpcUa_UInt32" name="FF12txwrite"
-  		nullPolicy="nullAllowed" addressSpaceWrite="regular"
-  		initialStatus="OpcUa_Good" initialValue="0">
   	</d:cachevariable>
   </d:class>
   <d:root>

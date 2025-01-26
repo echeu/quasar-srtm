@@ -14,12 +14,12 @@ See [README-docker.md](README-docker.md) for more information about setting up t
 ## Code development
 - Quasar tutorials can be found here: https://www.youtube.com/channel/UCQdLb4N-CEWrpYROcC-UF6w/videos
 - Adding a register for readout in the OpcUa server required modifications to the following:
-    - bin/config.xml  (contains the register address)
+    - bin/config.xml  (contains the register address, and can be changed at run time)
     - Device/src/DRegs.cpp  (the main code to read/write from the registers and i2c)
     - Device/include/Dregs.h
     - Design/Design.xml  (identifies which values to present to the client)
     - Server/src/QuasarServer.cpp  (main executable loop)
-- To allow firefly values to be displayed on the opcua client just modify the following files
+- To allow sensor values to be displayed on the opcua client just modify the following files
     - Device/src/DRegs.cpp
     - Design/Design.xml
 
