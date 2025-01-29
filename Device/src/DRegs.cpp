@@ -263,6 +263,9 @@ void DRegs::update() {
   }
   ************/
 
+  // ECC - be sure to delete cJSON object
+  cJSON_Delete(top);
+
 }
 
 /* delegators for methods */
