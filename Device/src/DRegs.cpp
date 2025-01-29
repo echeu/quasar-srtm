@@ -150,7 +150,9 @@ void DRegs::update() {
 
   // ECC - open file for output --- This is temporary to check that it works
   FILE *json_file = fopen("SRTM-sensor.output.txt","w");
-  fprintf(json_file, cJSON_Print(top));
+  char *string_json = NULL;
+  string_json = cJSON_Print(top);
+  fprintf(json_file, string_json);
   fclose(json_file);
 
   int tot_sensors = sensorCount();
@@ -172,7 +174,6 @@ void DRegs::update() {
     }
   }
 
-  maxprint++;
 
   // For now just do the first 8 sensors...
   const struct sensorRecord *sdata;
@@ -202,28 +203,69 @@ void DRegs::update() {
   value = *static_cast<float *>(sdata->valueBuffer);
   getAddressSpaceLink()->setSRTM_v07(value,OpcUa_Good);
 
-  /******
+  // Get firefly data
+  cJSON *sensor_json = NULL;
+  cJSON *ff_json = NULL;
+  cJSON *uptime_json = NULL;
+  cJSON *tempC_json = NULL;
+  cJSON *rxpower_json = NULL;
+  cJSON *rxpower0_json, *rxpower1_json, *rxpower2_json, *rxpower3_json;
+  double tempC = -99;
+  double uptime = -99;
+  double rxpower_0, rxpower_1, rxpower_2, rxpower_3;
+
+  sensor_json = cJSON_GetObjectItem(top, "sensor");
+  if (sensor_json) ff_json = cJSON_GetObjectItem(sensor_json, "firefly13");
+  if (ff_json) uptime_json = cJSON_GetObjectItem(ff_json, "uptime");
+  if (ff_json) tempC_json = cJSON_GetObjectItem(ff_json, "tempC");
+  if (ff_json) rxpower_json = cJSON_GetObjectItem(ff_json, "rxpower");
+  if (uptime_json) uptime = uptime_json->valuedouble;
+  if (tempC_json) tempC = tempC_json->valuedouble;
+  if (rxpower_json) rxpower0_json = cJSON_GetArrayItem(rxpower_json,0);
+  if (rxpower_json) rxpower1_json = cJSON_GetArrayItem(rxpower_json,1);
+  if (rxpower_json) rxpower2_json = cJSON_GetArrayItem(rxpower_json,2);
+  if (rxpower_json) rxpower3_json = cJSON_GetArrayItem(rxpower_json,3);
+  if (rxpower0_json) rxpower_0 = rxpower0_json->valuedouble;
+  if (rxpower1_json) rxpower_1 = rxpower1_json->valuedouble;
+  if (rxpower2_json) rxpower_2 = rxpower2_json->valuedouble;
+  if (rxpower3_json) rxpower_3 = rxpower3_json->valuedouble;
+
+  if (maxprint<3) {
+    std::cout << "filefly13 uptime: " << uptime << std::endl;
+    std::cout << "firefly13 tempC: " << tempC << std::endl;
+    std::cout << "firefly13 rxpower_0: " << rxpower_0 << std::endl;
+    std::cout << "firefly13 rxpower_1: " << rxpower_1 << std::endl;
+    std::cout << "firefly13 rxpower_2: " << rxpower_2 << std::endl;
+    std::cout << "firefly13 rxpower_3: " << rxpower_3 << std::endl;
+  }
+
+  maxprint++;
+
+  getAddressSpaceLink()->setFF13_uptime(uptime,OpcUa_Good);
+  getAddressSpaceLink()->setFF13_tempC(tempC,OpcUa_Good);
+  getAddressSpaceLink()->setFF13_rxpower_0(rxpower_0,OpcUa_Good);
+  getAddressSpaceLink()->setFF13_rxpower_1(rxpower_1,OpcUa_Good);
+  getAddressSpaceLink()->setFF13_rxpower_2(rxpower_2,OpcUa_Good);
+  getAddressSpaceLink()->setFF13_rxpower_3(rxpower_3,OpcUa_Good);
+
+  // Get FPGA values
+  cJSON *FPGA_json;
+  cJSON *FPGA_up_json;
+  double FPGA_up = -99;
+  if (sensor_json) FPGA_json = cJSON_GetObjectItem(sensor_json, "fpga");
+  if (FPGA_json) FPGA_up_json = cJSON_GetObjectItem(FPGA_json, "up");
+  if (FPGA_up_json) FPGA_up = FPGA_up_json->valuedouble;
+  getAddressSpaceLink()->setFPGA_up(FPGA_up,OpcUa_Good);
+
+  // ECC - be sure to delete cJSON object
+  cJSON_Delete(top);
+
+ /******
   // Push the values to the OpcUa client display
   // See Sensor/src/firefly.c for definitions
   // And see Design/Design.xml for names of address space links
   getAddressSpaceLink()->setUserReg(val,OpcUa_Good);
 
-  // Firefly 11 stuff
-  getAddressSpaceLink()->setFF11txdisable(ff_vals[3],OpcUa_Good);
-  getAddressSpaceLink()->setFF11tempC(ff_vals[13],OpcUa_Good);
-  getAddressSpaceLink()->setFF11rxpower0(ff_vals[14],OpcUa_Good);
-  getAddressSpaceLink()->setFF11rxpower1(ff_vals[15],OpcUa_Good);
-  getAddressSpaceLink()->setFF11rxpower2(ff_vals[16],OpcUa_Good);
-  getAddressSpaceLink()->setFF11rxpower3(ff_vals[17],OpcUa_Good);
-
-  // Firefly 11 stuff
-# define FF12off 19
-  getAddressSpaceLink()->setFF12txdisable(ff_vals[3+FF12off],OpcUa_Good);
-  getAddressSpaceLink()->setFF12tempC(ff_vals[13+FF12off],OpcUa_Good);
-  getAddressSpaceLink()->setFF12rxpower0(ff_vals[14+FF12off],OpcUa_Good);
-  getAddressSpaceLink()->setFF12rxpower1(ff_vals[15+FF12off],OpcUa_Good);
-  getAddressSpaceLink()->setFF12rxpower2(ff_vals[16+FF12off],OpcUa_Good);
-  getAddressSpaceLink()->setFF12rxpower3(ff_vals[17+FF12off],OpcUa_Good);
 
   // Compare values of FF11 txdisable and set value. Enable/disable if different.
   OpcUa_UInt32 setval_tx = 0;
@@ -263,8 +305,6 @@ void DRegs::update() {
   }
   ************/
 
-  // ECC - be sure to delete cJSON object
-  cJSON_Delete(top);
 
 }
 
