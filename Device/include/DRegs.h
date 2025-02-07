@@ -22,6 +22,7 @@
 #define __DRegs__H__
 
 #include <Base_DRegs.h>
+#include "cJSON.h"
 
 namespace Device
 {
@@ -58,6 +59,9 @@ private:
 
 public:
     void update();
+    void extract_ltc(cJSON *);
+    void extract_firefly(cJSON *);
+    void extract_fpga(cJSON *);
     //    void disableFF11();
     //    void enableFF11();
 
