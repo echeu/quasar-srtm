@@ -22,7 +22,7 @@
 #include "zynqOnBoard.h"
 #define INCLUDE_PL_IN_PS
 
-static const char* fsBase = "/sys/devices/platform/axi/ffa50000.ams/iio:device1";
+static const char* fsBase = "/sys/devices/platform/axi/ffa50000.ams/iio:device0";
 
 /* The list of sensor channel numbers to actual values can be found (as of 2022.x) at
  *

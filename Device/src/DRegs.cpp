@@ -160,24 +160,56 @@ void DRegs::update() {
 
   // print out the sensor data
   if (maxprint < 3) {
-    std::cout << "Number of sensors: " << tot_sensors << std::endl;
-    for (int i=0; i<tot_sensors; i++) {
-      const struct sensorRecord *sensor_data;
-      sensor_data = sensorGet(i);
-      std::cout << "i: " << i << " name: " << sensor_data->name;
-      void *buffer = sensor_data->valueBuffer;
-      if (i<8) {
-	float val1 = *static_cast<float *>(buffer);
-	std::cout << " val1: " << val1 << std::endl;
-      }
-      else std::cout << std::endl;
-    }
+    cJSON_Print(0);
   }
 
 
-  // For now just do the first 8 sensors...
+  // Get the ltc values
   const struct sensorRecord *sdata;
   float value;
+
+  cJSON *sensor_json = NULL;
+  cJSON *ltc_v1p8_json = NULL;
+  cJSON *ltc_v3p3_json = NULL;
+  cJSON *ltc_v2p5_json = NULL;
+  cJSON *ltc_v1p2_json = NULL;
+  cJSON *ltc_v0p9_json = NULL;
+  cJSON *ltc_v0p85_json = NULL;
+  cJSON *ltc_pddr_json = NULL;
+  cJSON *ltc_pff_json = NULL;
+
+  double ltc_v1p8, ltc_v3p3, ltc_v2p5, ltc_v1p2, ltc_v0p9, ltc_v0p85, ltc_pddr, ltc_pff;
+
+  sensor_json = cJSON_GetObjectItem(top, "sensor");
+
+  if (sensor_json) ltc_v1p8_json = cJSON_GetObjectItem(sensor_json, "ltc2945_v1p8");
+  if (sensor_json) ltc_v3p3_json = cJSON_GetObjectItem(sensor_json, "ltc2945_v3p3");
+  if (sensor_json) ltc_v2p5_json = cJSON_GetObjectItem(sensor_json, "ltc2945_v2p5");
+  if (sensor_json) ltc_v1p2_json = cJSON_GetObjectItem(sensor_json, "ltc2945_v1p2");
+  if (sensor_json) ltc_v0p9_json = cJSON_GetObjectItem(sensor_json, "ltc2945_v0p9");
+  if (sensor_json) ltc_v0p85_json = cJSON_GetObjectItem(sensor_json, "ltc2945_v0p85");
+  if (sensor_json) ltc_pddr_json = cJSON_GetObjectItem(sensor_json, "ltc2945_pddr");
+  if (sensor_json) ltc_pff_json = cJSON_GetObjectItem(sensor_json, "ltc2945_pff");
+
+  if (ltc_v1p8_json) ltc_v1p8 = cJSON_GetArrayItem(ltc_v1p8_json,2)->valuedouble;
+  if (ltc_v3p3_json) ltc_v3p3 = cJSON_GetArrayItem(ltc_v3p3_json,2)->valuedouble;
+  if (ltc_v2p5_json) ltc_v2p5 = cJSON_GetArrayItem(ltc_v2p5_json,2)->valuedouble;
+  if (ltc_v1p2_json) ltc_v1p2 = cJSON_GetArrayItem(ltc_v1p2_json,2)->valuedouble;
+  if (ltc_v0p9_json) ltc_v0p9 = cJSON_GetArrayItem(ltc_v0p9_json,2)->valuedouble;
+  if (ltc_v0p85_json)ltc_v0p85 = cJSON_GetArrayItem(ltc_v0p85_json,2)->valuedouble;
+  if (ltc_pddr_json) ltc_pddr = cJSON_GetArrayItem(ltc_pddr_json,2)->valuedouble;
+  if (ltc_pff_json)  ltc_pff = cJSON_GetArrayItem(ltc_pff_json,2)->valuedouble;
+
+  getAddressSpaceLink()->setSRTM_v00(ltc_v1p8,OpcUa_Good);
+  getAddressSpaceLink()->setSRTM_v01(ltc_v3p3,OpcUa_Good);
+  getAddressSpaceLink()->setSRTM_v02(ltc_v2p5,OpcUa_Good);
+  getAddressSpaceLink()->setSRTM_v03(ltc_v1p2,OpcUa_Good);
+  getAddressSpaceLink()->setSRTM_v04(ltc_v0p9,OpcUa_Good);
+  getAddressSpaceLink()->setSRTM_v05(ltc_v0p85,OpcUa_Good);
+  getAddressSpaceLink()->setSRTM_v06(ltc_pddr,OpcUa_Good);
+  getAddressSpaceLink()->setSRTM_v07(ltc_pff,OpcUa_Good);
+
+  /********************
   sdata = sensorGet(0);
   value = *static_cast<float *>(sdata->valueBuffer);
   getAddressSpaceLink()->setSRTM_v00(value,OpcUa_Good);
@@ -202,9 +234,9 @@ void DRegs::update() {
   sdata = sensorGet(7);
   value = *static_cast<float *>(sdata->valueBuffer);
   getAddressSpaceLink()->setSRTM_v07(value,OpcUa_Good);
+  ********************/
 
   // Get firefly data
-  cJSON *sensor_json = NULL;
   cJSON *ff_json = NULL;
   cJSON *uptime_json = NULL;
   cJSON *tempC_json = NULL;
@@ -214,7 +246,6 @@ void DRegs::update() {
   double uptime = -99;
   double rxpower_0, rxpower_1, rxpower_2, rxpower_3;
 
-  sensor_json = cJSON_GetObjectItem(top, "sensor");
   if (sensor_json) ff_json = cJSON_GetObjectItem(sensor_json, "firefly13");
   if (ff_json) uptime_json = cJSON_GetObjectItem(ff_json, "uptime");
   if (ff_json) tempC_json = cJSON_GetObjectItem(ff_json, "tempC");
@@ -239,7 +270,6 @@ void DRegs::update() {
     std::cout << "firefly13 rxpower_3: " << rxpower_3 << std::endl;
   }
 
-  maxprint++;
 
   getAddressSpaceLink()->setFF13_uptime(uptime,OpcUa_Good);
   getAddressSpaceLink()->setFF13_tempC(tempC,OpcUa_Good);
@@ -250,14 +280,42 @@ void DRegs::update() {
 
   // Get FPGA values
   cJSON *FPGA_json;
-  cJSON *FPGA_up_json;
-  double FPGA_up = -99;
+  cJSON *FPGA_up_json, *FPGA_temp_json, *FPGA_vint_json, *FPGA_vaux_json, *FPGA_vbram_json;
+  double FPGA_up = -99, FPGA_temp = -99, FPGA_vint = -99, FPGA_vaux = -99, FPGA_vbram = -99;
+  char  *FPGA_temp_str, *FPGA_vint_str, *FPGA_vaux_str, *FPGA_vbram_str;
   if (sensor_json) FPGA_json = cJSON_GetObjectItem(sensor_json, "fpga");
   if (FPGA_json) FPGA_up_json = cJSON_GetObjectItem(FPGA_json, "up");
-  if (FPGA_up_json) FPGA_up = FPGA_up_json->valuedouble;
-  getAddressSpaceLink()->setFPGA_up(FPGA_up,OpcUa_Good);
+  if (FPGA_json) FPGA_temp_json = cJSON_GetObjectItem(FPGA_json, "temp");
+  if (FPGA_json) FPGA_vint_json = cJSON_GetObjectItem(FPGA_json, "vint");
+  if (FPGA_json) FPGA_vaux_json = cJSON_GetObjectItem(FPGA_json, "vaux");
+  if (FPGA_json) FPGA_vbram_json = cJSON_GetObjectItem(FPGA_json, "vbram");
+  
+  if (FPGA_up_json)    FPGA_up = FPGA_up_json->valuedouble; // the uptime is stored as a number
+  if (FPGA_temp_json)  FPGA_temp_str = FPGA_temp_json->valuestring;
+  if (FPGA_vint_json)  FPGA_vint_str = FPGA_vint_json->valuestring;
+  if (FPGA_vaux_json)  FPGA_vaux_str = FPGA_vaux_json->valuestring;
+  if (FPGA_vbram_json) FPGA_vbram_str = FPGA_vbram_json->valuestring;
 
+  FPGA_temp = std::stod(FPGA_temp_str);
+  FPGA_vint = std::stod(FPGA_vint_str);
+  FPGA_vaux = std::stod(FPGA_vaux_str);
+  FPGA_vbram = std::stod(FPGA_vbram_str);
+
+  getAddressSpaceLink()->setFPGA_up(FPGA_up,OpcUa_Good);
+  getAddressSpaceLink()->setFPGA_temp(FPGA_temp,OpcUa_Good);
+  getAddressSpaceLink()->setFPGA_vint(FPGA_vint,OpcUa_Good);
+  getAddressSpaceLink()->setFPGA_vaux(FPGA_vaux,OpcUa_Good);
+  getAddressSpaceLink()->setFPGA_vbram(FPGA_vbram,OpcUa_Good);
+
+  if (maxprint<3) {
+    std::cout << "FPGA_up: " << FPGA_up << std::endl;
+    std::cout << "FPGA_temp_str: " << FPGA_temp_str << std::endl;
+    std::cout << "FPGA_vint_str: " << FPGA_vint_str << std::endl;
+    std::cout << "FPGA_vaux_str: " << FPGA_vaux_str << std::endl;
+    std::cout << "FPGA_vbram_str: " << FPGA_vbram_str << std::endl;
+  }
   // ECC - be sure to delete cJSON object
+  maxprint++;
   cJSON_Delete(top);
 
  /******
@@ -286,23 +344,6 @@ void DRegs::update() {
     }
   }
   
-  // Compare values of FF12 txdisable and set value. Enable/disable if different.
-  getAddressSpaceLink()->getFF12txwrite(setval_tx);
-  OpcUa_UInt32 FF12_txdisable = ff_vals[3+FF12off];
-  if (FF12_txdisable != setval_tx) {
-      
-   // Loop over the four channels
-    for (int ichan=0; ichan<nFFchan; ichan++) {
-      int ibitset = (setval_tx >> ichan) & 1;
-      int ibitval = (FF12_txdisable >> ichan) & 1;
-
-      // only change enable if the two bits differ
-      if (ibitset != ibitval) {
-	if (ibitset == 0) fcChanEnable(15, ichan);
-	else              fcChanDisable(15, ichan);
-      }
-    }
-  }
   ************/
 
 
