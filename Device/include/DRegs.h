@@ -63,6 +63,7 @@ public:
     void extract_ltc(cJSON *);
     void extract_firefly(int, cJSON *);
     void extract_fpga(cJSON *);
+    void extract_zynq(cJSON *);
     //    void disableFF11();
     //    void enableFF11();
 

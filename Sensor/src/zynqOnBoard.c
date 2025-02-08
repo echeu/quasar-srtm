@@ -125,8 +125,8 @@ static struct zynqDataRecord zynqDataRecs[] = {
   {"in_voltage12","VCC_DDR_IO",1.0,0.0,0,0.0,0,ZYNQ_INTERNAL_VOLTAGE},
   {"in_voltage13","PS_Bank_503",1.0,0.0,0,0.0,0,ZYNQ_INTERNAL_VOLTAGE},
   {"in_voltage14","PS_Bank_500",1.0,0.0,0,0.0,0,ZYNQ_INTERNAL_VOLTAGE},
-  {"in_voltage15","VCCO_PSIO1",1.0,0.0,0,0.0,0,ZYNQ_INTERNAL_VOLTAGE},
-  {"in_voltage16","VCCO_PSIO1",1.0,0.0,0,0.0,0,ZYNQ_INTERNAL_VOLTAGE},
+  {"in_voltage15","VCCO_PSIO1_1",1.0,0.0,0,0.0,0,ZYNQ_INTERNAL_VOLTAGE},
+  {"in_voltage16","VCCO_PSIO1_2",1.0,0.0,0,0.0,0,ZYNQ_INTERNAL_VOLTAGE},
   {"in_voltage17","VCC_PS_GTR",1.0,0.0,0,0.0,0,ZYNQ_INTERNAL_VOLTAGE},
 #ifdef INCLUDE_PL_IN_PS
   {"in_voltage18","VTT_PS_GTR",1.0,0.0,0,0.0,0,ZYNQ_INTERNAL_VOLTAGE},
@@ -259,7 +259,9 @@ void zynqOnBoardFormat(struct sensorRecord *sr, struct cJSON *parent) {
       if( cur->easyname ) cJSON_AddItemToObject(zynq,cur->easyname,cJSON_CreateNumber(cur->value));
       else cJSON_AddItemToObject(zynq,cur->basename,cJSON_CreateNumber(cur->value));
     }
-    else cJSON_AddItemToObject(zynq,cur->basename,cJSON_CreateString("ERROR"));
+    //    else cJSON_AddItemToObject(zynq,cur->basename,cJSON_CreateString("ERROR"));
+    // ECC - put a number here since I don't know how to guard agains misreading the data
+    else cJSON_AddItemToObject(zynq,cur->basename,cJSON_CreateNumber(-999));
   }
   cJSON_AddItemToObject(parent,"zynqps",zynq);
 

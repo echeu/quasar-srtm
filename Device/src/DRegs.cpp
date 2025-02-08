@@ -87,18 +87,15 @@ DRegs::DRegs (
     const Configuration::Regs& config,
     Parent_DRegs* parent
 ):
-    Base_DRegs( config, parent)
 
+Base_DRegs( config, parent) {
     /* fill up constructor initialization list here */
-{
     /* fill up constructor body here */
-
 }
 
 /* sample dtr */
 
-DRegs::~DRegs ()
-{
+DRegs::~DRegs () {
 }
 
 
@@ -129,7 +126,7 @@ void DRegs::update() {
   sensorFormat(top);
 
   // print out the sensor data
-  if (maxprint < 3) {
+  if (maxprint < 2) {
 
     // ECC - open file for output --- This is temporary to check that it works
     FILE *json_file = fopen("SRTM-sensor.output.txt","w");
@@ -148,7 +145,7 @@ void DRegs::update() {
 
   cJSON *sensor_json;
   sensor_json = cJSON_GetObjectItem(top, "sensor");
-  // Get the ltc values
+  // Get the ltc data
   if (sensor_json) extract_ltc(sensor_json);
 
   // Get firefly data
@@ -156,8 +153,11 @@ void DRegs::update() {
   if (sensor_json) extract_firefly(12, sensor_json);
   if (sensor_json) extract_firefly(13, sensor_json);
   
-  // Get FPGA values
+  // Get FPGA data
   if (sensor_json) extract_fpga(sensor_json);
+
+  // Get Zynq data
+  if (sensor_json) extract_zynq(sensor_json);
   
   // ECC - be sure to delete cJSON object
   cJSON_Delete(top);
@@ -484,4 +484,122 @@ void DRegs::extract_fpga(cJSON *sensor_json) {
 
 }
 
+// Get Zynq values from JSON object
+void DRegs::extract_zynq(cJSON *sensor_json) {
+
+  // JSON objects
+  cJSON *zynqps_json = NULL;
+  cJSON *ps_temp_json = NULL, *pl_temp_json = NULL, *vcc_pspll0_json = NULL, *vccint_json = NULL;
+  cJSON *vccbram_json = NULL, *vccaux_json = NULL, *vcc_psddrpll_json = NULL, *vcc_psintfp_ddr_json = NULL;
+  cJSON *vcc_ps_lpd1_json = NULL, *vcc_ps_lpd2_json = NULL, *ps_aux3_json = NULL, *vcc_ddr_io_json = NULL;
+  cJSON *ps_bank_503_json = NULL, *ps_bank_500_json = NULL, *vcc0_psi01_1_json = NULL;
+  cJSON *vcc0_psi01_2_json = NULL;
+  cJSON *vcc_ps_gtr_json = NULL, *vtt_ps_gtr_json = NULL, *vcc_ps_adc_json = NULL, *vcc_pl_int_json = NULL;
+  cJSON *vcc_pl_aux_json = NULL, *vref_p_json = NULL ,*vref_n_json = NULL, *vcc_pl_bram_json = NULL;
+  cJSON *vcc_ps_intlp4_json = NULL, *vcc_ps_intfp5_json = NULL, *vcc_ps_aux_json = NULL;
+  cJSON *vcc_pl_adc_json = NULL;
+
+  // voltages, temps, etc.
+  double ps_temp = -99, pl_temp = -99, vcc_pspll0 = -99, vccint = -99;
+  double vccbram = -99, vccaux = -99, vcc_psddrpll = -99, vcc_psintfp_ddr = -99;
+  double vcc_ps_lpd1 = -99, vcc_ps_lpd2 = -99, ps_aux3 = -99, vcc_ddr_io = -99;
+  double ps_bank_503 = -99, ps_bank_500 = -99, vcc0_psi01_1 = -99, vcc0_psi01_2 = -99;
+  double vcc_ps_gtr = -99, vtt_ps_gtr = -99, vcc_ps_adc = -99, vcc_pl_int = -99;
+  double vcc_pl_aux = -99, vref_p = -99 ,vref_n = -99, vcc_pl_bram = -99;
+  double vcc_ps_intlp4 = -99, vcc_ps_intfp5 = -99, vcc_ps_aux = -99;
+  double vcc_pl_adc = -99;
+
+  // unpack data from the Zynq
+  if (sensor_json) zynqps_json = cJSON_GetObjectItem(sensor_json, "zynqps");
+  if (zynqps_json) ps_temp_json = cJSON_GetObjectItem(zynqps_json, "PS LPD temp");
+  if (zynqps_json) pl_temp_json = cJSON_GetObjectItem(zynqps_json, "PL temp");
+  if (zynqps_json) vcc_pspll0_json = cJSON_GetObjectItem(zynqps_json, "VCC_PSPLL0");
+  if (zynqps_json) vccint_json = cJSON_GetObjectItem(zynqps_json, "VCCINT");
+  if (zynqps_json) vccbram_json = cJSON_GetObjectItem(zynqps_json, "VCCBRAM");
+  if (zynqps_json) vccaux_json = cJSON_GetObjectItem(zynqps_json, "VCCAUX");
+  if (zynqps_json) vcc_psddrpll_json = cJSON_GetObjectItem(zynqps_json, "VCC_PSDDRPLL");
+  if (zynqps_json) vcc_psintfp_ddr_json = cJSON_GetObjectItem(zynqps_json, "VCC_PSINTFP_DDR"); //
+  if (zynqps_json) vcc_ps_lpd1_json = cJSON_GetObjectItem(zynqps_json, "VCC_PS_LPD1");
+  if (zynqps_json) vcc_ps_lpd2_json = cJSON_GetObjectItem(zynqps_json, "VCC PS_LPD2");
+  if (zynqps_json) ps_aux3_json = cJSON_GetObjectItem(zynqps_json, "PS AUX3");
+  if (zynqps_json) vcc_ddr_io_json = cJSON_GetObjectItem(zynqps_json, "VCC_DDR_IO");
+  if (zynqps_json) ps_bank_503_json = cJSON_GetObjectItem(zynqps_json, "PS_Bank_503");
+  if (zynqps_json) ps_bank_500_json = cJSON_GetObjectItem(zynqps_json, "PS_Bank_500");
+  if (zynqps_json) vcc0_psi01_1_json = cJSON_GetObjectItem(zynqps_json, "VCCO_PSIO1_1"); //
+  if (zynqps_json) vcc0_psi01_2_json = cJSON_GetObjectItem(zynqps_json, "VCCO_PSIO1_2"); //
+  if (zynqps_json) vcc_ps_gtr_json = cJSON_GetObjectItem(zynqps_json, "VCC_PS_GTR");
+  if (zynqps_json) vtt_ps_gtr_json = cJSON_GetObjectItem(zynqps_json, "VTT_PS_GTR");
+  if (zynqps_json) vcc_ps_adc_json = cJSON_GetObjectItem(zynqps_json, "VCC_PS_ADC");
+  if (zynqps_json) vcc_pl_int_json = cJSON_GetObjectItem(zynqps_json, "VCC_PL_INT");
+  if (zynqps_json) vcc_pl_aux_json = cJSON_GetObjectItem(zynqps_json, "VCC_PL_AUX"); //
+  if (zynqps_json) vref_p_json = cJSON_GetObjectItem(zynqps_json, "VREF_P");
+  if (zynqps_json) vref_n_json = cJSON_GetObjectItem(zynqps_json, "VREF_N");
+  if (zynqps_json) vcc_pl_bram_json = cJSON_GetObjectItem(zynqps_json, "VCC_PL_BRAM");
+  if (zynqps_json) vcc_ps_intlp4_json = cJSON_GetObjectItem(zynqps_json, "VCC_PS_INTLP4");
+  if (zynqps_json) vcc_ps_intfp5_json = cJSON_GetObjectItem(zynqps_json, "VCC_PS_INTFP5");
+  if (zynqps_json) vcc_ps_aux_json = cJSON_GetObjectItem(zynqps_json, "VCC_PS_AUX");
+  if (zynqps_json) vcc_pl_adc_json = cJSON_GetObjectItem(zynqps_json, "VCC_PL_ADC");
+
+  // get the voltages. Need to guard against the data being a string (somehow)
+  // Modified zynqOnBoard.c to force values to be  doubles rather than strings (on error)
+  if (ps_temp_json) ps_temp = ps_temp_json->valuedouble;
+  if (pl_temp_json) pl_temp = pl_temp_json->valuedouble;
+  if (vcc_pspll0_json) vcc_pspll0 = vcc_pspll0_json->valuedouble;
+  if (vccint_json) vccint = vccint_json->valuedouble;
+  if (vccbram_json) vccbram = vccbram_json->valuedouble;
+  if (vccaux_json) vccaux = vccaux_json->valuedouble;
+  if (vcc_psddrpll_json) vcc_psddrpll = vcc_psddrpll_json->valuedouble;
+  if (vcc_psintfp_ddr_json) vcc_psintfp_ddr = vcc_psintfp_ddr_json->valuedouble;
+  if (vcc_ps_lpd1_json) vcc_ps_lpd1 = vcc_ps_lpd1_json->valuedouble;
+  if (vcc_ps_lpd2_json) vcc_ps_lpd2 = vcc_ps_lpd2_json->valuedouble;
+  if (ps_aux3_json) ps_aux3 = ps_aux3_json->valuedouble;
+  if (vcc_ddr_io_json) vcc_ddr_io = vcc_ddr_io_json->valuedouble;
+  if (ps_bank_503_json) ps_bank_503 = ps_bank_503_json->valuedouble;
+  if (ps_bank_500_json) ps_bank_500 = ps_bank_500_json->valuedouble;
+  if (vcc0_psi01_1_json) vcc0_psi01_1 = vcc0_psi01_1_json->valuedouble;
+  if (vcc0_psi01_2_json) vcc0_psi01_2 = vcc0_psi01_2_json->valuedouble;
+  if (vcc_ps_gtr_json) vcc_ps_gtr = vcc_ps_gtr_json->valuedouble;
+  if (vtt_ps_gtr_json) vtt_ps_gtr = vtt_ps_gtr_json->valuedouble;
+  if (vcc_ps_adc_json) vcc_ps_adc = vcc_ps_adc_json->valuedouble;
+  if (vcc_pl_int_json) vcc_pl_int = vcc_pl_int_json->valuedouble;
+  if (vcc_pl_aux_json) vcc_pl_aux = vcc_pl_aux_json->valuedouble;
+  if (vref_p_json) vref_p = vref_p_json->valuedouble;
+  if (vref_n_json) vref_n = vref_n_json->valuedouble;
+  if (vcc_pl_bram_json) vcc_pl_bram = vcc_pl_bram_json->valuedouble;
+  if (vcc_ps_intlp4_json) vcc_ps_intlp4 = vcc_ps_intlp4_json->valuedouble;
+  if (vcc_ps_intfp5_json) vcc_ps_intfp5 = vcc_ps_intfp5_json->valuedouble;
+  if (vcc_ps_aux_json) vcc_ps_aux = vcc_ps_aux_json->valuedouble;
+  if (vcc_pl_adc_json) vcc_pl_adc = vcc_pl_adc_json->valuedouble;
+
+  // link data to OpcUA
+  getAddressSpaceLink()->setZynq_ps_temp(ps_temp,OpcUa_Good);
+  getAddressSpaceLink()->setZynq_pl_temp(pl_temp,OpcUa_Good);
+  getAddressSpaceLink()->setZynq_vcc_pspll0(vcc_pspll0,OpcUa_Good);
+  getAddressSpaceLink()->setZynq_vccint(vccint,OpcUa_Good);
+  getAddressSpaceLink()->setZynq_vccbram(vccbram,OpcUa_Good);
+  getAddressSpaceLink()->setZynq_vccaux(vccaux,OpcUa_Good);
+  getAddressSpaceLink()->setZynq_vcc_psddrpll(vcc_psddrpll,OpcUa_Good);
+  getAddressSpaceLink()->setZynq_vcc_psintfp_ddr(vcc_psintfp_ddr,OpcUa_Good);
+  getAddressSpaceLink()->setZynq_vcc_ps_lpd1(vcc_ps_lpd1,OpcUa_Good);
+  getAddressSpaceLink()->setZynq_vcc_ps_lpd2(vcc_ps_lpd2,OpcUa_Good);
+  getAddressSpaceLink()->setZynq_ps_aux3(ps_aux3,OpcUa_Good);
+  getAddressSpaceLink()->setZynq_vcc_ddr_io(vcc_ddr_io,OpcUa_Good);
+  getAddressSpaceLink()->setZynq_ps_bank_503(ps_bank_503,OpcUa_Good);
+  getAddressSpaceLink()->setZynq_ps_bank_500(ps_bank_500,OpcUa_Good);
+  getAddressSpaceLink()->setZynq_vcc0_psi01_1(vcc0_psi01_1,OpcUa_Good);
+  getAddressSpaceLink()->setZynq_vcc0_psi01_2(vcc0_psi01_2,OpcUa_Good);
+  getAddressSpaceLink()->setZynq_vcc_ps_gtr(vcc_ps_gtr,OpcUa_Good);
+  getAddressSpaceLink()->setZynq_vtt_ps_gtr(vtt_ps_gtr,OpcUa_Good);
+  getAddressSpaceLink()->setZynq_vcc_ps_adc(vcc_ps_adc,OpcUa_Good);
+  getAddressSpaceLink()->setZynq_vcc_pl_int(vcc_pl_int,OpcUa_Good);
+  getAddressSpaceLink()->setZynq_vcc_pl_aux(vcc_pl_aux,OpcUa_Good);
+  getAddressSpaceLink()->setZynq_vref_p(vref_p,OpcUa_Good);
+  getAddressSpaceLink()->setZynq_vref_n(vref_n,OpcUa_Good);
+  getAddressSpaceLink()->setZynq_vcc_pl_bram(vcc_pl_bram,OpcUa_Good);
+  getAddressSpaceLink()->setZynq_vcc_ps_intlp4(vcc_ps_intlp4,OpcUa_Good);
+  getAddressSpaceLink()->setZynq_vcc_ps_intfp5(vcc_ps_intfp5,OpcUa_Good);
+  getAddressSpaceLink()->setZynq_vcc_ps_aux(vcc_ps_aux,OpcUa_Good);
+  getAddressSpaceLink()->setZynq_vcc_pl_adc(vcc_pl_adc,OpcUa_Good);
+}
+  
 } // Device

@@ -477,6 +477,146 @@
   		addressSpaceWrite="forbidden" initialStatus="OpcUa_Good"
   		initialValue="0">
   	</d:cachevariable>
+  	<d:cachevariable initializeWith="valueAndStatus"
+  		dataType="OpcUa_Double" name="Zynq_ps_temp" nullPolicy="nullAllowed"
+  		addressSpaceWrite="forbidden" initialStatus="OpcUa_Good"
+  		initialValue="0">
+  	</d:cachevariable>
+  	<d:cachevariable initializeWith="valueAndStatus"
+  		dataType="OpcUa_Double" name="Zynq_pl_temp" nullPolicy="nullAllowed"
+  		addressSpaceWrite="forbidden" initialStatus="OpcUa_Good"
+  		initialValue="0">
+  	</d:cachevariable>
+  	<d:cachevariable initializeWith="valueAndStatus"
+  		dataType="OpcUa_Double" name="Zynq_vcc_pspll0" nullPolicy="nullAllowed"
+  		addressSpaceWrite="forbidden" initialStatus="OpcUa_Good"
+  		initialValue="0">
+  	</d:cachevariable>
+  	<d:cachevariable initializeWith="valueAndStatus"
+  		dataType="OpcUa_Double" name="Zynq_vccint" nullPolicy="nullAllowed"
+  		addressSpaceWrite="forbidden" initialStatus="OpcUa_Good"
+  		initialValue="0">
+  	</d:cachevariable>
+  	<d:cachevariable initializeWith="valueAndStatus"
+  		dataType="OpcUa_Double" name="Zynq_vccbram" nullPolicy="nullAllowed"
+  		addressSpaceWrite="forbidden" initialStatus="OpcUa_Good"
+  		initialValue="0">
+  	</d:cachevariable>
+  	<d:cachevariable initializeWith="valueAndStatus"
+  		dataType="OpcUa_Double" name="Zynq_vccaux" nullPolicy="nullAllowed"
+  		addressSpaceWrite="forbidden" initialStatus="OpcUa_Good"
+  		initialValue="0">
+  	</d:cachevariable>
+  	<d:cachevariable initializeWith="valueAndStatus"
+  		dataType="OpcUa_Double" name="Zynq_vcc_psddrpll" nullPolicy="nullAllowed"
+  		addressSpaceWrite="forbidden" initialStatus="OpcUa_Good"
+  		initialValue="0">
+  	</d:cachevariable>
+  	<d:cachevariable initializeWith="valueAndStatus"
+  		dataType="OpcUa_Double" name="Zynq_vcc_psintfp_ddr" nullPolicy="nullAllowed"
+  		addressSpaceWrite="forbidden" initialStatus="OpcUa_Good"
+  		initialValue="0">
+  	</d:cachevariable>
+  	<d:cachevariable initializeWith="valueAndStatus"
+  		dataType="OpcUa_Double" name="Zynq_vcc_ps_lpd1" nullPolicy="nullAllowed"
+  		addressSpaceWrite="forbidden" initialStatus="OpcUa_Good"
+  		initialValue="0">
+  	</d:cachevariable>
+  	<d:cachevariable initializeWith="valueAndStatus"
+  		dataType="OpcUa_Double" name="Zynq_vcc_ps_lpd2" nullPolicy="nullAllowed"
+  		addressSpaceWrite="forbidden" initialStatus="OpcUa_Good"
+  		initialValue="0">
+  	</d:cachevariable>
+  	<d:cachevariable initializeWith="valueAndStatus"
+  		dataType="OpcUa_Double" name="Zynq_ps_aux3" nullPolicy="nullAllowed"
+  		addressSpaceWrite="forbidden" initialStatus="OpcUa_Good"
+  		initialValue="0">
+  	</d:cachevariable>
+  	<d:cachevariable initializeWith="valueAndStatus"
+  		dataType="OpcUa_Double" name="Zynq_vcc_ddr_io" nullPolicy="nullAllowed"
+  		addressSpaceWrite="forbidden" initialStatus="OpcUa_Good"
+  		initialValue="0">
+  	</d:cachevariable>
+  	<d:cachevariable initializeWith="valueAndStatus"
+  		dataType="OpcUa_Double" name="Zynq_ps_bank_503" nullPolicy="nullAllowed"
+  		addressSpaceWrite="forbidden" initialStatus="OpcUa_Good"
+  		initialValue="0">
+  	</d:cachevariable>
+  	<d:cachevariable initializeWith="valueAndStatus"
+  		dataType="OpcUa_Double" name="Zynq_ps_bank_500" nullPolicy="nullAllowed"
+  		addressSpaceWrite="forbidden" initialStatus="OpcUa_Good"
+  		initialValue="0">
+  	</d:cachevariable>
+  	<d:cachevariable initializeWith="valueAndStatus"
+  		dataType="OpcUa_Double" name="Zynq_vcc0_psi01_1" nullPolicy="nullAllowed"
+  		addressSpaceWrite="forbidden" initialStatus="OpcUa_Good"
+  		initialValue="0">
+  	</d:cachevariable>
+  	<d:cachevariable initializeWith="valueAndStatus"
+  		dataType="OpcUa_Double" name="Zynq_vcc0_psi01_2" nullPolicy="nullAllowed"
+  		addressSpaceWrite="forbidden" initialStatus="OpcUa_Good"
+  		initialValue="0">
+  	</d:cachevariable>
+  	<d:cachevariable initializeWith="valueAndStatus"
+  		dataType="OpcUa_Double" name="Zynq_vcc_ps_gtr" nullPolicy="nullAllowed"
+  		addressSpaceWrite="forbidden" initialStatus="OpcUa_Good"
+  		initialValue="0">
+  	</d:cachevariable>
+  	<d:cachevariable initializeWith="valueAndStatus"
+  		dataType="OpcUa_Double" name="Zynq_vtt_ps_gtr" nullPolicy="nullAllowed"
+  		addressSpaceWrite="forbidden" initialStatus="OpcUa_Good"
+  		initialValue="0">
+  	</d:cachevariable>
+  	<d:cachevariable initializeWith="valueAndStatus"
+  		dataType="OpcUa_Double" name="Zynq_vcc_ps_adc" nullPolicy="nullAllowed"
+  		addressSpaceWrite="forbidden" initialStatus="OpcUa_Good"
+  		initialValue="0">
+  	</d:cachevariable>
+  	<d:cachevariable initializeWith="valueAndStatus"
+  		dataType="OpcUa_Double" name="Zynq_vcc_pl_int" nullPolicy="nullAllowed"
+  		addressSpaceWrite="forbidden" initialStatus="OpcUa_Good"
+  		initialValue="0">
+  	</d:cachevariable>
+  	<d:cachevariable initializeWith="valueAndStatus"
+  		dataType="OpcUa_Double" name="Zynq_vcc_pl_aux" nullPolicy="nullAllowed"
+  		addressSpaceWrite="forbidden" initialStatus="OpcUa_Good"
+  		initialValue="0">
+  	</d:cachevariable>
+  	<d:cachevariable initializeWith="valueAndStatus"
+  		dataType="OpcUa_Double" name="Zynq_vref_p" nullPolicy="nullAllowed"
+  		addressSpaceWrite="forbidden" initialStatus="OpcUa_Good"
+  		initialValue="0">
+  	</d:cachevariable>
+  	<d:cachevariable initializeWith="valueAndStatus"
+  		dataType="OpcUa_Double" name="Zynq_vref_n" nullPolicy="nullAllowed"
+  		addressSpaceWrite="forbidden" initialStatus="OpcUa_Good"
+  		initialValue="0">
+  	</d:cachevariable>
+  	<d:cachevariable initializeWith="valueAndStatus"
+  		dataType="OpcUa_Double" name="Zynq_vcc_pl_bram" nullPolicy="nullAllowed"
+  		addressSpaceWrite="forbidden" initialStatus="OpcUa_Good"
+  		initialValue="0">
+  	</d:cachevariable>
+  	<d:cachevariable initializeWith="valueAndStatus"
+  		dataType="OpcUa_Double" name="Zynq_vcc_ps_intlp4" nullPolicy="nullAllowed"
+  		addressSpaceWrite="forbidden" initialStatus="OpcUa_Good"
+  		initialValue="0">
+  	</d:cachevariable>
+  	<d:cachevariable initializeWith="valueAndStatus"
+  		dataType="OpcUa_Double" name="Zynq_vcc_ps_intfp5" nullPolicy="nullAllowed"
+  		addressSpaceWrite="forbidden" initialStatus="OpcUa_Good"
+  		initialValue="0">
+  	</d:cachevariable>
+  	<d:cachevariable initializeWith="valueAndStatus"
+  		dataType="OpcUa_Double" name="Zynq_vcc_ps_aux" nullPolicy="nullAllowed"
+  		addressSpaceWrite="forbidden" initialStatus="OpcUa_Good"
+  		initialValue="0">
+  	</d:cachevariable>
+  	<d:cachevariable initializeWith="valueAndStatus"
+  		dataType="OpcUa_Double" name="Zynq_vcc_pl_adc" nullPolicy="nullAllowed"
+  		addressSpaceWrite="forbidden" initialStatus="OpcUa_Good"
+  		initialValue="0">
+  	</d:cachevariable>
   </d:class>
   <d:root>
   	<d:hasobjects instantiateUsing="configuration" class="Regs"></d:hasobjects></d:root>
