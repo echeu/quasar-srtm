@@ -73,9 +73,6 @@ namespace Device
 // 1111111111111111111111111111111111111111111111111111111111111111111111111
 
 
-//static off_t bram_pbase;
-static OpcUa_UInt32 saved_setval;
-
 
 // 2222222222222222222222222222222222222222222222222222222222222222222222222
 // 2     SEMI CUSTOM CODE STARTS HERE AND FINISHES AT SECTION 3            2
@@ -96,9 +93,6 @@ DRegs::DRegs (
 {
     /* fill up constructor body here */
 
-	// initialize the base address from the configuration file
-	LOG(Log::INF) << "Register address: " << std::hex << config.address();
-
 }
 
 /* sample dtr */
@@ -116,21 +110,8 @@ void DRegs::update() {
   static int maxprint = 0;
   static int first = 1;
 
-  // ECC - Read from /dev/mem
-  unsigned int bram_size = 0x8000;
-
-  // This is the physical base address which is set by the constructor
-  off_t bram_pbase = address();
-  OpcUa_UInt32 *bram32_vptr;
-
-  // see if we want to write to this address
-  OpcUa_UInt32 setval = 0;
-  getAddressSpaceLink()->getWriteRegValue(setval);
-
   // initialize write value here since I can't figure out how to do this in the constructor
   if (first) {
-    saved_setval = setval;
-    LOG(Log::INF) << "Register setval: " << std::hex << saved_setval;
     first = 0;
 
     // ECC - only do the sensor stuff for now
@@ -162,14 +143,18 @@ void DRegs::update() {
   }
   maxprint++;
 
-  cJSON *sensor_json;
+  // get header information
+  extract_header(top);
 
+  cJSON *sensor_json;
   sensor_json = cJSON_GetObjectItem(top, "sensor");
   // Get the ltc values
   if (sensor_json) extract_ltc(sensor_json);
 
   // Get firefly data
-  if (sensor_json) extract_firefly(sensor_json);
+  if (sensor_json) extract_firefly(11, sensor_json);
+  if (sensor_json) extract_firefly(12, sensor_json);
+  if (sensor_json) extract_firefly(13, sensor_json);
   
   // Get FPGA values
   if (sensor_json) extract_fpga(sensor_json);
@@ -179,6 +164,33 @@ void DRegs::update() {
 
 }
 
+// get header data from JSON object
+void DRegs::extract_header(cJSON *top) {
+  cJSON *hwid_json = NULL;
+  cJSON *versions_json = NULL;
+  cJSON *fwvers_json = NULL;
+  cJSON *swvers_json = NULL;
+  double hwid = -99, fwvers = -99, swvers = -99;
+  
+  // unpack header data 
+  hwid_json = cJSON_GetObjectItem(top, "hwid");
+  versions_json = cJSON_GetObjectItem(top, "versions");
+  if (versions_json) fwvers_json = cJSON_GetObjectItem(versions_json, "fwvers");
+  if (versions_json) swvers_json = cJSON_GetObjectItem(versions_json, "swvers");
+
+  // get values
+  if (hwid_json) hwid = hwid_json->valuedouble;
+  if (fwvers_json) fwvers = fwvers_json->valuedouble;
+  if (swvers_json) swvers = swvers_json->valuedouble;
+
+  // Link to OpcUA
+  getAddressSpaceLink()->setHwid(hwid,OpcUa_Good);
+  getAddressSpaceLink()->setFwvers(fwvers,OpcUa_Good);
+  getAddressSpaceLink()->setSwvers(swvers,OpcUa_Good);
+
+}
+
+// Get ltc values from JSON object
 void DRegs::extract_ltc(cJSON *sensor_json) {
 
   cJSON *ltc_v1p8_json = NULL;
@@ -265,7 +277,9 @@ void DRegs::extract_ltc(cJSON *sensor_json) {
   getAddressSpaceLink()->setSRTM_t07(ltc_pff_tmp,OpcUa_Good);
 }
 
-void DRegs::extract_firefly(cJSON *sensor_json) {
+// Code to extract the information for FF13
+// Unfortunately the SpaceLink code needs to be hardwired so it is not easily simplified
+void DRegs::extract_firefly(int ffnumber, cJSON *sensor_json) {
 
   cJSON *ff_json = NULL;
   cJSON *present_json = NULL;
@@ -302,9 +316,17 @@ void DRegs::extract_firefly(cJSON *sensor_json) {
   double tempC = -99;
   double uptime = -99;
   double rxpower_0, rxpower_1, rxpower_2, rxpower_3;
+  double id;
+  char *model, *serial, *fwversion;
 
+  // construct firefly name
+  std::string ffname = "firefly" + std::to_string(ffnumber);
+  int len = ffname.length()+1;
+  char cffname[len];
+  strcpy(cffname, ffname.c_str());
+  
   // Get data from JSON construct
-  if (sensor_json) ff_json = cJSON_GetObjectItem(sensor_json, "firefly13");
+  if (sensor_json) ff_json = cJSON_GetObjectItem(sensor_json, cffname);
   if (ff_json) present_json = cJSON_GetObjectItem(ff_json, "present");
   if (ff_json) status_json = cJSON_GetObjectItem(ff_json, "status");
   if (ff_json) txdisable_json = cJSON_GetObjectItem(ff_json, "txdisable");
@@ -319,10 +341,22 @@ void DRegs::extract_firefly(cJSON *sensor_json) {
   if (ff_json) uptime_json = cJSON_GetObjectItem(ff_json, "uptime");
   if (ff_json) tempC_json = cJSON_GetObjectItem(ff_json, "tempC");
   if (ff_json) rxpower_json = cJSON_GetObjectItem(ff_json, "rxpower");
+  if (ff_json) id_json = cJSON_GetObjectItem(ff_json, "id");
+  if (ff_json) model_json = cJSON_GetObjectItem(ff_json, "model");
+  if (ff_json) serial_json = cJSON_GetObjectItem(ff_json, "serial");
+  if (ff_json) fwversion_json = cJSON_GetObjectItem(ff_json, "fwversion");
 
   if (present_json) present = present_json->valuedouble;
   if (status_json) status = status_json->valuedouble;
   if (txdisable_json) txdisable = txdisable_json->valuedouble;
+  if (cdrenable_json) cdrenable = cdrenable_json->valuedouble;
+  if (cdrrate_json) cdrrate = cdrrate_json->valuedouble;
+  if (cdrlol_json) cdrlol = cdrlol_json->valuedouble;
+  if (los_json) los = los_json->valuedouble;
+  if (txfault_json) txfault = txfault_json->valuedouble;
+  if (tempfault_json) tempfault = tempfault_json->valuedouble;
+  if (voltfault_json) voltfault = voltfault_json->valuedouble;
+  if (powerfault_json) powerfault = powerfault_json->valuedouble;
   if (uptime_json) uptime = uptime_json->valuedouble;
   if (tempC_json) tempC = tempC_json->valuedouble;
   if (rxpower_json) rxpower0_json = cJSON_GetArrayItem(rxpower_json,0);
@@ -333,18 +367,82 @@ void DRegs::extract_firefly(cJSON *sensor_json) {
   if (rxpower1_json) rxpower_1 = rxpower1_json->valuedouble;
   if (rxpower2_json) rxpower_2 = rxpower2_json->valuedouble;
   if (rxpower3_json) rxpower_3 = rxpower3_json->valuedouble;
+  if (id_json) id = id_json->valuedouble;
+  if (model_json) model = model_json->valuestring;
+  if (serial_json) serial = serial_json->valuestring;
+  if (fwversion_json) fwversion = fwversion_json->valuestring;
 
 
-  // link data to OpcUA 
-  getAddressSpaceLink()->setFF13_present(present,OpcUa_Good);
-  getAddressSpaceLink()->setFF13_status(status,OpcUa_Good);
-  getAddressSpaceLink()->setFF13_txdisable(txdisable,OpcUa_Good);
-  getAddressSpaceLink()->setFF13_uptime(uptime,OpcUa_Good);
-  getAddressSpaceLink()->setFF13_tempC(tempC,OpcUa_Good);
-  getAddressSpaceLink()->setFF13_rxpower_0(rxpower_0,OpcUa_Good);
-  getAddressSpaceLink()->setFF13_rxpower_1(rxpower_1,OpcUa_Good);
-  getAddressSpaceLink()->setFF13_rxpower_2(rxpower_2,OpcUa_Good);
-  getAddressSpaceLink()->setFF13_rxpower_3(rxpower_3,OpcUa_Good);
+  // link data to OpcUA
+  if (ffnumber == 11) {
+    getAddressSpaceLink()->setFF11_present(present,OpcUa_Good);
+    getAddressSpaceLink()->setFF11_status(status,OpcUa_Good);
+    getAddressSpaceLink()->setFF11_txdisable(txdisable,OpcUa_Good);
+    getAddressSpaceLink()->setFF11_cdrenable(cdrenable,OpcUa_Good);
+    getAddressSpaceLink()->setFF11_cdrrate(cdrrate,OpcUa_Good);
+    getAddressSpaceLink()->setFF11_cdrlol(cdrlol,OpcUa_Good);
+    getAddressSpaceLink()->setFF11_los(los,OpcUa_Good);
+    getAddressSpaceLink()->setFF11_txfault(txfault,OpcUa_Good);
+    getAddressSpaceLink()->setFF11_tempfault(tempfault,OpcUa_Good);
+    getAddressSpaceLink()->setFF11_voltfault(voltfault,OpcUa_Good);
+    getAddressSpaceLink()->setFF11_powerfault(powerfault,OpcUa_Good);
+    getAddressSpaceLink()->setFF11_uptime(uptime,OpcUa_Good);
+    getAddressSpaceLink()->setFF11_tempC(tempC,OpcUa_Good);
+    getAddressSpaceLink()->setFF11_rxpower_0(rxpower_0,OpcUa_Good);
+    getAddressSpaceLink()->setFF11_rxpower_1(rxpower_1,OpcUa_Good);
+    getAddressSpaceLink()->setFF11_rxpower_2(rxpower_2,OpcUa_Good);
+    getAddressSpaceLink()->setFF11_rxpower_3(rxpower_3,OpcUa_Good);
+    getAddressSpaceLink()->setFF11_id(id,OpcUa_Good);
+    getAddressSpaceLink()->setFF11_model(model,OpcUa_Good);
+    getAddressSpaceLink()->setFF11_serial(serial,OpcUa_Good);
+    getAddressSpaceLink()->setFF11_fwversion(fwversion,OpcUa_Good);
+  }
+  else if (ffnumber == 12) {
+    getAddressSpaceLink()->setFF12_present(present,OpcUa_Good);
+    getAddressSpaceLink()->setFF12_status(status,OpcUa_Good);
+    getAddressSpaceLink()->setFF12_txdisable(txdisable,OpcUa_Good);
+    getAddressSpaceLink()->setFF12_cdrenable(cdrenable,OpcUa_Good);
+    getAddressSpaceLink()->setFF12_cdrrate(cdrrate,OpcUa_Good);
+    getAddressSpaceLink()->setFF12_cdrlol(cdrlol,OpcUa_Good);
+    getAddressSpaceLink()->setFF12_los(los,OpcUa_Good);
+    getAddressSpaceLink()->setFF12_txfault(txfault,OpcUa_Good);
+    getAddressSpaceLink()->setFF12_tempfault(tempfault,OpcUa_Good);
+    getAddressSpaceLink()->setFF12_voltfault(voltfault,OpcUa_Good);
+    getAddressSpaceLink()->setFF12_powerfault(powerfault,OpcUa_Good);
+    getAddressSpaceLink()->setFF12_uptime(uptime,OpcUa_Good);
+    getAddressSpaceLink()->setFF12_tempC(tempC,OpcUa_Good);
+    getAddressSpaceLink()->setFF12_rxpower_0(rxpower_0,OpcUa_Good);
+    getAddressSpaceLink()->setFF12_rxpower_1(rxpower_1,OpcUa_Good);
+    getAddressSpaceLink()->setFF12_rxpower_2(rxpower_2,OpcUa_Good);
+    getAddressSpaceLink()->setFF12_rxpower_3(rxpower_3,OpcUa_Good);
+    getAddressSpaceLink()->setFF12_id(id,OpcUa_Good);
+    getAddressSpaceLink()->setFF12_model(model,OpcUa_Good);
+    getAddressSpaceLink()->setFF12_serial(serial,OpcUa_Good);
+    getAddressSpaceLink()->setFF12_fwversion(fwversion,OpcUa_Good);
+  }
+  else if (ffnumber == 13) {
+    getAddressSpaceLink()->setFF13_present(present,OpcUa_Good);
+    getAddressSpaceLink()->setFF13_status(status,OpcUa_Good);
+    getAddressSpaceLink()->setFF13_txdisable(txdisable,OpcUa_Good);
+    getAddressSpaceLink()->setFF13_cdrenable(cdrenable,OpcUa_Good);
+    getAddressSpaceLink()->setFF13_cdrrate(cdrrate,OpcUa_Good);
+    getAddressSpaceLink()->setFF13_cdrlol(cdrlol,OpcUa_Good);
+    getAddressSpaceLink()->setFF13_los(los,OpcUa_Good);
+    getAddressSpaceLink()->setFF13_txfault(txfault,OpcUa_Good);
+    getAddressSpaceLink()->setFF13_tempfault(tempfault,OpcUa_Good);
+    getAddressSpaceLink()->setFF13_voltfault(voltfault,OpcUa_Good);
+    getAddressSpaceLink()->setFF13_powerfault(powerfault,OpcUa_Good);
+    getAddressSpaceLink()->setFF13_uptime(uptime,OpcUa_Good);
+    getAddressSpaceLink()->setFF13_tempC(tempC,OpcUa_Good);
+    getAddressSpaceLink()->setFF13_rxpower_0(rxpower_0,OpcUa_Good);
+    getAddressSpaceLink()->setFF13_rxpower_1(rxpower_1,OpcUa_Good);
+    getAddressSpaceLink()->setFF13_rxpower_2(rxpower_2,OpcUa_Good);
+    getAddressSpaceLink()->setFF13_rxpower_3(rxpower_3,OpcUa_Good);
+    getAddressSpaceLink()->setFF13_id(id,OpcUa_Good);
+    getAddressSpaceLink()->setFF13_model(model,OpcUa_Good);
+    getAddressSpaceLink()->setFF13_serial(serial,OpcUa_Good);
+    getAddressSpaceLink()->setFF13_fwversion(fwversion,OpcUa_Good);
+  }
 
 }
 

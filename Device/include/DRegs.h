@@ -59,8 +59,9 @@ private:
 
 public:
     void update();
+    void extract_header(cJSON *);
     void extract_ltc(cJSON *);
-    void extract_firefly(cJSON *);
+    void extract_firefly(int, cJSON *);
     void extract_fpga(cJSON *);
     //    void disableFF11();
     //    void enableFF11();

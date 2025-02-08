@@ -3,16 +3,19 @@
   <d:class name="Regs">
   	<d:devicelogic></d:devicelogic>
   	<d:cachevariable initializeWith="valueAndStatus"
-  		dataType="OpcUa_UInt32" name="userReg" nullPolicy="nullAllowed"
-  		addressSpaceWrite="forbidden" initialStatus="OpcUa_BadWaitingForInitialData">
+  		dataType="OpcUa_Double" name="Hwid" nullPolicy="nullAllowed"
+  		addressSpaceWrite="forbidden" initialStatus="OpcUa_Good"
+  		initialValue="0">
   	</d:cachevariable>
-  	<d:configentry dataType="OpcUa_UInt32" name="address"
-  		storedInDeviceObject="true">
-  	</d:configentry>
   	<d:cachevariable initializeWith="valueAndStatus"
-  		dataType="OpcUa_UInt32" name="writeRegValue"
-  		nullPolicy="nullAllowed" addressSpaceWrite="regular"
-  		initialStatus="OpcUa_Good" initialValue="0">
+  		dataType="OpcUa_Double" name="Fwvers" nullPolicy="nullAllowed"
+  		addressSpaceWrite="forbidden" initialStatus="OpcUa_Good"
+  		initialValue="0">
+  	</d:cachevariable>
+  	<d:cachevariable initializeWith="valueAndStatus"
+  		dataType="OpcUa_Double" name="Swvers" nullPolicy="nullAllowed"
+  		addressSpaceWrite="forbidden" initialStatus="OpcUa_Good"
+  		initialValue="0">
   	</d:cachevariable>
   	<d:cachevariable initializeWith="valueAndStatus"
   		dataType="OpcUa_Double" name="SRTM_v00" nullPolicy="nullAllowed"
@@ -135,6 +138,216 @@
   		initialValue="0">
   	</d:cachevariable>
   	<d:cachevariable initializeWith="valueAndStatus"
+  		dataType="OpcUa_Double" name="FF11_present" nullPolicy="nullAllowed"
+  		addressSpaceWrite="forbidden" initialStatus="OpcUa_Good"
+  		initialValue="0">
+  	</d:cachevariable>
+  	<d:cachevariable initializeWith="valueAndStatus"
+  		dataType="OpcUa_Double" name="FF11_status" nullPolicy="nullAllowed"
+  		addressSpaceWrite="forbidden" initialStatus="OpcUa_Good"
+  		initialValue="0">
+  	</d:cachevariable>
+  	<d:cachevariable initializeWith="valueAndStatus"
+  		dataType="OpcUa_Double" name="FF11_txdisable" nullPolicy="nullAllowed"
+  		addressSpaceWrite="forbidden" initialStatus="OpcUa_Good"
+  		initialValue="0">
+  	</d:cachevariable>
+  	<d:cachevariable initializeWith="valueAndStatus"
+  		dataType="OpcUa_Double" name="FF11_cdrenable" nullPolicy="nullAllowed"
+  		addressSpaceWrite="forbidden" initialStatus="OpcUa_Good"
+  		initialValue="0">
+  	</d:cachevariable>
+  	<d:cachevariable initializeWith="valueAndStatus"
+  		dataType="OpcUa_Double" name="FF11_cdrrate" nullPolicy="nullAllowed"
+  		addressSpaceWrite="forbidden" initialStatus="OpcUa_Good"
+  		initialValue="0">
+  	</d:cachevariable>
+  	<d:cachevariable initializeWith="valueAndStatus"
+  		dataType="OpcUa_Double" name="FF11_cdrlol" nullPolicy="nullAllowed"
+  		addressSpaceWrite="forbidden" initialStatus="OpcUa_Good"
+  		initialValue="0">
+  	</d:cachevariable>
+  	<d:cachevariable initializeWith="valueAndStatus"
+  		dataType="OpcUa_Double" name="FF11_los" nullPolicy="nullAllowed"
+  		addressSpaceWrite="forbidden" initialStatus="OpcUa_Good"
+  		initialValue="0">
+  	</d:cachevariable>
+  	<d:cachevariable initializeWith="valueAndStatus"
+  		dataType="OpcUa_Double" name="FF11_txfault" nullPolicy="nullAllowed"
+  		addressSpaceWrite="forbidden" initialStatus="OpcUa_Good"
+  		initialValue="0">
+  	</d:cachevariable>
+  	<d:cachevariable initializeWith="valueAndStatus"
+  		dataType="OpcUa_Double" name="FF11_tempfault" nullPolicy="nullAllowed"
+  		addressSpaceWrite="forbidden" initialStatus="OpcUa_Good"
+  		initialValue="0">
+  	</d:cachevariable>
+  	<d:cachevariable initializeWith="valueAndStatus"
+  		dataType="OpcUa_Double" name="FF11_voltfault" nullPolicy="nullAllowed"
+  		addressSpaceWrite="forbidden" initialStatus="OpcUa_Good"
+  		initialValue="0">
+  	</d:cachevariable>
+  	<d:cachevariable initializeWith="valueAndStatus"
+  		dataType="OpcUa_Double" name="FF11_powerfault" nullPolicy="nullAllowed"
+  		addressSpaceWrite="forbidden" initialStatus="OpcUa_Good"
+  		initialValue="0">
+  	</d:cachevariable>
+  	<d:cachevariable initializeWith="valueAndStatus"
+  		dataType="OpcUa_Double" name="FF11_uptime" nullPolicy="nullAllowed"
+  		addressSpaceWrite="forbidden" initialStatus="OpcUa_Good"
+  		initialValue="0">
+  	</d:cachevariable>
+  	<d:cachevariable initializeWith="valueAndStatus"
+  		dataType="OpcUa_Double" name="FF11_tempC" nullPolicy="nullAllowed"
+  		addressSpaceWrite="forbidden" initialStatus="OpcUa_Good"
+  		initialValue="0">
+  	</d:cachevariable>
+  	<d:cachevariable initializeWith="valueAndStatus"
+  		dataType="OpcUa_Double" name="FF11_rxpower_0" nullPolicy="nullAllowed"
+  		addressSpaceWrite="forbidden" initialStatus="OpcUa_Good"
+  		initialValue="0">
+  	</d:cachevariable>
+  	<d:cachevariable initializeWith="valueAndStatus"
+  		dataType="OpcUa_Double" name="FF11_rxpower_1" nullPolicy="nullAllowed"
+  		addressSpaceWrite="forbidden" initialStatus="OpcUa_Good"
+  		initialValue="0">
+  	</d:cachevariable>
+  	<d:cachevariable initializeWith="valueAndStatus"
+  		dataType="OpcUa_Double" name="FF11_rxpower_2" nullPolicy="nullAllowed"
+  		addressSpaceWrite="forbidden" initialStatus="OpcUa_Good"
+  		initialValue="0">
+  	</d:cachevariable>
+  	<d:cachevariable initializeWith="valueAndStatus"
+  		dataType="OpcUa_Double" name="FF11_rxpower_3" nullPolicy="nullAllowed"
+  		addressSpaceWrite="forbidden" initialStatus="OpcUa_Good"
+  		initialValue="0">
+  	</d:cachevariable>
+  	<d:cachevariable initializeWith="valueAndStatus"
+  		dataType="OpcUa_Double" name="FF11_id" nullPolicy="nullAllowed"
+  		addressSpaceWrite="forbidden" initialStatus="OpcUa_Good"
+  		initialValue="0">
+  	</d:cachevariable>
+  	<d:cachevariable initializeWith="valueAndStatus"
+  		dataType="UaString" name="FF11_model" nullPolicy="nullAllowed"
+  		addressSpaceWrite="forbidden" initialStatus="OpcUa_Good"
+  		initialValue="0">
+  	</d:cachevariable>
+  	<d:cachevariable initializeWith="valueAndStatus"
+  		dataType="UaString" name="FF11_serial" nullPolicy="nullAllowed"
+  		addressSpaceWrite="forbidden" initialStatus="OpcUa_Good"
+  		initialValue="0">
+  	</d:cachevariable>
+  	<d:cachevariable initializeWith="valueAndStatus"
+  		dataType="UaString" name="FF11_fwversion" nullPolicy="nullAllowed"
+  		addressSpaceWrite="forbidden" initialStatus="OpcUa_Good"
+  		initialValue="0">
+  	</d:cachevariable>
+  	<d:cachevariable initializeWith="valueAndStatus"
+  		dataType="OpcUa_Double" name="FF12_present" nullPolicy="nullAllowed"
+  		addressSpaceWrite="forbidden" initialStatus="OpcUa_Good"
+  		initialValue="0">
+  	</d:cachevariable>
+  	<d:cachevariable initializeWith="valueAndStatus"
+  		dataType="OpcUa_Double" name="FF12_status" nullPolicy="nullAllowed"
+  		addressSpaceWrite="forbidden" initialStatus="OpcUa_Good"
+  		initialValue="0">
+  	</d:cachevariable>
+  	<d:cachevariable initializeWith="valueAndStatus"
+  		dataType="OpcUa_Double" name="FF12_txdisable" nullPolicy="nullAllowed"
+  		addressSpaceWrite="forbidden" initialStatus="OpcUa_Good"
+  		initialValue="0">
+  	</d:cachevariable>
+  	<d:cachevariable initializeWith="valueAndStatus"
+  		dataType="OpcUa_Double" name="FF12_cdrenable" nullPolicy="nullAllowed"
+  		addressSpaceWrite="forbidden" initialStatus="OpcUa_Good"
+  		initialValue="0">
+  	</d:cachevariable>
+  	<d:cachevariable initializeWith="valueAndStatus"
+  		dataType="OpcUa_Double" name="FF12_cdrrate" nullPolicy="nullAllowed"
+  		addressSpaceWrite="forbidden" initialStatus="OpcUa_Good"
+  		initialValue="0">
+  	</d:cachevariable>
+  	<d:cachevariable initializeWith="valueAndStatus"
+  		dataType="OpcUa_Double" name="FF12_cdrlol" nullPolicy="nullAllowed"
+  		addressSpaceWrite="forbidden" initialStatus="OpcUa_Good"
+  		initialValue="0">
+  	</d:cachevariable>
+  	<d:cachevariable initializeWith="valueAndStatus"
+  		dataType="OpcUa_Double" name="FF12_los" nullPolicy="nullAllowed"
+  		addressSpaceWrite="forbidden" initialStatus="OpcUa_Good"
+  		initialValue="0">
+  	</d:cachevariable>
+  	<d:cachevariable initializeWith="valueAndStatus"
+  		dataType="OpcUa_Double" name="FF12_txfault" nullPolicy="nullAllowed"
+  		addressSpaceWrite="forbidden" initialStatus="OpcUa_Good"
+  		initialValue="0">
+  	</d:cachevariable>
+  	<d:cachevariable initializeWith="valueAndStatus"
+  		dataType="OpcUa_Double" name="FF12_tempfault" nullPolicy="nullAllowed"
+  		addressSpaceWrite="forbidden" initialStatus="OpcUa_Good"
+  		initialValue="0">
+  	</d:cachevariable>
+  	<d:cachevariable initializeWith="valueAndStatus"
+  		dataType="OpcUa_Double" name="FF12_voltfault" nullPolicy="nullAllowed"
+  		addressSpaceWrite="forbidden" initialStatus="OpcUa_Good"
+  		initialValue="0">
+  	</d:cachevariable>
+  	<d:cachevariable initializeWith="valueAndStatus"
+  		dataType="OpcUa_Double" name="FF12_powerfault" nullPolicy="nullAllowed"
+  		addressSpaceWrite="forbidden" initialStatus="OpcUa_Good"
+  		initialValue="0">
+  	</d:cachevariable>
+  	<d:cachevariable initializeWith="valueAndStatus"
+  		dataType="OpcUa_Double" name="FF12_uptime" nullPolicy="nullAllowed"
+  		addressSpaceWrite="forbidden" initialStatus="OpcUa_Good"
+  		initialValue="0">
+  	</d:cachevariable>
+  	<d:cachevariable initializeWith="valueAndStatus"
+  		dataType="OpcUa_Double" name="FF12_tempC" nullPolicy="nullAllowed"
+  		addressSpaceWrite="forbidden" initialStatus="OpcUa_Good"
+  		initialValue="0">
+  	</d:cachevariable>
+  	<d:cachevariable initializeWith="valueAndStatus"
+  		dataType="OpcUa_Double" name="FF12_rxpower_0" nullPolicy="nullAllowed"
+  		addressSpaceWrite="forbidden" initialStatus="OpcUa_Good"
+  		initialValue="0">
+  	</d:cachevariable>
+  	<d:cachevariable initializeWith="valueAndStatus"
+  		dataType="OpcUa_Double" name="FF12_rxpower_1" nullPolicy="nullAllowed"
+  		addressSpaceWrite="forbidden" initialStatus="OpcUa_Good"
+  		initialValue="0">
+  	</d:cachevariable>
+  	<d:cachevariable initializeWith="valueAndStatus"
+  		dataType="OpcUa_Double" name="FF12_rxpower_2" nullPolicy="nullAllowed"
+  		addressSpaceWrite="forbidden" initialStatus="OpcUa_Good"
+  		initialValue="0">
+  	</d:cachevariable>
+  	<d:cachevariable initializeWith="valueAndStatus"
+  		dataType="OpcUa_Double" name="FF12_rxpower_3" nullPolicy="nullAllowed"
+  		addressSpaceWrite="forbidden" initialStatus="OpcUa_Good"
+  		initialValue="0">
+  	</d:cachevariable>
+  	<d:cachevariable initializeWith="valueAndStatus"
+  		dataType="OpcUa_Double" name="FF12_id" nullPolicy="nullAllowed"
+  		addressSpaceWrite="forbidden" initialStatus="OpcUa_Good"
+  		initialValue="0">
+  	</d:cachevariable>
+  	<d:cachevariable initializeWith="valueAndStatus"
+  		dataType="UaString" name="FF12_model" nullPolicy="nullAllowed"
+  		addressSpaceWrite="forbidden" initialStatus="OpcUa_Good"
+  		initialValue="0">
+  	</d:cachevariable>
+  	<d:cachevariable initializeWith="valueAndStatus"
+  		dataType="UaString" name="FF12_serial" nullPolicy="nullAllowed"
+  		addressSpaceWrite="forbidden" initialStatus="OpcUa_Good"
+  		initialValue="0">
+  	</d:cachevariable>
+  	<d:cachevariable initializeWith="valueAndStatus"
+  		dataType="UaString" name="FF12_fwversion" nullPolicy="nullAllowed"
+  		addressSpaceWrite="forbidden" initialStatus="OpcUa_Good"
+  		initialValue="0">
+  	</d:cachevariable>
+  	<d:cachevariable initializeWith="valueAndStatus"
   		dataType="OpcUa_Double" name="FF13_present" nullPolicy="nullAllowed"
   		addressSpaceWrite="forbidden" initialStatus="OpcUa_Good"
   		initialValue="0">
@@ -146,6 +359,46 @@
   	</d:cachevariable>
   	<d:cachevariable initializeWith="valueAndStatus"
   		dataType="OpcUa_Double" name="FF13_txdisable" nullPolicy="nullAllowed"
+  		addressSpaceWrite="forbidden" initialStatus="OpcUa_Good"
+  		initialValue="0">
+  	</d:cachevariable>
+  	<d:cachevariable initializeWith="valueAndStatus"
+  		dataType="OpcUa_Double" name="FF13_cdrenable" nullPolicy="nullAllowed"
+  		addressSpaceWrite="forbidden" initialStatus="OpcUa_Good"
+  		initialValue="0">
+  	</d:cachevariable>
+  	<d:cachevariable initializeWith="valueAndStatus"
+  		dataType="OpcUa_Double" name="FF13_cdrrate" nullPolicy="nullAllowed"
+  		addressSpaceWrite="forbidden" initialStatus="OpcUa_Good"
+  		initialValue="0">
+  	</d:cachevariable>
+  	<d:cachevariable initializeWith="valueAndStatus"
+  		dataType="OpcUa_Double" name="FF13_cdrlol" nullPolicy="nullAllowed"
+  		addressSpaceWrite="forbidden" initialStatus="OpcUa_Good"
+  		initialValue="0">
+  	</d:cachevariable>
+  	<d:cachevariable initializeWith="valueAndStatus"
+  		dataType="OpcUa_Double" name="FF13_los" nullPolicy="nullAllowed"
+  		addressSpaceWrite="forbidden" initialStatus="OpcUa_Good"
+  		initialValue="0">
+  	</d:cachevariable>
+  	<d:cachevariable initializeWith="valueAndStatus"
+  		dataType="OpcUa_Double" name="FF13_txfault" nullPolicy="nullAllowed"
+  		addressSpaceWrite="forbidden" initialStatus="OpcUa_Good"
+  		initialValue="0">
+  	</d:cachevariable>
+  	<d:cachevariable initializeWith="valueAndStatus"
+  		dataType="OpcUa_Double" name="FF13_tempfault" nullPolicy="nullAllowed"
+  		addressSpaceWrite="forbidden" initialStatus="OpcUa_Good"
+  		initialValue="0">
+  	</d:cachevariable>
+  	<d:cachevariable initializeWith="valueAndStatus"
+  		dataType="OpcUa_Double" name="FF13_voltfault" nullPolicy="nullAllowed"
+  		addressSpaceWrite="forbidden" initialStatus="OpcUa_Good"
+  		initialValue="0">
+  	</d:cachevariable>
+  	<d:cachevariable initializeWith="valueAndStatus"
+  		dataType="OpcUa_Double" name="FF13_powerfault" nullPolicy="nullAllowed"
   		addressSpaceWrite="forbidden" initialStatus="OpcUa_Good"
   		initialValue="0">
   	</d:cachevariable>
@@ -176,6 +429,26 @@
   	</d:cachevariable>
   	<d:cachevariable initializeWith="valueAndStatus"
   		dataType="OpcUa_Double" name="FF13_rxpower_3" nullPolicy="nullAllowed"
+  		addressSpaceWrite="forbidden" initialStatus="OpcUa_Good"
+  		initialValue="0">
+  	</d:cachevariable>
+  	<d:cachevariable initializeWith="valueAndStatus"
+  		dataType="OpcUa_Double" name="FF13_id" nullPolicy="nullAllowed"
+  		addressSpaceWrite="forbidden" initialStatus="OpcUa_Good"
+  		initialValue="0">
+  	</d:cachevariable>
+  	<d:cachevariable initializeWith="valueAndStatus"
+  		dataType="UaString" name="FF13_model" nullPolicy="nullAllowed"
+  		addressSpaceWrite="forbidden" initialStatus="OpcUa_Good"
+  		initialValue="0">
+  	</d:cachevariable>
+  	<d:cachevariable initializeWith="valueAndStatus"
+  		dataType="UaString" name="FF13_serial" nullPolicy="nullAllowed"
+  		addressSpaceWrite="forbidden" initialStatus="OpcUa_Good"
+  		initialValue="0">
+  	</d:cachevariable>
+  	<d:cachevariable initializeWith="valueAndStatus"
+  		dataType="UaString" name="FF13_fwversion" nullPolicy="nullAllowed"
   		addressSpaceWrite="forbidden" initialStatus="OpcUa_Good"
   		initialValue="0">
   	</d:cachevariable>
