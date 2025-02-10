@@ -44,8 +44,9 @@ Copy the contents of the whole directory structure to the target board
 ## Monitoring
   The Unified Automation UA Client (UAExpert) can be used to communicate with the server
 - Click on the "+" sign to add the SRTM OpcUa server
-- The server name is <SRTM ip address>:4841
+- The server name is \<SRTM ip address\>:4841
 - After adding the server an ope62541-based OPC UA Application line will appear in the Add Server window
+- Click on this line to choose the server
 - Once you choose the server, click on the "power plug" icon to connect to the server
 - You should see an SRTM pulldown menu in the Address Space window (lower left)
 - If you expand this list, you can pull various sensors into the Data Access View window to monitor their values
