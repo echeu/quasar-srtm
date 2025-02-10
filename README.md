@@ -41,6 +41,7 @@ Copy the contents of the whole directory structure to the target board
     - At this moment the address field needs to be in decimal (not hex).
 - ./OpcUaServer
 
+## Monitoring
   The Unified Automation UA Client (UAExpert) can be used to communicate with the server
 - Click on the "+" sign to add the SRTM OpcUa server
 - The server name is <SRTM ip address>:4841
