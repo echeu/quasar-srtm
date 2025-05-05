@@ -158,6 +158,9 @@ void DRegs::update() {
 
   // Get Zynq data
   if (sensor_json) extract_zynq(sensor_json);
+
+  // Get IPMC data
+  if (sensor_json) extract_ipmc(sensor_json);
   
   // ECC - be sure to delete cJSON object
   cJSON_Delete(top);
@@ -484,6 +487,39 @@ void DRegs::extract_fpga(cJSON *sensor_json) {
 
 }
 
+// get IPMC sensor data from the JSON structure
+void DRegs::extract_ipmc(cJSON *sensor_json) {
+  cJSON *IPMC_json;
+  cJSON *IPMC_id_json, *IPMC_i2cVer_json, *IPMC_rev_json, *IPMC_ver_json, *IPMC_seq_json;
+  double IPMC_id = -99, IPMC_i2cVer = -99, IPMC_rev = -99, IPMC_ver = -99, IPMC_seq = -99;
+
+
+  // first locate the fpga pointer
+  if (sensor_json) IPMC_json = cJSON_GetObjectItem(sensor_json, "ipmc");
+
+  // now get the actual data
+  if (IPMC_json) IPMC_id_json = cJSON_GetObjectItem(IPMC_json, "id");
+  if (IPMC_json) IPMC_i2cVer_json = cJSON_GetObjectItem(IPMC_json, "i2cVer");
+  if (IPMC_json) IPMC_rev_json = cJSON_GetObjectItem(IPMC_json, "rev");
+  if (IPMC_json) IPMC_ver_json = cJSON_GetObjectItem(IPMC_json, "ver");
+  if (IPMC_json) IPMC_seq_json = cJSON_GetObjectItem(IPMC_json, "seq");
+
+  if (IPMC_id_json)     IPMC_id  = IPMC_id_json->valuedouble; // these data are stored as numbers
+  if (IPMC_i2cVer_json) IPMC_i2cVer = IPMC_i2cVer_json->valuedouble;
+  if (IPMC_rev_json)    IPMC_rev = IPMC_rev_json->valuedouble;
+  if (IPMC_ver_json)    IPMC_ver = IPMC_ver_json->valuedouble;
+  if (IPMC_seq_json)    IPMC_seq = IPMC_seq_json->valuedouble;
+
+
+  // link data to OpcUA
+  getAddressSpaceLink()->setIPMC_id(IPMC_id,OpcUa_Good);
+  getAddressSpaceLink()->setIPMC_i2cVer(IPMC_i2cVer,OpcUa_Good);
+  getAddressSpaceLink()->setIPMC_rev(IPMC_rev,OpcUa_Good);
+  getAddressSpaceLink()->setIPMC_ver(IPMC_ver,OpcUa_Good);
+  getAddressSpaceLink()->setIPMC_seq(IPMC_seq,OpcUa_Good);
+
+}
+  
 // Get Zynq values from JSON object
 void DRegs::extract_zynq(cJSON *sensor_json) {
 

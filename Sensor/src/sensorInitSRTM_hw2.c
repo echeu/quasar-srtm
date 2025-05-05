@@ -40,6 +40,7 @@
 #include "zynqOnBoard.h"
 #include "zynqPL.h"
 #include "sfp.h"
+#include "ipmcSensorBlock.h"
 
 #include "sensorI2C.h"
 #include "sensorData.h"
@@ -67,6 +68,7 @@
 #define NDDR4 1
 //#define NZYNQ 2  /* Pre 2024.1 SRTM, the internal Zynq PS and PL side sensors */
 #define NZYNQ 1 /* Starting with 2024.1 SRTM, only PS side is used */
+#define NIPMC 1 /* This is the (optional?) data from the IPMC via I2C.*/
 
 /* --- SRTM sensors -----------------------------------------------------------
  * First, we do the devices on the RTM_SENSOR bus. This is shared with the 
@@ -126,6 +128,7 @@ static struct sensorReadings {
   struct ddr4 ddr4;
   struct zynqOnBoard zynqInternal;
   struct zynqPL zynqPLInternal;
+  struct ipmcDataRecord ipmcInternal;
 } sensorData;
 
 /* 
@@ -146,7 +149,7 @@ static struct sensorReadings {
 #define SENSOR0 0
 #define SENSOR1 1
 
-static int nsensors=NTEMP+NPOWER+NSTATUS+NFIREFLY+NPSEQ+NDDR4+NZYNQ;
+static int nsensors=NTEMP+NPOWER+NSTATUS+NFIREFLY+NPSEQ+NDDR4+NZYNQ+NIPMC;
 static struct sensorRecord sensors[] = {
 #ifdef USE_SHARED_I2C /* this might cause crashes */
   /* The NTEMP temperature sensors. In the IPMC buffer, 16(byte) = 8(word) has FPGA temp. Skip it */
@@ -172,6 +175,7 @@ static struct sensorRecord sensors[] = {
   {{SENSOR1,0,0,DDR4ADDR,ddr4Init,ddr4Read,ddr4Format,0},{-1,0,0},&sensorData.ddr4,"DDR4"},
   {{0,0,0,ZYNQADDR,zynqOnBoardInit,zynqOnBoardRead,zynqOnBoardFormat,0},{-1,0,0},&sensorData.zynqInternal,"ZynqInternal"}, /* Psuedo sensor. It's a group */
 //  {{0,0,0,ZYNQADDR,zynqPLInit,zynqPLRead,zynqPLFormat,0},{-1,0,0},&sensorData.zynqPLInternal,"ZynqPLInternal"},  /* Psuedo sensor. It's a group */
+  {{0,0,0,ZYNQADDR,ipmcSensorBlockInit,ipmcSensorBlockRead,ipmcSensorBlockFormat,0},{-1,0,0},&sensorData.ipmcInternal,"IpmcInternal"}, /* Psuedo sensor. It's a group */
   {{0,0,0,0,0,0,0,0},{0,0,0},0,0}
 };
 

@@ -23,7 +23,7 @@
 extern "C" {
 #endif
 
-void hexdump( u8 *buff, int len );
+void hexdump(const u8 *buff, int len );
 
 #ifdef __cplusplus
 }
