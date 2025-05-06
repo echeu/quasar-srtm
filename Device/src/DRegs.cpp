@@ -494,10 +494,13 @@ void DRegs::extract_ipmc(cJSON *sensor_json) {
   cJSON *IPMC_status_json, *IPMC_rawtime_json, *IPMC_time_json, *IPMC_iQ_I_json, *IPMC_iQ_VA_json;
   cJSON *IPMC_iQ_VB_json, *IPMC_iQ_T_json, *IPMC_PCF_al_json, *IPMC_PCF_ah_json, *IPMC_PCF_bl_V_json;
   cJSON *IPMC_PCF_bh_I_json, *IPMC_TMP100_fb_json, *IPMC_TMP100_bb_json, *IPMC_TMP100_ft_json, *IPMC_TMP100_bt_json;
+  cJSON *IPMC_TMP100_z_json;
+  
   double IPMC_id = -99, IPMC_i2cVer = -99, IPMC_rev = -99, IPMC_ver = -99, IPMC_seq = -99;
   double IPMC_status = -99, IPMC_rawtime = -99, IPMC_iQ_I = -99, IPMC_iQ_VA = -99;
   double IPMC_iQ_VB = -99, IPMC_iQ_T = -99, IPMC_PCF_al = -99, IPMC_PCF_ah = -99, IPMC_PCF_bl_V = -99;
   double IPMC_PCF_bh_I = -99, IPMC_TMP100_fb = -99, IPMC_TMP100_bb = -99, IPMC_TMP100_ft = -99, IPMC_TMP100_bt = -99;
+  double IPMC_TMP100_z;
 
   char *IPMC_time;
 
@@ -524,7 +527,7 @@ void DRegs::extract_ipmc(cJSON *sensor_json) {
   if (IPMC_json) IPMC_TMP100_fb_json = cJSON_GetObjectItem(IPMC_json, "TMP100_fb");
   if (IPMC_json) IPMC_TMP100_bb_json = cJSON_GetObjectItem(IPMC_json, "TMP100_bb");
   if (IPMC_json) IPMC_TMP100_ft_json = cJSON_GetObjectItem(IPMC_json, "TMP100_ft");
-  if (IPMC_json) IPMC_TMP100_bt_json = cJSON_GetObjectItem(IPMC_json, "TMP100_bt");
+  if (IPMC_json) IPMC_TMP100_z_json = cJSON_GetObjectItem(IPMC_json, "TMP100_z");
 
 
   if (IPMC_id_json)        IPMC_id  = IPMC_id_json->valuedouble; // these data are stored as numbers
@@ -547,6 +550,7 @@ void DRegs::extract_ipmc(cJSON *sensor_json) {
   if (IPMC_TMP100_bb_json) IPMC_TMP100_bb = IPMC_TMP100_bb_json->valuedouble;
   if (IPMC_TMP100_ft_json) IPMC_TMP100_ft = IPMC_TMP100_ft_json->valuedouble;
   if (IPMC_TMP100_bt_json) IPMC_TMP100_bt = IPMC_TMP100_bt_json->valuedouble;
+  if (IPMC_TMP100_z_json)  IPMC_TMP100_z = IPMC_TMP100_z_json->valuedouble;
 
 
   // link data to OpcUA
@@ -570,6 +574,7 @@ void DRegs::extract_ipmc(cJSON *sensor_json) {
   getAddressSpaceLink()->setIPMC_TMP100_bb(IPMC_TMP100_bb,OpcUa_Good);
   getAddressSpaceLink()->setIPMC_TMP100_ft(IPMC_TMP100_ft,OpcUa_Good);
   getAddressSpaceLink()->setIPMC_TMP100_bt(IPMC_TMP100_bt,OpcUa_Good);
+  getAddressSpaceLink()->setIPMC_TMP100_z(IPMC_TMP100_z,OpcUa_Good);
 
 }
   
