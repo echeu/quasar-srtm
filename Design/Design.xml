@@ -503,6 +503,81 @@
   		initialValue="0">
   	</d:cachevariable>
   	<d:cachevariable initializeWith="valueAndStatus"
+  		dataType="OpcUa_Double" name="IPMC_status" nullPolicy="nullAllowed"
+  		addressSpaceWrite="forbidden" initialStatus="OpcUa_Good"
+  		initialValue="0">
+  	</d:cachevariable>
+  	<d:cachevariable initializeWith="valueAndStatus"
+  		dataType="OpcUa_Double" name="IPMC_rawtime" nullPolicy="nullAllowed"
+  		addressSpaceWrite="forbidden" initialStatus="OpcUa_Good"
+  		initialValue="0">
+  	</d:cachevariable>
+  	<d:cachevariable initializeWith="valueAndStatus"
+  		dataType="UaString" name="IPMC_time" nullPolicy="nullAllowed"
+  		addressSpaceWrite="forbidden" initialStatus="OpcUa_Good"
+  		initialValue="0">
+  	</d:cachevariable>
+  	<d:cachevariable initializeWith="valueAndStatus"
+  		dataType="OpcUa_Double" name="IPMC_iQ_I" nullPolicy="nullAllowed"
+  		addressSpaceWrite="forbidden" initialStatus="OpcUa_Good"
+  		initialValue="0">
+  	</d:cachevariable>
+  	<d:cachevariable initializeWith="valueAndStatus"
+  		dataType="OpcUa_Double" name="IPMC_iQ_VA" nullPolicy="nullAllowed"
+  		addressSpaceWrite="forbidden" initialStatus="OpcUa_Good"
+  		initialValue="0">
+  	</d:cachevariable>
+  	<d:cachevariable initializeWith="valueAndStatus"
+  		dataType="OpcUa_Double" name="IPMC_iQ_VB" nullPolicy="nullAllowed"
+  		addressSpaceWrite="forbidden" initialStatus="OpcUa_Good"
+  		initialValue="0">
+  	</d:cachevariable>
+  	<d:cachevariable initializeWith="valueAndStatus"
+  		dataType="OpcUa_Double" name="IPMC_iQ_T" nullPolicy="nullAllowed"
+  		addressSpaceWrite="forbidden" initialStatus="OpcUa_Good"
+  		initialValue="0">
+  	</d:cachevariable>
+  	<d:cachevariable initializeWith="valueAndStatus"
+  		dataType="OpcUa_Double" name="IPMC_PCF_al" nullPolicy="nullAllowed"
+  		addressSpaceWrite="forbidden" initialStatus="OpcUa_Good"
+  		initialValue="0">
+  	</d:cachevariable>
+  	<d:cachevariable initializeWith="valueAndStatus"
+  		dataType="OpcUa_Double" name="IPMC_PCF_ah" nullPolicy="nullAllowed"
+  		addressSpaceWrite="forbidden" initialStatus="OpcUa_Good"
+  		initialValue="0">
+  	</d:cachevariable>
+  	<d:cachevariable initializeWith="valueAndStatus"
+  		dataType="OpcUa_Double" name="IPMC_PCF_bl_V" nullPolicy="nullAllowed"
+  		addressSpaceWrite="forbidden" initialStatus="OpcUa_Good"
+  		initialValue="0">
+  	</d:cachevariable>
+  	<d:cachevariable initializeWith="valueAndStatus"
+  		dataType="OpcUa_Double" name="IPMC_PCF_bh_I" nullPolicy="nullAllowed"
+  		addressSpaceWrite="forbidden" initialStatus="OpcUa_Good"
+  		initialValue="0">
+  	</d:cachevariable>
+  	<d:cachevariable initializeWith="valueAndStatus"
+  		dataType="OpcUa_Double" name="IPMC_TMP100_fb" nullPolicy="nullAllowed"
+  		addressSpaceWrite="forbidden" initialStatus="OpcUa_Good"
+  		initialValue="0">
+  	</d:cachevariable>
+  	<d:cachevariable initializeWith="valueAndStatus"
+  		dataType="OpcUa_Double" name="IPMC_TMP100_bb" nullPolicy="nullAllowed"
+  		addressSpaceWrite="forbidden" initialStatus="OpcUa_Good"
+  		initialValue="0">
+  	</d:cachevariable>
+  	<d:cachevariable initializeWith="valueAndStatus"
+  		dataType="OpcUa_Double" name="IPMC_TMP100_ft" nullPolicy="nullAllowed"
+  		addressSpaceWrite="forbidden" initialStatus="OpcUa_Good"
+  		initialValue="0">
+  	</d:cachevariable>
+  	<d:cachevariable initializeWith="valueAndStatus"
+  		dataType="OpcUa_Double" name="IPMC_TMP100_bt" nullPolicy="nullAllowed"
+  		addressSpaceWrite="forbidden" initialStatus="OpcUa_Good"
+  		initialValue="0">
+  	</d:cachevariable>
+  	<d:cachevariable initializeWith="valueAndStatus"
   		dataType="OpcUa_Double" name="Zynq_ps_temp" nullPolicy="nullAllowed"
   		addressSpaceWrite="forbidden" initialStatus="OpcUa_Good"
   		initialValue="0">

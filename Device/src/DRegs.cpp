@@ -491,7 +491,15 @@ void DRegs::extract_fpga(cJSON *sensor_json) {
 void DRegs::extract_ipmc(cJSON *sensor_json) {
   cJSON *IPMC_json;
   cJSON *IPMC_id_json, *IPMC_i2cVer_json, *IPMC_rev_json, *IPMC_ver_json, *IPMC_seq_json;
+  cJSON *IPMC_status_json, *IPMC_rawtime_json, *IPMC_time_json, *IPMC_iQ_I_json, *IPMC_iQ_VA_json;
+  cJSON *IPMC_iQ_VB_json, *IPMC_iQ_T_json, *IPMC_PCF_al_json, *IPMC_PCF_ah_json, *IPMC_PCF_bl_V_json;
+  cJSON *IPMC_PCF_bh_I_json, *IPMC_TMP100_fb_json, *IPMC_TMP100_bb_json, *IPMC_TMP100_ft_json, *IPMC_TMP100_bt_json;
   double IPMC_id = -99, IPMC_i2cVer = -99, IPMC_rev = -99, IPMC_ver = -99, IPMC_seq = -99;
+  double IPMC_status = -99, IPMC_rawtime = -99, IPMC_iQ_I = -99, IPMC_iQ_VA = -99;
+  double IPMC_iQ_VB = -99, IPMC_iQ_T = -99, IPMC_PCF_al = -99, IPMC_PCF_ah = -99, IPMC_PCF_bl_V = -99;
+  double IPMC_PCF_bh_I = -99, IPMC_TMP100_fb = -99, IPMC_TMP100_bb = -99, IPMC_TMP100_ft = -99, IPMC_TMP100_bt = -99;
+
+  char *IPMC_time;
 
 
   // first locate the fpga pointer
@@ -502,13 +510,43 @@ void DRegs::extract_ipmc(cJSON *sensor_json) {
   if (IPMC_json) IPMC_i2cVer_json = cJSON_GetObjectItem(IPMC_json, "i2cVer");
   if (IPMC_json) IPMC_rev_json = cJSON_GetObjectItem(IPMC_json, "rev");
   if (IPMC_json) IPMC_ver_json = cJSON_GetObjectItem(IPMC_json, "ver");
-  if (IPMC_json) IPMC_seq_json = cJSON_GetObjectItem(IPMC_json, "seq");
+  if (IPMC_json) IPMC_status_json = cJSON_GetObjectItem(IPMC_json, "seq");
+  if (IPMC_json) IPMC_rawtime_json = cJSON_GetObjectItem(IPMC_json, "rawtime");
+  if (IPMC_json) IPMC_time_json = cJSON_GetObjectItem(IPMC_json, "time");
+  if (IPMC_json) IPMC_iQ_I_json = cJSON_GetObjectItem(IPMC_json, "iQ65033qqma10_I");
+  if (IPMC_json) IPMC_iQ_VA_json = cJSON_GetObjectItem(IPMC_json, "iQ65033qqma10_VA");
+  if (IPMC_json) IPMC_iQ_VB_json = cJSON_GetObjectItem(IPMC_json, "iQ65033qqma10_VB");
+  if (IPMC_json) IPMC_iQ_T_json = cJSON_GetObjectItem(IPMC_json, "iQ65033qqma10_T");
+  if (IPMC_json) IPMC_PCF_al_json = cJSON_GetObjectItem(IPMC_json, "PCF8575_al");
+  if (IPMC_json) IPMC_PCF_ah_json = cJSON_GetObjectItem(IPMC_json, "PCF8575_ah");
+  if (IPMC_json) IPMC_PCF_bl_V_json = cJSON_GetObjectItem(IPMC_json, "PCF8575_bl_V");
+  if (IPMC_json) IPMC_PCF_bh_I_json = cJSON_GetObjectItem(IPMC_json, "PCF8575_bh_I");
+  if (IPMC_json) IPMC_TMP100_fb_json = cJSON_GetObjectItem(IPMC_json, "TMP100_fb");
+  if (IPMC_json) IPMC_TMP100_bb_json = cJSON_GetObjectItem(IPMC_json, "TMP100_bb");
+  if (IPMC_json) IPMC_TMP100_ft_json = cJSON_GetObjectItem(IPMC_json, "TMP100_ft");
+  if (IPMC_json) IPMC_TMP100_bt_json = cJSON_GetObjectItem(IPMC_json, "TMP100_bt");
 
-  if (IPMC_id_json)     IPMC_id  = IPMC_id_json->valuedouble; // these data are stored as numbers
-  if (IPMC_i2cVer_json) IPMC_i2cVer = IPMC_i2cVer_json->valuedouble;
-  if (IPMC_rev_json)    IPMC_rev = IPMC_rev_json->valuedouble;
-  if (IPMC_ver_json)    IPMC_ver = IPMC_ver_json->valuedouble;
-  if (IPMC_seq_json)    IPMC_seq = IPMC_seq_json->valuedouble;
+
+  if (IPMC_id_json)        IPMC_id  = IPMC_id_json->valuedouble; // these data are stored as numbers
+  if (IPMC_i2cVer_json)    IPMC_i2cVer = IPMC_i2cVer_json->valuedouble;
+  if (IPMC_rev_json)       IPMC_rev = IPMC_rev_json->valuedouble;
+  if (IPMC_ver_json)       IPMC_ver = IPMC_ver_json->valuedouble;
+  if (IPMC_seq_json)       IPMC_seq = IPMC_seq_json->valuedouble;
+  if (IPMC_status_json)    IPMC_status = IPMC_status_json->valuedouble;
+  if (IPMC_rawtime_json)   IPMC_rawtime = IPMC_rawtime_json->valuedouble;
+  if (IPMC_time_json)      IPMC_time = IPMC_time_json->valuestring;
+  if (IPMC_iQ_I_json)      IPMC_iQ_I = IPMC_iQ_I_json->valuedouble;
+  if (IPMC_iQ_VA_json)     IPMC_iQ_VA = IPMC_iQ_VA_json->valuedouble;
+  if (IPMC_iQ_VB_json)     IPMC_iQ_VB = IPMC_iQ_VB_json->valuedouble;
+  if (IPMC_iQ_T_json)      IPMC_iQ_T = IPMC_iQ_T_json->valuedouble;
+  if (IPMC_PCF_al_json)    IPMC_PCF_al = IPMC_PCF_al_json->valuedouble;
+  if (IPMC_PCF_ah_json)    IPMC_PCF_ah = IPMC_PCF_ah_json->valuedouble;
+  if (IPMC_PCF_bl_V_json)  IPMC_PCF_bl_V = IPMC_PCF_bl_V_json->valuedouble;
+  if (IPMC_PCF_bh_I_json)  IPMC_PCF_bh_I = IPMC_PCF_bh_I_json->valuedouble;
+  if (IPMC_TMP100_fb_json) IPMC_TMP100_fb = IPMC_TMP100_fb_json->valuedouble;
+  if (IPMC_TMP100_bb_json) IPMC_TMP100_bb = IPMC_TMP100_bb_json->valuedouble;
+  if (IPMC_TMP100_ft_json) IPMC_TMP100_ft = IPMC_TMP100_ft_json->valuedouble;
+  if (IPMC_TMP100_bt_json) IPMC_TMP100_bt = IPMC_TMP100_bt_json->valuedouble;
 
 
   // link data to OpcUA
@@ -517,6 +555,21 @@ void DRegs::extract_ipmc(cJSON *sensor_json) {
   getAddressSpaceLink()->setIPMC_rev(IPMC_rev,OpcUa_Good);
   getAddressSpaceLink()->setIPMC_ver(IPMC_ver,OpcUa_Good);
   getAddressSpaceLink()->setIPMC_seq(IPMC_seq,OpcUa_Good);
+  getAddressSpaceLink()->setIPMC_status(IPMC_status,OpcUa_Good);
+  getAddressSpaceLink()->setIPMC_rawtime(IPMC_rawtime,OpcUa_Good);
+  getAddressSpaceLink()->setIPMC_time(IPMC_time,OpcUa_Good);
+  getAddressSpaceLink()->setIPMC_iQ_I(IPMC_iQ_I,OpcUa_Good);
+  getAddressSpaceLink()->setIPMC_iQ_VA(IPMC_iQ_VA,OpcUa_Good);
+  getAddressSpaceLink()->setIPMC_iQ_VB(IPMC_iQ_VB,OpcUa_Good);
+  getAddressSpaceLink()->setIPMC_iQ_T(IPMC_iQ_T,OpcUa_Good);
+  getAddressSpaceLink()->setIPMC_PCF_al(IPMC_PCF_al,OpcUa_Good);
+  getAddressSpaceLink()->setIPMC_PCF_ah(IPMC_PCF_ah,OpcUa_Good);
+  getAddressSpaceLink()->setIPMC_PCF_bl_V(IPMC_PCF_bl_V,OpcUa_Good);
+  getAddressSpaceLink()->setIPMC_PCF_bh_I(IPMC_PCF_bh_I,OpcUa_Good);
+  getAddressSpaceLink()->setIPMC_TMP100_fb(IPMC_TMP100_fb,OpcUa_Good);
+  getAddressSpaceLink()->setIPMC_TMP100_bb(IPMC_TMP100_bb,OpcUa_Good);
+  getAddressSpaceLink()->setIPMC_TMP100_ft(IPMC_TMP100_ft,OpcUa_Good);
+  getAddressSpaceLink()->setIPMC_TMP100_bt(IPMC_TMP100_bt,OpcUa_Good);
 
 }
   
