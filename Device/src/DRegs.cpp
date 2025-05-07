@@ -495,12 +495,28 @@ void DRegs::extract_ipmc(cJSON *sensor_json) {
   cJSON *IPMC_iQ_VB_json, *IPMC_iQ_T_json, *IPMC_PCF_al_json, *IPMC_PCF_ah_json, *IPMC_PCF_bl_V_json;
   cJSON *IPMC_PCF_bh_I_json, *IPMC_TMP100_fb_json, *IPMC_TMP100_bb_json, *IPMC_TMP100_ft_json, *IPMC_TMP100_bt_json;
   cJSON *IPMC_TMP100_z_json;
+  cJSON *IPMC_LTC_6A_V_json,  *IPMC_LTC_6A_I_json, *IPMC_LTC_6A_T_json;
+  cJSON *IPMC_LTC_67_V_json,  *IPMC_LTC_67_I_json;
+  cJSON *IPMC_LTC_6B_V_json,  *IPMC_LTC_6B_I_json;
+  cJSON *IPMC_LTC_6D_V1_json, *IPMC_LTC_6D_I1_json;
+  cJSON *IPMC_LTC_69_V_json,  *IPMC_LTC_69_I_json;
+  cJSON *IPMC_LTC_6C_V_json,  *IPMC_LTC_6C_I_json;
+  cJSON *IPMC_LTC_6D_V2_json, *IPMC_LTC_6D_I2_json;
+  cJSON *IPMC_LTC_6E_V_json,  *IPMC_LTC_6E_I_json;
   
   double IPMC_id = -99, IPMC_i2cVer = -99, IPMC_rev = -99, IPMC_ver = -99, IPMC_seq = -99;
   double IPMC_status = -99, IPMC_rawtime = -99, IPMC_iQ_I = -99, IPMC_iQ_VA = -99;
   double IPMC_iQ_VB = -99, IPMC_iQ_T = -99, IPMC_PCF_al = -99, IPMC_PCF_ah = -99, IPMC_PCF_bl_V = -99;
   double IPMC_PCF_bh_I = -99, IPMC_TMP100_fb = -99, IPMC_TMP100_bb = -99, IPMC_TMP100_ft = -99, IPMC_TMP100_bt = -99;
-  double IPMC_TMP100_z;
+  double IPMC_TMP100_z = -99;
+  double IPMC_LTC_6A_V = -99,  IPMC_LTC_6A_I = -99, IPMC_LTC_6A_T = -99;
+  double IPMC_LTC_67_V = -99,  IPMC_LTC_67_I = -99;
+  double IPMC_LTC_6B_V = -99,  IPMC_LTC_6B_I = -99;
+  double IPMC_LTC_6D_V1 = -99, IPMC_LTC_6D_I1 = -99;
+  double IPMC_LTC_69_V = -99,  IPMC_LTC_69_I = -99;
+  double IPMC_LTC_6C_V = -99,  IPMC_LTC_6C_I = -99;
+  double IPMC_LTC_6D_V2 = -99, IPMC_LTC_6D_I2 = -99;
+  double IPMC_LTC_6E_V = -99,  IPMC_LTC_6E_I = -99;
 
   char *IPMC_time;
 
@@ -528,6 +544,23 @@ void DRegs::extract_ipmc(cJSON *sensor_json) {
   if (IPMC_json) IPMC_TMP100_bb_json = cJSON_GetObjectItem(IPMC_json, "TMP100_bb");
   if (IPMC_json) IPMC_TMP100_ft_json = cJSON_GetObjectItem(IPMC_json, "TMP100_ft");
   if (IPMC_json) IPMC_TMP100_z_json = cJSON_GetObjectItem(IPMC_json, "TMP100_z");
+  if (IPMC_json) IPMC_LTC_6A_V_json = cJSON_GetObjectItem(IPMC_json, "LTC2945_6A_V");
+  if (IPMC_json) IPMC_LTC_6A_I_json = cJSON_GetObjectItem(IPMC_json, "LTC2945_6A_I");
+  if (IPMC_json) IPMC_LTC_6A_T_json = cJSON_GetObjectItem(IPMC_json, "LTC2945_6A_T");
+  if (IPMC_json) IPMC_LTC_67_V_json = cJSON_GetObjectItem(IPMC_json, "LTC2945_67_V");
+  if (IPMC_json) IPMC_LTC_67_I_json = cJSON_GetObjectItem(IPMC_json, "LTC2945_67_I");
+  if (IPMC_json) IPMC_LTC_6B_V_json = cJSON_GetObjectItem(IPMC_json, "LTC2945_6B_V");
+  if (IPMC_json) IPMC_LTC_6B_I_json = cJSON_GetObjectItem(IPMC_json, "LTC2945_6B_I");
+  if (IPMC_json) IPMC_LTC_6D_V1_json = cJSON_GetObjectItem(IPMC_json, "LTC2945_6D_V1");
+  if (IPMC_json) IPMC_LTC_6D_I1_json = cJSON_GetObjectItem(IPMC_json, "LTC2945_6D_I1");
+  if (IPMC_json) IPMC_LTC_69_V_json = cJSON_GetObjectItem(IPMC_json, "LTC2945_69_V");
+  if (IPMC_json) IPMC_LTC_69_I_json = cJSON_GetObjectItem(IPMC_json, "LTC2945_69_I");
+  if (IPMC_json) IPMC_LTC_6C_V_json = cJSON_GetObjectItem(IPMC_json, "LTC2945_6C_V");
+  if (IPMC_json) IPMC_LTC_6C_I_json = cJSON_GetObjectItem(IPMC_json, "LTC2945_6C_I");
+  if (IPMC_json) IPMC_LTC_6D_V2_json = cJSON_GetObjectItem(IPMC_json, "LTC2945_6D_V2");
+  if (IPMC_json) IPMC_LTC_6D_I2_json = cJSON_GetObjectItem(IPMC_json, "LTC2945_6D_I2");
+  if (IPMC_json) IPMC_LTC_6E_V_json = cJSON_GetObjectItem(IPMC_json, "LTC2945_6E_V");
+  if (IPMC_json) IPMC_LTC_6E_I_json = cJSON_GetObjectItem(IPMC_json, "LTC2945_6E_I");
 
 
   if (IPMC_id_json)        IPMC_id  = IPMC_id_json->valuedouble; // these data are stored as numbers
@@ -551,6 +584,23 @@ void DRegs::extract_ipmc(cJSON *sensor_json) {
   if (IPMC_TMP100_ft_json) IPMC_TMP100_ft = IPMC_TMP100_ft_json->valuedouble;
   if (IPMC_TMP100_bt_json) IPMC_TMP100_bt = IPMC_TMP100_bt_json->valuedouble;
   if (IPMC_TMP100_z_json)  IPMC_TMP100_z = IPMC_TMP100_z_json->valuedouble;
+  if (IPMC_LTC_6A_V_json)  IPMC_LTC_6A_V = IPMC_LTC_6A_V_json->valuedouble;
+  if (IPMC_LTC_6A_I_json)  IPMC_LTC_6A_I = IPMC_LTC_6A_I_json->valuedouble;
+  if (IPMC_LTC_6A_T_json)  IPMC_LTC_6A_T = IPMC_LTC_6A_T_json->valuedouble;
+  if (IPMC_LTC_67_V_json)  IPMC_LTC_67_V = IPMC_LTC_67_V_json->valuedouble;
+  if (IPMC_LTC_67_I_json)  IPMC_LTC_67_I = IPMC_LTC_67_I_json->valuedouble;
+  if (IPMC_LTC_6B_V_json)  IPMC_LTC_6B_V = IPMC_LTC_6B_V_json->valuedouble;
+  if (IPMC_LTC_6B_I_json)  IPMC_LTC_6B_I = IPMC_LTC_6B_I_json->valuedouble;
+  if (IPMC_LTC_6D_V1_json)  IPMC_LTC_6D_V1 = IPMC_LTC_6D_V1_json->valuedouble;
+  if (IPMC_LTC_6D_I1_json)  IPMC_LTC_6D_I1 = IPMC_LTC_6D_I1_json->valuedouble;
+  if (IPMC_LTC_69_V_json)  IPMC_LTC_69_V = IPMC_LTC_69_V_json->valuedouble;
+  if (IPMC_LTC_69_I_json)  IPMC_LTC_69_I = IPMC_LTC_69_I_json->valuedouble;
+  if (IPMC_LTC_6C_V_json)  IPMC_LTC_6C_V = IPMC_LTC_6C_V_json->valuedouble;
+  if (IPMC_LTC_6C_I_json)  IPMC_LTC_6C_I = IPMC_LTC_6C_I_json->valuedouble;
+  if (IPMC_LTC_6D_V2_json)  IPMC_LTC_6D_V2 = IPMC_LTC_6D_V2_json->valuedouble;
+  if (IPMC_LTC_6D_I2_json)  IPMC_LTC_6D_I2 = IPMC_LTC_6D_I2_json->valuedouble;
+  if (IPMC_LTC_6E_V_json)  IPMC_LTC_6E_V = IPMC_LTC_6E_V_json->valuedouble;
+  if (IPMC_LTC_6E_I_json)  IPMC_LTC_6E_I = IPMC_LTC_6E_I_json->valuedouble;
 
 
   // link data to OpcUA
@@ -575,6 +625,23 @@ void DRegs::extract_ipmc(cJSON *sensor_json) {
   getAddressSpaceLink()->setIPMC_TMP100_ft(IPMC_TMP100_ft,OpcUa_Good);
   getAddressSpaceLink()->setIPMC_TMP100_bt(IPMC_TMP100_bt,OpcUa_Good);
   getAddressSpaceLink()->setIPMC_TMP100_z(IPMC_TMP100_z,OpcUa_Good);
+  getAddressSpaceLink()->setIPMC_LTC_6A_V(IPMC_LTC_6A_V,OpcUa_Good);
+  getAddressSpaceLink()->setIPMC_LTC_6A_I(IPMC_LTC_6A_I,OpcUa_Good);
+  getAddressSpaceLink()->setIPMC_LTC_6A_T(IPMC_LTC_6A_T,OpcUa_Good);
+  getAddressSpaceLink()->setIPMC_LTC_67_V(IPMC_LTC_67_V,OpcUa_Good);
+  getAddressSpaceLink()->setIPMC_LTC_67_I(IPMC_LTC_67_I,OpcUa_Good);
+  getAddressSpaceLink()->setIPMC_LTC_6B_V(IPMC_LTC_6B_V,OpcUa_Good);
+  getAddressSpaceLink()->setIPMC_LTC_6B_I(IPMC_LTC_6B_I,OpcUa_Good);
+  getAddressSpaceLink()->setIPMC_LTC_6D_V1(IPMC_LTC_6D_V1,OpcUa_Good);
+  getAddressSpaceLink()->setIPMC_LTC_6D_I1(IPMC_LTC_6D_I1,OpcUa_Good);
+  getAddressSpaceLink()->setIPMC_LTC_69_V(IPMC_LTC_69_V,OpcUa_Good);
+  getAddressSpaceLink()->setIPMC_LTC_69_I(IPMC_LTC_69_I,OpcUa_Good);
+  getAddressSpaceLink()->setIPMC_LTC_6C_V(IPMC_LTC_6C_V,OpcUa_Good);
+  getAddressSpaceLink()->setIPMC_LTC_6C_I(IPMC_LTC_6C_I,OpcUa_Good);
+  getAddressSpaceLink()->setIPMC_LTC_6D_V2(IPMC_LTC_6D_V2,OpcUa_Good);
+  getAddressSpaceLink()->setIPMC_LTC_6D_I2(IPMC_LTC_6D_I2,OpcUa_Good);
+  getAddressSpaceLink()->setIPMC_LTC_6E_V(IPMC_LTC_6E_V,OpcUa_Good);
+  getAddressSpaceLink()->setIPMC_LTC_6E_I(IPMC_LTC_6E_V,OpcUa_Good);
 
 }
   
