@@ -529,7 +529,8 @@ void DRegs::extract_ipmc(cJSON *sensor_json) {
   if (IPMC_json) IPMC_i2cVer_json = cJSON_GetObjectItem(IPMC_json, "i2cVer");
   if (IPMC_json) IPMC_rev_json = cJSON_GetObjectItem(IPMC_json, "rev");
   if (IPMC_json) IPMC_ver_json = cJSON_GetObjectItem(IPMC_json, "ver");
-  if (IPMC_json) IPMC_status_json = cJSON_GetObjectItem(IPMC_json, "seq");
+  if (IPMC_json) IPMC_seq_json = cJSON_GetObjectItem(IPMC_json, "seq");
+  if (IPMC_json) IPMC_status_json = cJSON_GetObjectItem(IPMC_json, "status");
   if (IPMC_json) IPMC_rawtime_json = cJSON_GetObjectItem(IPMC_json, "rawtime");
   if (IPMC_json) IPMC_time_json = cJSON_GetObjectItem(IPMC_json, "time");
   if (IPMC_json) IPMC_iQ_I_json = cJSON_GetObjectItem(IPMC_json, "iQ65033qqma10_I");
@@ -641,7 +642,7 @@ void DRegs::extract_ipmc(cJSON *sensor_json) {
   getAddressSpaceLink()->setIPMC_LTC_6D_V2(IPMC_LTC_6D_V2,OpcUa_Good);
   getAddressSpaceLink()->setIPMC_LTC_6D_I2(IPMC_LTC_6D_I2,OpcUa_Good);
   getAddressSpaceLink()->setIPMC_LTC_6E_V(IPMC_LTC_6E_V,OpcUa_Good);
-  getAddressSpaceLink()->setIPMC_LTC_6E_I(IPMC_LTC_6E_V,OpcUa_Good);
+  getAddressSpaceLink()->setIPMC_LTC_6E_I(IPMC_LTC_6E_I,OpcUa_Good);
 
 }
   
