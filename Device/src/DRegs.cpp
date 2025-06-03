@@ -529,13 +529,14 @@ void DRegs::extract_ipmc(cJSON *sensor_json) {
   if (IPMC_json) IPMC_i2cVer_json = cJSON_GetObjectItem(IPMC_json, "i2cVer");
   if (IPMC_json) IPMC_rev_json = cJSON_GetObjectItem(IPMC_json, "rev");
   if (IPMC_json) IPMC_ver_json = cJSON_GetObjectItem(IPMC_json, "ver");
-  if (IPMC_json) IPMC_status_json = cJSON_GetObjectItem(IPMC_json, "seq");
+  if (IPMC_json) IPMC_seq_json = cJSON_GetObjectItem(IPMC_json, "seq");
+  if (IPMC_json) IPMC_status_json = cJSON_GetObjectItem(IPMC_json, "status");
   if (IPMC_json) IPMC_rawtime_json = cJSON_GetObjectItem(IPMC_json, "rawtime");
   if (IPMC_json) IPMC_time_json = cJSON_GetObjectItem(IPMC_json, "time");
-  if (IPMC_json) IPMC_iQ_I_json = cJSON_GetObjectItem(IPMC_json, "iQ65033qqma10_I");
-  if (IPMC_json) IPMC_iQ_VA_json = cJSON_GetObjectItem(IPMC_json, "iQ65033qqma10_VA");
-  if (IPMC_json) IPMC_iQ_VB_json = cJSON_GetObjectItem(IPMC_json, "iQ65033qqma10_VB");
-  if (IPMC_json) IPMC_iQ_T_json = cJSON_GetObjectItem(IPMC_json, "iQ65033qqma10_T");
+  if (IPMC_json) IPMC_iQ_I_json = cJSON_GetObjectItem(IPMC_json, "iQ65033qma10_I");
+  if (IPMC_json) IPMC_iQ_VA_json = cJSON_GetObjectItem(IPMC_json, "iQ65033qma10_VA");
+  if (IPMC_json) IPMC_iQ_VB_json = cJSON_GetObjectItem(IPMC_json, "iQ65033qma10_VB");
+  if (IPMC_json) IPMC_iQ_T_json = cJSON_GetObjectItem(IPMC_json, "iQ65033qma10_T");
   if (IPMC_json) IPMC_PCF_al_json = cJSON_GetObjectItem(IPMC_json, "PCF8575_al");
   if (IPMC_json) IPMC_PCF_ah_json = cJSON_GetObjectItem(IPMC_json, "PCF8575_ah");
   if (IPMC_json) IPMC_PCF_bl_V_json = cJSON_GetObjectItem(IPMC_json, "PCF8575_bl_V");
@@ -543,6 +544,7 @@ void DRegs::extract_ipmc(cJSON *sensor_json) {
   if (IPMC_json) IPMC_TMP100_fb_json = cJSON_GetObjectItem(IPMC_json, "TMP100_fb");
   if (IPMC_json) IPMC_TMP100_bb_json = cJSON_GetObjectItem(IPMC_json, "TMP100_bb");
   if (IPMC_json) IPMC_TMP100_ft_json = cJSON_GetObjectItem(IPMC_json, "TMP100_ft");
+  if (IPMC_json) IPMC_TMP100_bt_json = cJSON_GetObjectItem(IPMC_json, "TMP100_bt");
   if (IPMC_json) IPMC_TMP100_z_json = cJSON_GetObjectItem(IPMC_json, "TMP100_z");
   if (IPMC_json) IPMC_LTC_6A_V_json = cJSON_GetObjectItem(IPMC_json, "LTC2945_6A_V");
   if (IPMC_json) IPMC_LTC_6A_I_json = cJSON_GetObjectItem(IPMC_json, "LTC2945_6A_I");
@@ -641,7 +643,7 @@ void DRegs::extract_ipmc(cJSON *sensor_json) {
   getAddressSpaceLink()->setIPMC_LTC_6D_V2(IPMC_LTC_6D_V2,OpcUa_Good);
   getAddressSpaceLink()->setIPMC_LTC_6D_I2(IPMC_LTC_6D_I2,OpcUa_Good);
   getAddressSpaceLink()->setIPMC_LTC_6E_V(IPMC_LTC_6E_V,OpcUa_Good);
-  getAddressSpaceLink()->setIPMC_LTC_6E_I(IPMC_LTC_6E_V,OpcUa_Good);
+  getAddressSpaceLink()->setIPMC_LTC_6E_I(IPMC_LTC_6E_I,OpcUa_Good);
 
 }
   
