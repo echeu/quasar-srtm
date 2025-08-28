@@ -10,7 +10,7 @@ A Dockerfile is provided to allow one to easily install the requisite packages.
 
 ## Build docker image
 
-The following commands only have to be issued once to instantiate the docker image.
+The following commands only have to be issued once to instantiate the docker image. You might need to use sudo for these commands to run properly.
   - docker run --rm --privileged multiarch/qemu-user-static:register --reset
   - docker build --rm -t cern-arm64-alma9 - < Dockerfile
 

@@ -60,8 +60,8 @@ int setupDecoder(struct ipmcDataRecord *sbf) {
   if( !sbf->decoder ) {
     switch ( sbf->idh.boardid ) {
       case ID_SRTM_TESTER:
-	sbf->values = 0;
-	sbf->decoder = SrtmTester_v1_decoder;
+	      sbf->values = 0;
+	      sbf->decoder = SrtmTester_v1_decoder;
         break;
       case ID_LASP:
         /* TODO: Implement a LASP decoder. */
@@ -87,11 +87,11 @@ static void resetHeader(u8 *header) {
 void ipmcSensorBlockInit(struct sensorI2CAddress *sa) {
   if( initDone ) return;
 
-  fp = fopen(bufferFilename,"rb");
-  if( !fp ) {
-    /* TODO: Figure out how to signal an error. */
-    return;
-  }
+  //fp = fopen(bufferFilename,"rb");
+  //if( !fp ) {
+  //  /* TODO: Figure out how to signal an error. */
+  //  return;
+  //}
 
   initDone = 1;
 }
@@ -107,19 +107,29 @@ void ipmcSensorBlockRead(struct sensorI2CAddress *sa, void *valueBuffer) {
   }
 
   /* Get the header */
+  fp = fopen(bufferFilename,"rb");
+  if( !fp ) {
+    /* TODO: Figure out how to signal an error. */
+    return;
+  }
+
   fseek(fp,0,SEEK_SET);
   int rc = fread(header,1,sizeof(struct ipmcDataHeader),fp);
   if( rc != sizeof(struct ipmcDataHeader)) {
     /* TODO: Figure out how to signal an error. */
     resetHeader((u8*)header);
+    fclose(fp);
     return;
   }
+
+  /*  printf("Seq = 0x%02x\n",header->seqid); */
 
   /* The first time through, set up the values array. This needs the number of words = number of bytes. */
   if( !sbf->values ) {
     sbf->values = malloc(sizeof(double)*(header->nBytes));
     if( !sbf->values ) {
       resetHeader((u8*)header);
+      fclose(fp);
       return;
     }
   }
@@ -129,11 +139,13 @@ void ipmcSensorBlockRead(struct sensorI2CAddress *sa, void *valueBuffer) {
   u8 *rawdata = sbf->rawSensorData;
   if( !rawdata ) {
     /* TODO: Figure out how to signal an error. */
+    fclose(fp);
     return;
   }
   rc = fread(rawdata,1,header->nBytes,fp);
   if( rc != header->nBytes ) {
     /* TODO: Figure out how to signal an error. */
+    fclose(fp);
     return;
   }
 
@@ -142,12 +154,14 @@ void ipmcSensorBlockRead(struct sensorI2CAddress *sa, void *valueBuffer) {
   rc = fread(trailer,1,9,fp);
   if( rc != 9 ) {
     /* TODO: Figure out how to signal an error. */
+    fclose(fp);
     return;
   }
 
   /* If the sequence number has changed, the record is invalid. */
   if( header->seqid != trailer[0] ) {
     resetHeader((u8*)header);
+    fclose(fp);
     return;
   }
 
@@ -157,11 +171,13 @@ void ipmcSensorBlockRead(struct sensorI2CAddress *sa, void *valueBuffer) {
   rc = fread(tmphdr,1,sizeof(struct ipmcDataHeader),fp);
   if( header->seqid != tmphdr[0] ) {
     resetHeader((u8*)header);
+    fclose(fp);
     return;
   }
 
   /* Copy the timestamp from the trailer into the data record. */
   memcpy(sbf->timestamp,&trailer[1],8);
+  fclose(fp);
 }
 
 void ipmcSensorBlockFormat(struct sensorRecord *sr, struct cJSON *parent) {
@@ -257,20 +273,23 @@ void SrtmTester_v1_decoder(struct ipmcDataRecord *idr, struct cJSON *ipmc) {
   int idxraw = 0;
   int nBytes = idr->idh.nBytes;
   u8 *dataraw = idr->rawSensorData;
+#ifdef DEBUG_DUMP
   char ebuf[1024];
   sprintf(ebuf,"dataraw: %p; nbytes: %d",dataraw,nBytes);
   ERRMSG(ebuf);
+#endif
   while( current->tag ) {
     /* TODO: Decide whether or not to remove the data entry from the struct. Also stored in values. */
-    current->data = current->scale * dataraw[idxraw++] + current->offset;
+    current->data = current->scale * dataraw[idxraw] + current->offset;
     if( idr->values ) { /* TODO: Set up converted value local storage */
       if( idxraw < nBytes ) idr->values[idxraw] = current->data; /* The "if" is just for safety. */
       else {
-	printf("LOGIC ERROR: %c:%d, too many sensors. nBytes = %d, idxraw = %d\n",__FILE__,__LINE__,nBytes,idxraw);
-	/* TODO: Figure out how to send an error. Maybe use kprintf? */
+      	printf("LOGIC ERROR: %c:%d, too many sensors. nBytes = %d, idxraw = %d (tag = %s)\n",__FILE__,__LINE__,nBytes,idxraw,current->tag);
+	      /* TODO: Figure out how to send an error. Maybe use kprintf? */
       }
     }
     cJSON_AddItemToObject(ipmc,current->tag,cJSON_CreateNumber(current->data));
+    idxraw += 1;
     ++current;
   }
   if ( idxraw != idr->idh.nBytes ) {
